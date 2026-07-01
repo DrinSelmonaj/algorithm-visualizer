@@ -1,0 +1,175 @@
+/* ── Code Panel Layout ── */
+.code-panel {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* ── Header ── */
+.code-panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+}
+
+.code-panel-header h3 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.code-lang-badge {
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 20px;
+    background-color: var(--accent-orange);
+    color: #fff;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+/* ── Line Numbers + Code ── */
+.code-panel pre {
+    flex: 1;
+    overflow-y: auto;
+    margin: 0;
+    padding: 0;
+    background: transparent !important;
+    counter-reset: line-counter;
+}
+
+.code-panel code {
+    display: block;
+    padding: 16px 0;
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    line-height: 1.8;
+    background: transparent !important;
+    color: var(--text-primary);
+}
+
+/* Çdo linjë kodi — strukturohet nga codePanel.js */
+.code-line {
+    display: flex;
+    align-items: stretch;
+    padding: 0 16px 0 0;
+    position: relative;
+    transition: background 0.15s ease;
+}
+
+.code-line:hover {
+    background-color: var(--bg-hover);
+}
+
+/* Numri i linjës */
+.line-number {
+    flex-shrink: 0;
+    width: 36px;
+    padding: 0 8px 0 12px;
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    text-align: right;
+    user-select: none;
+    border-right: 1px solid var(--border);
+    margin-right: 12px;
+}
+
+/* Teksti i linjës */
+.line-content {
+    flex: 1;
+    white-space: pre;
+}
+
+/* ── Linja e Aktive (ndriçohet nga codePanel.js) ── */
+.code-line.active {
+    background-color: rgba(79, 142, 247, 0.12);
+}
+
+.code-line.active .line-number {
+    color: var(--accent-blue);
+    border-right-color: var(--accent-blue);
+}
+
+/* Shenja trekëndore në të majtë */
+.code-line.active::before {
+    content: '▶';
+    position: absolute;
+    left: 2px;
+    color: var(--accent-blue);
+    font-size: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+/* ── Scrollbar i code panel ── */
+.code-panel pre::-webkit-scrollbar {
+    width: 4px;
+}
+
+.code-panel pre::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.code-panel pre::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 2px;
+}
+
+/* ── Kompleksiteti poshtë kodit ── */
+.complexity-section {
+    border-top: 1px solid var(--border);
+    padding: 14px 16px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.complexity-title {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+}
+
+.complexity-table {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+}
+
+.complexity-row {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    background-color: var(--bg-card);
+    border-radius: 6px;
+    padding: 8px 10px;
+}
+
+.complexity-case {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+}
+
+.complexity-value {
+    font-family: var(--font-mono);
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--accent-green);
+}
+
+/* ── Mobile ── */
+@media (max-width: 768px) {
+    .code-panel pre {
+        max-height: 200px;
+    }
+
+    .complexity-section {
+        padding: 10px 12px;
+    }
+}

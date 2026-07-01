@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vizualizues Algoritmesh</title>
+
+    <link rel="stylesheet" href="vendor/highlight-dark.css">
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/visualizer.css">
+    <link rel="stylesheet" href="styles/controls.css">
+    <link rel="stylesheet" href="styles/code-panel.css">
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header class="app-header">
+        <h1 class="app-title">Vizualizues Algoritmesh</h1>
+        <p class="app-subtitle">Shiko algoritmet duke u ekzekutuar — hap pas hapi</p>
+    </header>
+
+    <!-- LAYOUT: [sidebar] [visualizer] [code-panel] -->
+    <main class="app-layout">
+
+        <!-- ZONA 1 — Lista e algoritmeve -->
+        <aside class="sidebar">
+
+            <div class="algo-group">
+                <h3 class="algo-group-title">🔍 Kërkim</h3>
+                <button class="algo-btn" data-algorithm="linear" data-category="searching">Linear Search</button>
+                <button class="algo-btn" data-algorithm="binary" data-category="searching">Binary Search</button>
+            </div>
+
+            <div class="algo-group">
+                <h3 class="algo-group-title">📊 Renditje</h3>
+                <button class="algo-btn" data-algorithm="bubble"    data-category="sorting">Bubble Sort</button>
+                <button class="algo-btn" data-algorithm="insertion" data-category="sorting">Insertion Sort</button>
+                <button class="algo-btn" data-algorithm="selection" data-category="sorting">Selection Sort</button>
+                <button class="algo-btn" data-algorithm="merge"     data-category="sorting">Merge Sort</button>
+                <button class="algo-btn" data-algorithm="quick"     data-category="sorting">Quick Sort</button>
+                <button class="algo-btn" data-algorithm="shell"     data-category="sorting">Shell Sort</button>
+                <button class="algo-btn" data-algorithm="heap"      data-category="sorting">Heap Sort</button>
+                <button class="algo-btn" data-algorithm="radix"     data-category="sorting">Radix Sort</button>
+            </div>
+
+            <div class="algo-group">
+                <h3 class="algo-group-title">🌳 BST</h3>
+                <button class="algo-btn" data-algorithm="bst" data-category="bst">BST Operations</button>
+            </div>
+
+           <div class="algo-group">
+                <h3 class="algo-group-title">🕸️ Grafe</h3>
+                <button class="algo-btn" data-algorithm="dijkstra" data-category="graph">Dijkstra</button>
+                <button class="algo-btn" data-algorithm="kruskal"  data-category="graph">Kruskal</button>
+            </div>
+
+            <div class="algo-group">
+                <h3 class="algo-group-title">📦 Struktura të Dhënash</h3>
+                <button class="algo-btn" data-algorithm="stack"      data-category="datastructures">Stack</button>
+                <button class="algo-btn" data-algorithm="queue"      data-category="datastructures">Queue</button>
+                <button class="algo-btn" data-algorithm="linkedlist" data-category="datastructures">Linked List</button>
+                <button class="algo-btn" data-algorithm="hashmap"    data-category="datastructures">HashMap</button>
+            </div>
+
+        </aside>
+
+        <!-- ZONA 2 — Vizualizuesi kryesor -->
+        <section class="visualizer-zone">
+
+            <div class="algo-info-bar">
+                <h2 id="active-algo-name">Zgjidh një algoritëm</h2>
+                <div class="complexity-badges">
+                    <span class="badge" id="badge-time">Time: —</span>
+                    <span class="badge" id="badge-space">Space: —</span>
+                </div>
+            </div>
+
+            <!-- SVG — mbushet dinamikisht nga renderer-at -->
+            <div class="svg-container">
+                <svg id="main-svg" width="100%" height="400">
+                    <text x="50%" y="50%" text-anchor="middle" class="svg-placeholder">
+                        Zgjidh një algoritëm nga lista
+                    </text>
+                </svg>
+            </div>
+
+            <!-- Statistikat live -->
+            <div class="stats-bar">
+                <div class="stat">
+                    <span class="stat-label">Krahasime</span>
+                    <span class="stat-value" id="stat-comparisons">0</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Ndërrrime</span>
+                    <span class="stat-value" id="stat-swaps">0</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Hapi</span>
+                    <span class="stat-value" id="stat-step">0</span>
+                </div>
+            </div>
+
+            <!-- Kontrolluesit -->
+            <div class="controls-bar">
+
+                <div class="control-buttons">
+                    <button id="btn-run"   class="btn btn-primary"   disabled>▶ Ekzekuto</button>
+                    <button id="btn-pause" class="btn btn-secondary" disabled>⏸ Pauzë</button>
+                    <button id="btn-reset" class="btn btn-secondary" disabled>↺ Rikthe</button>
+                    <button id="btn-step"  class="btn btn-secondary" disabled>⏭ Hap</button>
+                </div>
+
+                <div class="speed-control">
+                    <label for="speed-slider">Shpejtësia</label>
+                    <div class="speed-labels">
+                        <span>Ngadalë</span>
+                        <input type="range" id="speed-slider" min="1" max="3" value="2" step="1">
+                        <span>Shpejt</span>
+                    </div>
+                </div>
+
+                <div class="size-control">
+                    <label for="size-slider">Elementet: <span id="size-value">20</span></label>
+                    <input type="range" id="size-slider" min="5" max="100" value="20">
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ZONA 3 — Paneli i kodit Java -->
+        <aside class="code-panel">
+            <div class="code-panel-header">
+                <h3>Kodi Java</h3>
+                <span class="code-lang-badge">Java</span>
+            </div>
+            <pre><code id="java-code-display" class="language-java">// Zgjidh një algoritëm për të parë kodin</code></pre>
+        </aside>
+
+    </main>
+
+<!-- Librarite -->
+    <script src="vendor/d3.v7.min.js"></script>
+    <script src="vendor/highlight.min.js"></script>
+
+    <!-- Engine -->
+    <script src="src/engine/scheduler.js"></script>
+    <script src="src/engine/animator.js"></script>
+    <script src="src/engine/sortRenderer.js"></script>
+    <script src="src/engine/bstRenderer.js"></script>
+    <script src="src/engine/graphRenderer.js"></script>
+    <script src="src/engine/stackRenderer.js"></script>
+    <script src="src/engine/queueRenderer.js"></script>
+    <script src="src/engine/linkedListRenderer.js"></script>
+    <script src="src/engine/hashMapRenderer.js"></script>
+
+    <!-- Algorithms: Data Structures -->
+    <script src="src/algorithms/datastructures/stack/index.js"></script>
+    <script src="src/algorithms/datastructures/queue/index.js"></script>
+    <script src="src/algorithms/datastructures/linkedlist/index.js"></script>
+    <script src="src/algorithms/datastructures/hashmap/index.js"></script>
+
+    <!-- Entry point -->
+    <script type="module" src="main.js"></script>
+
+</body>
+</html>

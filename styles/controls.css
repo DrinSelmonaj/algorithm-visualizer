@@ -1,0 +1,184 @@
+/* ── Controls Bar ── */
+.controls-bar {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding: 14px 24px;
+    background-color: var(--bg-secondary);
+    border-top: 1px solid var(--border);
+    flex-shrink: 0;
+    flex-wrap: wrap;
+}
+
+/* ── Buttons ── */
+.control-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: background var(--transition),
+                color var(--transition),
+                opacity var(--transition),
+                transform 0.1s ease;
+}
+
+.btn:active:not(:disabled) {
+    transform: scale(0.97);
+}
+
+.btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+
+.btn-primary {
+    background-color: var(--accent-blue);
+    color: #fff;
+}
+
+.btn-primary:hover:not(:disabled) {
+    background-color: #6a9ef8;
+}
+
+.btn-secondary {
+    background-color: var(--bg-card);
+    color: var(--text-primary);
+    border: 1px solid var(--border);
+}
+
+.btn-secondary:hover:not(:disabled) {
+    background-color: var(--bg-hover);
+    border-color: var(--accent-blue);
+}
+
+/* ── Speed Control ── */
+.speed-control,
+.size-control {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.speed-control label,
+.size-control label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+}
+
+.speed-labels {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+/* ── Range Slider ── */
+input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--border);
+    outline: none;
+    cursor: pointer;
+    transition: background var(--transition);
+}
+
+input[type="range"]#speed-slider {
+    width: 100px;
+}
+
+input[type="range"]#size-slider {
+    width: 120px;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--accent-blue);
+    cursor: pointer;
+    transition: background var(--transition), transform 0.1s ease;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+    background: #6a9ef8;
+    transform: scale(1.2);
+}
+
+input[type="range"]::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--accent-blue);
+    border: none;
+    cursor: pointer;
+}
+
+#size-value {
+    font-family: var(--font-mono);
+    color: var(--accent-blue);
+    font-weight: 600;
+}
+
+/* ── Search Input (Linear / Binary) ── */
+.search-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.search-input-group label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+}
+
+.search-input-group input[type="number"] {
+    width: 80px;
+    padding: 6px 10px;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text-primary);
+    font-family: var(--font-mono);
+    font-size: 0.88rem;
+    outline: none;
+    transition: border-color var(--transition);
+}
+
+.search-input-group input[type="number"]:focus {
+    border-color: var(--accent-blue);
+}
+
+/* ── Mobile ── */
+@media (max-width: 768px) {
+    .controls-bar {
+        padding: 10px 12px;
+        gap: 12px;
+    }
+
+    .btn {
+        padding: 7px 12px;
+        font-size: 0.8rem;
+    }
+
+    input[type="range"]#speed-slider,
+    input[type="range"]#size-slider {
+        width: 80px;
+    }
+}

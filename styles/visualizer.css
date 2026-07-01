@@ -1,0 +1,231 @@
+/* ── Visualizer Zone ── */
+.visualizer-zone {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background-color: var(--bg-primary);
+}
+
+/* ── Info Bar ── */
+.algo-info-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 24px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+}
+
+.algo-info-bar h2 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.complexity-badges {
+    display: flex;
+    gap: 8px;
+}
+
+.badge {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 20px;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+    transition: color var(--transition), border-color var(--transition);
+}
+
+.badge.active {
+    color: var(--accent-green);
+    border-color: var(--accent-green);
+}
+
+/* ── SVG Container ── */
+.svg-container {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+    padding: 24px;
+}
+
+#main-svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.svg-placeholder {
+    fill: var(--text-muted);
+    font-size: 0.9rem;
+    font-family: var(--font-main);
+}
+
+/* ── Sorting Bars ── */
+.sort-bar {
+    transition: x 0.25s ease;
+}
+
+.sort-bar rect {
+    rx: 4px;
+    ry: 4px;
+    transition: fill 0.15s ease;
+}
+
+.sort-bar text {
+    fill: var(--text-secondary);
+    font-size: 11px;
+    font-family: var(--font-mono);
+    text-anchor: middle;
+}
+
+/* Gjendjet e bars — ngjyrat ndryshojnë sipas gjendjes */
+.bar-default  { fill: var(--accent-blue);   }
+.bar-compare  { fill: var(--accent-orange); }
+.bar-swap     { fill: var(--accent-red);    }
+.bar-sorted   { fill: var(--accent-green);  }
+.bar-pivot    { fill: var(--accent-purple); }
+.bar-found    { fill: var(--accent-green);  }
+.bar-search   { fill: var(--accent-orange); }
+
+/* ── BST Nodes ── */
+.bst-node circle {
+    fill: var(--bg-card);
+    stroke: var(--accent-blue);
+    stroke-width: 2;
+    transition: fill 0.2s ease, stroke 0.2s ease;
+}
+
+.bst-node text {
+    fill: var(--text-primary);
+    font-size: 13px;
+    font-family: var(--font-mono);
+    text-anchor: middle;
+    dominant-baseline: central;
+}
+
+.bst-edge {
+    stroke: var(--border);
+    stroke-width: 2;
+    fill: none;
+    transition: stroke 0.2s ease;
+}
+
+/* Gjendjet e BST */
+.bst-node.visiting circle  { fill: var(--accent-orange); stroke: var(--accent-orange); }
+.bst-node.found circle     { fill: var(--accent-green);  stroke: var(--accent-green);  }
+.bst-node.inserting circle { fill: var(--accent-purple); stroke: var(--accent-purple); }
+.bst-node.deleting circle  { fill: var(--accent-red);    stroke: var(--accent-red);    }
+.bst-edge.active           { stroke: var(--accent-blue); }
+
+/* ── Graph Nodes (Dijkstra / Kruskal) ── */
+.graph-node circle {
+    fill: var(--bg-card);
+    stroke: var(--border);
+    stroke-width: 2;
+    cursor: pointer;
+    transition: fill 0.2s ease, stroke 0.2s ease;
+}
+
+.graph-node text {
+    fill: var(--text-primary);
+    font-size: 13px;
+    font-family: var(--font-mono);
+    text-anchor: middle;
+    dominant-baseline: central;
+    pointer-events: none;
+}
+
+.graph-node:hover circle {
+    stroke: var(--accent-blue);
+}
+
+.graph-edge {
+    stroke: var(--border);
+    stroke-width: 2;
+    fill: none;
+    transition: stroke 0.2s ease, stroke-width 0.2s ease;
+}
+
+.graph-edge-weight {
+    fill: var(--text-muted);
+    font-size: 11px;
+    font-family: var(--font-mono);
+    text-anchor: middle;
+}
+
+/* Gjendjet e Graph */
+.graph-node.visited circle   { fill: var(--bg-hover);    stroke: var(--accent-blue);   }
+.graph-node.current circle   { fill: var(--accent-blue); stroke: var(--accent-blue);   }
+.graph-node.shortest circle  { fill: var(--accent-green); stroke: var(--accent-green); }
+.graph-edge.active           { stroke: var(--accent-blue);   stroke-width: 3; }
+.graph-edge.in-tree          { stroke: var(--accent-green);  stroke-width: 3; }
+.graph-edge.considering      { stroke: var(--accent-orange); stroke-width: 2; }
+
+/* ── Stats Bar ── */
+.stats-bar {
+    display: flex;
+    gap: 0;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+}
+
+.stat {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px 0;
+    border-right: 1px solid var(--border);
+}
+
+.stat:last-child {
+    border-right: none;
+}
+
+.stat-label {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 2px;
+}
+
+.stat-value {
+    font-size: 1.2rem;
+    font-weight: 700;
+    font-family: var(--font-mono);
+    color: var(--accent-blue);
+    transition: color 0.15s ease;
+}
+
+/* Animacion kur vlera ndryshon */
+.stat-value.updated {
+    color: var(--accent-orange);
+}
+
+/* ── Mobile ── */
+@media (max-width: 768px) {
+    .algo-info-bar {
+        padding: 10px 16px;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .svg-container {
+        padding: 12px;
+        min-height: 260px;
+    }
+
+    .stats-bar {
+        gap: 0;
+    }
+
+    .stat-value {
+        font-size: 1rem;
+    }
+}

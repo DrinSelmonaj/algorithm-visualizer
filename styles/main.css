@@ -1,0 +1,260 @@
+/* ── Reset & Variables ── */
+*, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    /* Ngjyrat kryesore */
+    --bg-primary:    #0f1117;
+    --bg-secondary:  #1a1d2e;
+    --bg-card:       #212438;
+    --bg-hover:      #2a2d45;
+
+    /* Aksentet */
+    --accent-blue:   #4f8ef7;
+    --accent-green:  #3dd68c;
+    --accent-orange: #f7934f;
+    --accent-red:    #f75f5f;
+    --accent-purple: #a78bfa;
+
+    /* Teksti */
+    --text-primary:   #e8eaf6;
+    --text-secondary: #8b8fa8;
+    --text-muted:     #555870;
+
+    /* Borders */
+    --border:         #2e3150;
+    --border-active:  #4f8ef7;
+
+    /* Dimensionet e layout-it */
+    --sidebar-width:    220px;
+    --code-panel-width: 340px;
+    --header-height:    64px;
+
+    /* Tipografia */
+    --font-main: 'Segoe UI', system-ui, sans-serif;
+    --font-mono: 'Fira Code', 'Cascadia Code', monospace;
+
+    /* Tranzicionet */
+    --transition: 0.2s ease;
+}
+
+/* ── Base ── */
+html, body {
+    height: 100%;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: var(--font-main);
+    font-size: 15px;
+    line-height: 1.5;
+    overflow: hidden;
+}
+
+button {
+    font-family: var(--font-main);
+    cursor: pointer;
+    border: none;
+    outline: none;
+}
+
+/* ── Header ── */
+.app-header {
+    height: var(--header-height);
+    background-color: var(--bg-secondary);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 0 24px;
+}
+
+.app-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: 0.3px;
+}
+
+.app-subtitle {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+/* ── Layout kryesor ── */
+.app-layout {
+    display: grid;
+    grid-template-columns: var(--sidebar-width) 1fr var(--code-panel-width);
+    height: calc(100vh - var(--header-height));
+    overflow: hidden;
+}
+
+/* ── Sidebar ── */
+.sidebar {
+    background-color: var(--bg-secondary);
+    border-right: 1px solid var(--border);
+    overflow-y: auto;
+    padding: 16px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* Scrollbar i sidebar-it */
+.sidebar::-webkit-scrollbar {
+    width: 4px;
+}
+.sidebar::-webkit-scrollbar-track {
+    background: transparent;
+}
+.sidebar::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 2px;
+}
+
+.algo-group {
+    margin-bottom: 8px;
+}
+
+.algo-group-title {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 8px 8px 6px;
+}
+
+.algo-btn {
+    width: 100%;
+    text-align: left;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+    background: transparent;
+    transition: background var(--transition), color var(--transition);
+    margin-bottom: 2px;
+}
+
+.algo-btn:hover {
+    background-color: var(--bg-hover);
+    color: var(--text-primary);
+}
+
+.algo-btn.active {
+    background-color: var(--accent-blue);
+    color: #fff;
+    font-weight: 600;
+}
+
+/* ── Code panel ── */
+.code-panel {
+    background-color: var(--bg-secondary);
+    border-left: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.code-panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+}
+
+.code-panel-header h3 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.code-lang-badge {
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 20px;
+    background-color: var(--accent-orange);
+    color: #fff;
+    letter-spacing: 0.5px;
+}
+
+.code-panel pre {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    line-height: 1.7;
+    background: transparent !important;
+}
+
+/* Linja e ndriçuar nga codePanel.js */
+.code-panel .highlighted-line {
+    background-color: rgba(79, 142, 247, 0.15);
+    border-left: 3px solid var(--accent-blue);
+    margin: 0 -16px;
+    padding: 0 16px 0 13px;
+    display: block;
+}
+
+/* ── Scrollbar global ── */
+::-webkit-scrollbar       { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+/* ── Responsive — Tablet ── */
+@media (max-width: 1024px) {
+    :root {
+        --code-panel-width: 280px;
+        --sidebar-width:    180px;
+    }
+}
+
+/* ── Responsive — Mobile ── */
+@media (max-width: 768px) {
+    html, body {
+        overflow: auto;
+    }
+
+    .app-layout {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr auto;
+        height: auto;
+    }
+
+    .sidebar {
+        flex-direction: row;
+        flex-wrap: wrap;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+        padding: 8px;
+        overflow-x: auto;
+        overflow-y: hidden;
+    }
+
+    .algo-group {
+        margin-bottom: 0;
+    }
+
+    .algo-group-title {
+        display: none;
+    }
+
+    .algo-btn {
+        width: auto;
+        white-space: nowrap;
+        padding: 6px 10px;
+        font-size: 0.8rem;
+    }
+
+    .code-panel {
+        border-left: none;
+        border-top: 1px solid var(--border);
+        max-height: 280px;
+    }
+}
