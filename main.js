@@ -137,6 +137,21 @@ function initDataStructure(key) {
 // ─── Run ──────────────────────────────────────────────────────────
 function runAlgorithm() {
     if (!currentAlgo) return;
+
+    const { isRunning, isPaused } = getState();
+
+    // Nëse është në pauzë, vazhdo — mos fillo run të ri
+    if (isPaused) { resume(); return; }
+
+    // Nëse po ekzekutohet, ndaloje së pari
+    // scheduler.js e menaxhon me activeRunId
+    if (isRunning) stop();
+
+    // Reset stats para çdo run të ri — pa këtë
+    // numrat grumbullohen nga run-i i mëparshëm
+    resetStats();
+    currentGen = null;
+
     const algo = ALGORITHMS[currentAlgo];
     const cat  = algo.category;
 
@@ -150,14 +165,15 @@ function runAlgorithm() {
             .split(',').map(Number);
         currentGen = algo.gen(vals);
     } else if (cat === 'graph') {
-        // graphBuilder e ndërton grafin
         return;
     } else if (cat === 'datastructures') {
-        // Data structures kanë operacione individuale — run nuk ka kuptim
         return;
     }
 
+    if (!currentGen) return;
+
     setButtonState('pause', false);
+    setButtonState('run', true);
 
     run(
         currentGen,
@@ -209,8 +225,10 @@ function resetAlgorithm() {
 
     if (cat === 'sorting' || cat === 'searching') {
         const size = parseInt(document.getElementById('size-slider').value);
-        currentArray = cat === 'searching' ? generateSortedArray(size) : generateArray(size);
-        currentBars  = renderBars(currentArray);
+        currentArray = cat === 'searching'
+            ? generateSortedArray(size)
+            : generateArray(size);
+        currentBars = renderBars(currentArray);
     } else if (cat === 'bst') {
         rerenderBST(null);
     } else if (cat === 'datastructures') {
@@ -288,9 +306,25 @@ document.getElementById('speed-slider').addEventListener('input', (e) => {
 
 document.getElementById('size-slider').addEventListener('input', (e) => {
     document.getElementById('size-value').textContent = e.target.value;
-    if (currentAlgo && (ALGORITHMS[currentAlgo].category === 'sorting' ||
-                        ALGORITHMS[currentAlgo].category === 'searching')) {
-        resetAlgorithm();
+
+    // Slider ndryshon array-in — ndalojmë çdo animacion aktiv
+    // pa stop(), animatori aplikonte hapa mbi array-in e vjetër
+    // dhe stats grumbulloheshin gabimisht
+    stop();
+    resetStats();
+    currentGen = null;
+
+    if (!currentAlgo) return;
+    const cat = ALGORITHMS[currentAlgo].category;
+
+    if (cat === 'sorting' || cat === 'searching') {
+        const size = parseInt(e.target.value);
+        currentArray = cat === 'searching'
+            ? generateSortedArray(size)
+            : generateArray(size);
+        currentBars = renderBars(currentArray);
+        resetButtons();
+        enableButtons(['run', 'step', 'reset']);
     }
 });
 

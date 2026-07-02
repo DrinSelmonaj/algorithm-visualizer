@@ -1,73 +1,61 @@
-// ── Scheduler — kontrollon ritmin e animacionit ──
+// src/engine/scheduler.js
 
 const SPEEDS = {
-    1: 1200,  // Ngadalë
-    2: 500,   // Normal
-    3: 80     // Shpejt
+    1: 1200,
+    2: 500,
+    3: 80
 };
 
-// Gjendja aktuale e scheduler-it
 let isRunning   = false;
 let isPaused    = false;
 let stopRequest = false;
 
-/**
- * Pret X milisekonda pa bllokuar browser-in
- * @param {number} ms
- * @returns {Promise}
- */
+// Guard kundër double-run — nëse po ekzekutohet, blloko
+// thirrjen e re pa e ndalur të vjetrën me stop() së pari
+let activeRunId = 0;
+
 function wait(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-/**
- * Ekzekuton hapat e algoritmit një nga një me vonesë
- * @param {Generator}  generator - function* e algoritmit
- * @param {Function}   onStep    - thirret për çdo hap
- * @param {Function}   onFinish  - thirret kur algoritmi mbaron
- * @param {number}     speed     - 1 | 2 | 3
- */
 async function run(generator, onStep, onFinish, speed = 2) {
+    // Nëse ka run aktiv, ndalo atë së pari
+    if (isRunning) {
+        stop();
+        // Prit 1 tick që stop() të regjistrohet
+        await wait(50);
+    }
+
+    const myRunId = ++activeRunId;
+
     isRunning   = true;
     isPaused    = false;
     stopRequest = false;
 
     for (const step of generator) {
-        // Nëse është kërkuar ndalesë — dil
-        if (stopRequest) break;
+        // Kontrollojmë ID-në — nëse ka filluar run i ri, dil
+        if (stopRequest || myRunId !== activeRunId) break;
 
-        // Nëse është pauzë — prit derisa të vazhdojë
         while (isPaused && !stopRequest) {
             await wait(100);
         }
 
-        if (stopRequest) break;
+        if (stopRequest || myRunId !== activeRunId) break;
 
         onStep(step);
         await wait(SPEEDS[speed]);
     }
 
-    isRunning = false;
-
-    if (!stopRequest) {
-        onFinish();
+    // Shëno si jo-aktiv vetëm nëse ky është run-i aktual
+    if (myRunId === activeRunId) {
+        isRunning = false;
+        if (!stopRequest) onFinish();
     }
 }
 
-/**
- * Ekzekuton 1 hap manualisht (butoni "Hap")
- * @param {Generator} generator
- * @param {Function}  onStep
- * @param {Function}  onFinish
- */
 function stepOnce(generator, onStep, onFinish) {
     const result = generator.next();
-
-    if (result.done) {
-        onFinish();
-        return;
-    }
-
+    if (result.done) { onFinish(); return; }
     onStep(result.value);
 }
 
@@ -75,8 +63,6 @@ function pause()  { isPaused    = true;  }
 function resume() { isPaused    = false; }
 function stop()   { stopRequest = true; isRunning = false; isPaused = false; }
 
-function getState() {
-    return { isRunning, isPaused };
-}
+function getState() { return { isRunning, isPaused }; }
 
 export { run, stepOnce, pause, resume, stop, getState, SPEEDS };
