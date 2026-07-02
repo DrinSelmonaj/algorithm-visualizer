@@ -1,27 +1,43 @@
-// src/algorithms/searching/linear.js
+// src/algorithms/searching/binary.js
 
 const JAVA_SOURCE =
-`public class LinearSearch {
+`public class BinarySearch {
     public static int search(int[] arr, int target) {
-        for (int i = 0; i < arr.length; i++) {
-            if (arr[i] == target) return i;
+        int low = 0, high = arr.length - 1;
+        while (low <= high) {
+            int mid = (low + high) / 2;
+            if (arr[mid] == target) return mid;
+            if (arr[mid] < target)  low  = mid + 1;
+            else                    high = mid - 1;
         }
         return -1;
     }
 }`;
 
-function* linearSearch(array, target) {
+function* binarySearch(array, target) {
     const arr = [...array];
+    let low = 0, high = arr.length - 1;
 
-    for (let i = 0; i < arr.length; i++) {
-        yield { type: 'compare', indices: [i], javaLine: 3 };
-        if (arr[i] === target) {
-            yield { type: 'found', indices: [i], javaLine: 4 };
+    while (low <= high) {
+        const mid = Math.floor((low + high) / 2);
+
+        yield { type: 'compare', indices: [mid], javaLine: 5 };
+
+        if (arr[mid] === target) {
+            yield { type: 'found', indices: [mid], javaLine: 6 };
             return;
+        }
+
+        if (arr[mid] < target) {
+            yield { type: 'compare', indices: [mid], javaLine: 7 };
+            low = mid + 1;
+        } else {
+            yield { type: 'compare', indices: [mid], javaLine: 8 };
+            high = mid - 1;
         }
     }
 
-    yield { type: 'compare', indices: [], javaLine: 6, message: `${target} nuk u gjet.` };
+    yield { type: 'compare', indices: [], javaLine: 10, message: `${target} nuk u gjet.` };
 }
 
-export { linearSearch, JAVA_SOURCE };
+export { binarySearch, JAVA_SOURCE };
