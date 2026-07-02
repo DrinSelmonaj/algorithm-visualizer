@@ -4,30 +4,22 @@
 // — statistikat live (krahasime, ndërrrime, hapi)
 // — input-et për vlera
 
-// ─── Statistikat live ─────────────────────────────────────────────
-let comparisons = 0;
-let swaps       = 0;
-let steps       = 0;
 
-/**
- * Përditëson numrat e statistikave në UI.
- * Thirret nga animator.js pas çdo hapi.
- * @param {{ comparisons?, swaps?, steps? }} delta
- */
+
+
 function updateStats(delta = {}) {
     if (delta.comparisons != null) {
-        comparisons += delta.comparisons;
         const el = document.getElementById('stat-comparisons');
-        if (el) el.textContent = comparisons;
+        if (el) el.textContent = delta.comparisons;
     }
     if (delta.swaps != null) {
-        swaps += delta.swaps;
         const el = document.getElementById('stat-swaps');
-        if (el) el.textContent = swaps;
+        if (el) el.textContent = delta.swaps;
     }
-    steps++;
-    const stepEl = document.getElementById('stat-step');
-    if (stepEl) stepEl.textContent = steps;
+    if (delta.step != null) {
+        const el = document.getElementById('stat-step');
+        if (el) el.textContent = delta.step;
+    }
 }
 
 /**
@@ -35,15 +27,11 @@ function updateStats(delta = {}) {
  * Thirret nga main.js kur zgjidhet algoritëm i ri ose reset.
  */
 function resetStats() {
-    comparisons = 0;
-    swaps       = 0;
-    steps       = 0;
     ['stat-comparisons', 'stat-swaps', 'stat-step'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.textContent = '0';
     });
 }
-
 // ─── Paneli i operacioneve DS ─────────────────────────────────────
 // Shfaqet vetëm kur kategoria aktive është 'datastructures'.
 // Çdo strukturë ka butonat e vet — fshihen/shfaqen dinamikisht.

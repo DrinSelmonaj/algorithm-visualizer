@@ -3,16 +3,12 @@
 
 import { render as renderBars, markAllSorted, generateArray, generateSortedArray } from './src/engine/sortRenderer.js';
 import { rerender as rerenderBST } from './src/engine/bstRenderer.js';
-import { render as renderGraph, stop as stopGraph } from './src/engine/graphRenderer.js';
-import { render as renderStack } from './src/engine/stackRenderer.js';
-import { render as renderQueue } from './src/engine/queueRenderer.js';
-import { render as renderLinkedList } from './src/engine/linkedListRenderer.js';
-import { render as renderHashMap, BUCKET_COUNT } from './src/engine/hashMapRenderer.js';
+import { initGraph, getGraph } from './src/ui/graphBuilder.js';
 
 import { run, stepOnce, pause, resume, stop, getState } from './src/engine/scheduler.js';
 import { applyStep, resetStats } from './src/engine/animator.js';
 
-import { updateStats, bindControls } from './src/ui/controls.js';
+import { bindControls, showDSPanel, hideDSPanel } from './src/ui/controls.js'
 import { showCode, highlightLine } from './src/ui/codePanel.js';
 import { showComplexity } from './src/ui/complexity.js';
 
@@ -103,8 +99,9 @@ function selectAlgorithm(algoKey) {
 
     // Inicializo varësisht nga kategoria
     const cat = algo.category;
-
-    if (cat === 'sorting' || cat === 'searching') {
+if (cat === 'sorting' || cat === 'searching') {
+        hideDSPanel();
+        document.querySelector('.size-control').style.display = '';
         const size = parseInt(document.getElementById('size-slider').value);
         currentArray = cat === 'searching'
             ? generateSortedArray(size)
@@ -113,16 +110,21 @@ function selectAlgorithm(algoKey) {
         enableButtons(['run', 'step', 'reset']);
 
     } else if (cat === 'bst') {
+        hideDSPanel();
+        document.querySelector('.size-control').style.display = '';
         rerenderBST(null);
         enableButtons(['run', 'step', 'reset']);
 
     } else if (cat === 'graph') {
-        // graphBuilder do ndërtojë grafin dhe do thërrasë render()
+        hideDSPanel();
+        document.querySelector('.size-control').style.display = '';
         document.getElementById('btn-run').disabled = false;
 
     } else if (cat === 'datastructures') {
+        showDSPanel(algoKey, (op, ...args) => runDSOperation(op, ...args));
+        document.querySelector('.size-control').style.display = 'none';
         initDataStructure(algoKey);
-        enableButtons(['run', 'step', 'reset']);
+        enableButtons(['reset']);
     }
 }
 
@@ -161,9 +163,13 @@ function runAlgorithm() {
         const target = parseInt(prompt('Shkruaj numrin për të kërkuar:') || '0');
         currentGen = algo.gen([...currentArray], target);
     } else if (cat === 'bst') {
-        const vals = (prompt('Vlerat BST (me presje): 5,3,7,1,4') || '5,3,7,1,4')
-            .split(',').map(Number);
-        currentGen = algo.gen(vals);
+        const input = prompt('Vlerat BST (me presje): 5,3,7,1,4') || '5,3,7,1,4';
+    const vals  = input
+        .split(',')
+        .map(s => parseInt(s.trim(), 10))   // trim() heq hapësirat, parseInt() saktë
+        .filter(n => !isNaN(n));            // filtro NaN nëse ka karakter të gabuar
+    if (vals.length === 0) return;
+    currentGen = algo.gen(vals);
     } else if (cat === 'graph') {
         return;
     } else if (cat === 'datastructures') {
