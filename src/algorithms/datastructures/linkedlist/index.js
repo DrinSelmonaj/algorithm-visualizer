@@ -114,7 +114,7 @@ function* insertAtTail(value) {
 }
 
 // ── DELETE ─────────────────────────────────────────────────────────
-function* deleteValue(value) {
+function* deleteLL(value) {
     if (!head) {
         yield { type: 'compare', dsType: 'linkedlist', message: 'Lista është bosh.', javaLine: 21 };
         return;
@@ -146,7 +146,7 @@ function* deleteValue(value) {
 }
 
 // ── SEARCH ─────────────────────────────────────────────────────────
-function* search(value) {
+function* searchLL(value) {
     let cur = head;
     while (cur) {
         yield { type: 'compare', dsType: 'linkedlist', nodeId: `ll-node-${cur.id}`, message: `Kontrollojmë nyjen ${cur.value}.`, javaLine: 32 };
@@ -158,5 +158,5 @@ function* search(value) {
     }
     yield { type: 'compare', dsType: 'linkedlist', message: `${value} nuk u gjet.`, javaLine: 35 };
 }
+export { init, insertAtHead, insertAtTail, deleteLL, searchLL, JAVA_SOURCE };
 
-export { init, insertAtHead, insertAtTail, delete: deleteValue, search, JAVA_SOURCE };
