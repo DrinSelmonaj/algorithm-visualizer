@@ -101,15 +101,15 @@
             </div>
 
             <!-- Kontrolluesit -->
-           <div class="control-buttons">
+           <!-- Kontrolluesit -->
+            <div class="controls-bar">
+
+                <div class="control-buttons">
                     <button id="btn-run"   class="btn btn-primary"   disabled>▶ Ekzekuto</button>
                     <button id="btn-pause" class="btn btn-secondary" disabled>⏸ Pauzë</button>
                     <button id="btn-reset" class="btn btn-secondary" disabled>↺ Rikthe</button>
                     <button id="btn-step"  class="btn btn-secondary" disabled>⏭ Hap</button>
                 </div>
-
-                <!-- Paneli i operacioneve DS — shfaqet vetëm për Stack/Queue/LinkedList/HashMap -->
-                <div id="ds-controls" style="display:none;"></div>
 
                 <div class="speed-control">
                     <label for="speed-slider">Shpejtësia</label>
@@ -124,6 +124,19 @@
                     <label for="size-slider">Elementet: <span id="size-value">20</span></label>
                     <input type="range" id="size-slider" min="5" max="100" value="20">
                 </div>
+
+                <!-- BST Input — shfaqet vetëm kur BST është aktiv -->
+                <div id="bst-input-group" class="bst-input-group">
+                    <input type="text" id="bst-values-input"
+                           placeholder="p.sh. 5,3,7,1,4" class="ds-input" style="width:150px;">
+                    <button id="btn-bst-run" class="btn btn-primary">Krijo pemën</button>
+                    <input type="number" id="bst-search-input"
+                           placeholder="Kërko vlerën..." class="ds-input ds-input--small">
+                    <button id="btn-bst-search" class="btn btn-secondary">Kërko</button>
+                </div>
+
+                <!-- DS Panel — Stack / Queue / LinkedList / HashMap -->
+                <div id="ds-controls" style="display:none;"></div>
 
             </div>
         </section>

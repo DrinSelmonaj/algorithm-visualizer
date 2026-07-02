@@ -27,8 +27,8 @@ import { linearSearch, JAVA_SOURCE as JAVA_LINEAR } from './src/algorithms/searc
 import { binarySearch, JAVA_SOURCE as JAVA_BINARY } from './src/algorithms/searching/binary.js';
 
 // ── Trees ─────────────────────────────────────────────────────────
-import { bstAlgorithm, JAVA_SOURCE as JAVA_BST } from './src/algorithms/bst.js';
-
+import { bstAlgorithm, bstSearch,
+         JAVA_SOURCE as JAVA_BST } from './src/algorithms/bst.js'
 // ── Graphs ────────────────────────────────────────────────────────
 import { dijkstra, JAVA_SOURCE as JAVA_DIJKSTRA } from './src/algorithms/graph/dijkstra.js';
 import { kruskal,  JAVA_SOURCE as JAVA_KRUSKAL  } from './src/algorithms/graph/kruskal.js';
@@ -38,8 +38,8 @@ import { init as initStack,  push, pop, peek as peekStack, isEmpty, JAVA_SOURCE 
     from './src/algorithms/datastructures/stack/index.js';
 import { init as initQueue,  enqueue, dequeue, peek as peekQueue, JAVA_SOURCE as JAVA_QUEUE }
     from './src/algorithms/datastructures/queue/index.js';
-import { init as initLL, insertAtHead, insertAtTail, deleteLL, searchLL, JAVA_SOURCE as JAVA_LL }
-
+import { init as initLL, insertAtHead, insertAtTail, insertAtIndex,
+         deleteLL, searchLL, JAVA_SOURCE as JAVA_LL }
     from './src/algorithms/datastructures/linkedlist/index.js';
 import { init as initHM, put, get, remove, JAVA_SOURCE as JAVA_HM }
     from './src/algorithms/datastructures/hashmap/index.js';
@@ -101,6 +101,7 @@ function selectAlgorithm(algoKey) {
     const cat = algo.category;
 if (cat === 'sorting' || cat === 'searching') {
         hideDSPanel();
+        document.getElementById('bst-input-group').style.display = 'none';
         document.querySelector('.size-control').style.display = '';
         const size = parseInt(document.getElementById('size-slider').value);
         currentArray = cat === 'searching'
@@ -111,17 +112,22 @@ if (cat === 'sorting' || cat === 'searching') {
 
     } else if (cat === 'bst') {
         hideDSPanel();
-        document.querySelector('.size-control').style.display = '';
+        document.getElementById('bst-input-group').style.display = 'flex';
+        document.querySelector('.size-control').style.display = 'none';
         rerenderBST(null);
-        enableButtons(['run', 'step', 'reset']);
+        enableButtons(['reset']);
 
     } else if (cat === 'graph') {
         hideDSPanel();
-        document.querySelector('.size-control').style.display = '';
+        document.getElementById('bst-input-group').style.display = 'none';
+        document.querySelector('.size-control').style.display = 'none';
         document.getElementById('btn-run').disabled = false;
+        document.getElementById('btn-reset').disabled = false;
 
     } else if (cat === 'datastructures') {
+        hideDSPanel();
         showDSPanel(algoKey, (op, ...args) => runDSOperation(op, ...args));
+        document.getElementById('bst-input-group').style.display = 'none';
         document.querySelector('.size-control').style.display = 'none';
         initDataStructure(algoKey);
         enableButtons(['reset']);
@@ -162,14 +168,6 @@ function runAlgorithm() {
     } else if (cat === 'searching') {
         const target = parseInt(prompt('Shkruaj numrin për të kërkuar:') || '0');
         currentGen = algo.gen([...currentArray], target);
-    } else if (cat === 'bst') {
-        const input = prompt('Vlerat BST (me presje): 5,3,7,1,4') || '5,3,7,1,4';
-    const vals  = input
-        .split(',')
-        .map(s => parseInt(s.trim(), 10))   // trim() heq hapësirat, parseInt() saktë
-        .filter(n => !isNaN(n));            // filtro NaN nëse ka karakter të gabuar
-    if (vals.length === 0) return;
-    currentGen = algo.gen(vals);
     } else if (cat === 'graph') {
         return;
     } else if (cat === 'datastructures') {
@@ -305,6 +303,35 @@ document.getElementById('btn-run').addEventListener('click', () => {
 document.getElementById('btn-pause').addEventListener('click', () => pause());
 document.getElementById('btn-reset').addEventListener('click', resetAlgorithm);
 document.getElementById('btn-step').addEventListener('click', stepAlgorithm);
+// ─── BST Input Buttons ────────────────────────────────────────────
+document.getElementById('btn-bst-run').addEventListener('click', () => {
+    const input = document.getElementById('bst-values-input').value.trim() || '5,3,7,1,4';
+    const vals  = input.split(',')
+        .map(s => parseInt(s.trim(), 10))
+        .filter(n => !isNaN(n) && n > 0);
+
+    if (vals.length === 0) return;
+    resetStats();
+    const gen = bstAlgorithm(vals);
+    run(
+        gen,
+        (step) => { applyStep(step, [], 'bst'); if (step.javaLine) highlightLine(step.javaLine); },
+        () => {},
+        speedValue
+    );
+});
+
+document.getElementById('btn-bst-search').addEventListener('click', () => {
+    const target = parseInt(document.getElementById('bst-search-input').value);
+    if (isNaN(target)) return;
+    const gen = bstSearch(target);
+    run(
+        gen,
+        (step) => { applyStep(step, [], 'bst'); if (step.javaLine) highlightLine(step.javaLine); },
+        () => {},
+        speedValue
+    );
+});
 
 document.getElementById('speed-slider').addEventListener('input', (e) => {
     speedValue = parseInt(e.target.value);

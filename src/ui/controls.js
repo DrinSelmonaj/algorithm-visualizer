@@ -59,15 +59,34 @@ const DS_PANELS = {
         </div>`,
 
     linkedlist: `
-        <div class="ds-ops" id="ds-panel-linkedlist">
-            <div class="ds-input-row">
-                <input type="number" id="ds-input" placeholder="Vlera" class="ds-input">
-                <button class="btn btn-primary"   onclick="window.__dsOp('insertHead', document.getElementById('ds-input').value)">Insert Head</button>
-                <button class="btn btn-primary"   onclick="window.__dsOp('insertTail', document.getElementById('ds-input').value)">Insert Tail</button>
-                <button class="btn btn-secondary" onclick="window.__dsOp('delete',     document.getElementById('ds-input').value)">Delete</button>
-                <button class="btn btn-secondary" onclick="window.__dsOp('search',     document.getElementById('ds-input').value)">Search</button>
-            </div>
-        </div>`,
+    <div class="ds-ops" id="ds-panel-linkedlist">
+        <div class="ds-input-row">
+            <input type="number" id="ds-input"
+                   placeholder="Vlera" class="ds-input">
+            <input type="number" id="ds-index"
+                   placeholder="Indeksi" class="ds-input ds-index-input">
+            <button class="btn btn-primary"
+                onclick="window.__dsOp('insertHead', document.getElementById('ds-input').value)">
+                ↑ Head
+            </button>
+            <button class="btn btn-primary"
+                onclick="window.__dsOp('insertTail', document.getElementById('ds-input').value)">
+                ↓ Tail
+            </button>
+            <button class="btn btn-secondary"
+                onclick="window.__dsOp('insertIndex', document.getElementById('ds-input').value, document.getElementById('ds-index').value)">
+                → Index
+            </button>
+            <button class="btn btn-secondary"
+                onclick="window.__dsOp('delete', document.getElementById('ds-input').value)">
+                Fshi
+            </button>
+            <button class="btn btn-secondary"
+                onclick="window.__dsOp('search', document.getElementById('ds-input').value)">
+                Kërko
+            </button>
+        </div>
+    </div>`,
 
     hashmap: `
         <div class="ds-ops" id="ds-panel-hashmap">
