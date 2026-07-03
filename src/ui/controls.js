@@ -63,8 +63,8 @@ const DS_PANELS = {
         <div class="ds-input-row">
             <input type="number" id="ds-input"
                    placeholder="Vlera" class="ds-input">
-            <input type="number" id="ds-index"
-                   placeholder="Indeksi" class="ds-input ds-index-input">
+            <input type="number" id="ds-after"
+                   placeholder="Pas vlerës..." class="ds-input ds-input--small">
             <button class="btn btn-primary"
                 onclick="window.__dsOp('insertHead', document.getElementById('ds-input').value)">
                 ↑ Head
@@ -74,8 +74,8 @@ const DS_PANELS = {
                 ↓ Tail
             </button>
             <button class="btn btn-secondary"
-                onclick="window.__dsOp('insertIndex', document.getElementById('ds-input').value, document.getElementById('ds-index').value)">
-                → Index
+                onclick="window.__dsOp('insertAfter', document.getElementById('ds-input').value, document.getElementById('ds-after').value)">
+                → Pas vlerës
             </button>
             <button class="btn btn-secondary"
                 onclick="window.__dsOp('delete', document.getElementById('ds-input').value)">

@@ -113,6 +113,54 @@ function* insertAtTail(value) {
     };
 }
 
+// ── INSERT AFTER VALUE ─────────────────────────────────────────────
+// Kërkon nyjen me vlerën `target`, pastaj fut nyjen e re pas saj.
+// Kjo pasqyron saktësisht si funksionon LinkedList në Java —
+// nuk ka indekse, duhet ecur zinxhirin hap pas hapi O(n).
+function* insertAfterValue(value, target) {
+    const node = makeNode(value);
+
+    if (!head) {
+        yield { type: 'compare', dsType: 'linkedlist',
+                message: 'Lista është bosh.', javaLine: 8 };
+        return;
+    }
+
+    let cur = head;
+    while (cur) {
+        yield { type: 'compare', dsType: 'linkedlist',
+                nodeId: `ll-node-${cur.id}`,
+                message: `Kërkojmë ${target}: kontrollojmë nyjen ${cur.value}.`,
+                javaLine: 22 };
+
+        if (cur.value === parseInt(target)) {
+            yield { type: 'found', dsType: 'linkedlist',
+                    nodeId: `ll-node-${cur.id}`,
+                    message: `Gjendëm ${target} — futim ${value} pas saj.`,
+                    javaLine: 24 };
+
+            // Ky është operacioni kryesor i LinkedList insert:
+            // 1. nyja e re tregon te kjo.next
+            // 2. kjo tregon te nyja e re
+            node.next = cur.next;
+            cur.next  = node;
+
+            yield {
+                type: 'rerender', dsType: 'linkedlist',
+                render: () => render(head),
+                nodeId: `ll-node-${node.id}`,
+                javaLine: 25,
+                message: `${value} u fut pas ${target}: ${target} → ${value} → ${node.next ? node.next.value : 'null'}.`,
+            };
+            return;
+        }
+        cur = cur.next;
+    }
+
+    yield { type: 'compare', dsType: 'linkedlist',
+            message: `${target} nuk u gjet — nuk u fut asgjë.`, javaLine: 28 };
+}
+
 // ── DELETE ─────────────────────────────────────────────────────────
 function* deleteLL(value) {
     if (!head) {
@@ -158,5 +206,5 @@ function* searchLL(value) {
     }
     yield { type: 'compare', dsType: 'linkedlist', message: `${value} nuk u gjet.`, javaLine: 35 };
 }
-export { init, insertAtHead, insertAtTail, deleteLL, searchLL, JAVA_SOURCE };
+export { init, insertAtHead, insertAtTail, insertAfterValue, deleteLL, searchLL, JAVA_SOURCE };
 

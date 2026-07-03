@@ -38,7 +38,8 @@ import { init as initStack,  push, pop, peek as peekStack, isEmpty, JAVA_SOURCE 
     from './src/algorithms/datastructures/stack/index.js';
 import { init as initQueue,  enqueue, dequeue, peek as peekQueue, JAVA_SOURCE as JAVA_QUEUE }
     from './src/algorithms/datastructures/queue/index.js';
-import { init as initLL, insertAtHead, insertAtTail, insertAtIndex,
+// Importi:
+import { init as initLL, insertAtHead, insertAtTail, insertAfterValue,
          deleteLL, searchLL, JAVA_SOURCE as JAVA_LL }
     from './src/algorithms/datastructures/linkedlist/index.js';
 import { init as initHM, put, get, remove, JAVA_SOURCE as JAVA_HM }
@@ -261,10 +262,11 @@ function runDSOperation(operation, ...args) {
         if (operation === 'dequeue') gen = dequeue();
         if (operation === 'peek')    gen = peekQueue();
     } else if (currentAlgo === 'linkedlist') {
-        if (operation === 'insertHead') gen = insertAtHead(args[0]);
-        if (operation === 'insertTail') gen = insertAtTail(args[0]);
-        if (operation === 'delete')     gen = deleteLL(args[0]);
-        if (operation === 'search')     gen = searchLL(args[0]);
+    if (operation === 'insertHead')  gen = insertAtHead(parseInt(args[0]));
+    if (operation === 'insertTail')  gen = insertAtTail(parseInt(args[0]));
+    if (operation === 'insertAfter') gen = insertAfterValue(parseInt(args[0]), parseInt(args[1]));
+    if (operation === 'delete')      gen = deleteLL(parseInt(args[0]));
+    if (operation === 'search')      gen = searchLL(parseInt(args[0]));
     } else if (currentAlgo === 'hashmap') {
         if (operation === 'put')    gen = put(args[0], args[1]);
         if (operation === 'get')    gen = get(args[0]);
