@@ -137,5 +137,33 @@ function bindControls(onDSOp) {
     // bindControls ruhet për lidhje shtesë nëse nevojitet
     window.__dsOpMain = onDSOp;
 }
+// Paneli për shtim dinamik nyjesh/skajesh te grafet (Dijkstra/Kruskal)
+const GRAPH_PANEL = `
+    <div class="ds-ops" id="graph-panel">
+        <div class="ds-input-row">
+            <input type="text" id="graph-node-input" placeholder="ID nyje (p.sh. G)" class="ds-input ds-input--small">
+            <button class="btn btn-primary" onclick="window.__graphOp('addNode', document.getElementById('graph-node-input').value)">Shto Nyje</button>
+        </div>
+        <div class="ds-input-row">
+            <input type="text" id="graph-source-input" placeholder="Nga (p.sh. A)" class="ds-input ds-input--small">
+            <input type="text" id="graph-target-input" placeholder="Tek (p.sh. B)" class="ds-input ds-input--small">
+            <input type="number" id="graph-weight-input" placeholder="Pesha" class="ds-input ds-input--small">
+            <button class="btn btn-primary" onclick="window.__graphOp('addEdge', document.getElementById('graph-source-input').value, document.getElementById('graph-target-input').value, document.getElementById('graph-weight-input').value)">Shto Lidhje</button>
+        </div>
+    </div>
+    <div class="ds-input-row">
+    <input type="text" id="graph-source-node" placeholder="Nyja fillestare (default A)" class="ds-input ds-input--small">
+</div>`;
 
-export { updateStats, resetStats, showDSPanel, hideDSPanel, bindControls };
+/**
+ * Shfaq panelin e editimit të grafit — thirret nga main.js kur cat === 'graph'.
+ * Ndjek të njëjtin pattern si showDSPanel() për konsistencë.
+ */
+function showGraphPanel(graphOpCallback) {
+    window.__graphOp = graphOpCallback;
+    const container = document.getElementById('ds-controls');
+    if (!container) return;
+    container.innerHTML = GRAPH_PANEL;
+    container.style.display = 'flex';
+}
+export { updateStats, resetStats, showDSPanel, hideDSPanel, showGraphPanel, bindControls };

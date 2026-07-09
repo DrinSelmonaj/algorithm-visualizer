@@ -1,18 +1,11 @@
 // src/ui/graphBuilder.js
 // Ndërton UI-n për krijimin/editimin e grafeve.
-// Për momentin përdor grafin default nga dijkstra.js.
-// Zgjerim i mundshëm: input manual i nyjeve dhe skajeve.
 
 import { render as renderGraph } from '../engine/graphRenderer.js';
 import { DEFAULT_GRAPH }         from '../algorithms/graph/dijkstra.js';
 
 let currentGraph = null;
 
-/**
- * Inicializo vizualizimin e grafeve me grafin default.
- * Thirret nga main.js kur zgjidhet Dijkstra ose Kruskal.
- * @returns {Object} grafu aktual
- */
 function initGraph() {
     currentGraph = {
         nodes: DEFAULT_GRAPH.nodes.map(n => ({ ...n })),
@@ -22,11 +15,27 @@ function initGraph() {
     return currentGraph;
 }
 
-/**
- * Kthen grafin aktual për ta përdorur gjeneratori.
- */
 function getGraph() {
     return currentGraph;
 }
 
-export { initGraph, getGraph };
+// Shton një nyje të re dhe rivizaton grafin
+function addNode(id) {
+    if (!currentGraph || !id) return;
+    if (currentGraph.nodes.some(n => n.id === id)) return;
+    currentGraph.nodes.push({ id });
+    renderGraph(currentGraph);
+}
+
+// Shton një lidhje të re mes dy nyjeve ekzistuese
+function addEdge(source, target, weight) {
+    if (!currentGraph) return;
+    const w = Number(weight);
+    if (!Number.isFinite(w) || w <= 0) return;
+    const validNode = id => currentGraph.nodes.some(n => n.id === id);
+    if (!validNode(source) || !validNode(target)) return;
+    currentGraph.edges.push({ source, target, weight: w });
+    renderGraph(currentGraph);
+}
+
+export { initGraph, getGraph, addNode, addEdge };

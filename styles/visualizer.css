@@ -91,6 +91,17 @@
 .bar-found    { fill: var(--accent-green);  }
 .bar-search   { fill: var(--accent-orange); }
 
+svg text {
+    fill: var(--text-primary);   /* default: teksti brenda SVG-ve lexohet qartë mbi sfond të errët */
+}
+/*puna fundit*/
+
+svg rect {
+    fill: var(--bg-hover);      /* #2a2d45 — më i çelët se sfondi bazë, dallohet qartë */
+    stroke: var(--accent-blue); /* konturë e hollë me ngjyrë aksenti, i jep pamje "kartele" */
+    stroke-width: 1.5;
+}
+
 /* ── BST Nodes ── */
 .bst-node circle {
     fill: var(--bg-card);
@@ -228,4 +239,18 @@
     .stat-value {
         font-size: 1rem;
     }
+}
+/* Sfondi i përbashkët për të gjitha qelizat/nyjet e strukturave të të dhënave */
+.ds-cell rect,
+.ds-node rect,
+.ds-bucket rect {
+    fill: var(--bg-hover);
+    stroke: var(--accent-blue);
+    stroke-width: 1.5;
+}
+
+/* Nyja aktive në krye të Stack — theksim vizual shtesë */
+.stack-top rect {
+    stroke: var(--accent-orange);
+    stroke-width: 2;
 }
