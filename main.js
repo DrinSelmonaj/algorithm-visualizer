@@ -3,12 +3,12 @@
 
 import { render as renderBars, markAllSorted, generateArray, generateSortedArray } from './src/engine/sortRenderer.js';
 import { rerender as rerenderBST } from './src/engine/bstRenderer.js';
-import { initGraph, getGraph } from './src/ui/graphBuilder.js';
+import { initGraph, getGraph, addNode, addEdge } from './src/ui/graphBuilder.js';
 
 import { run, stepOnce, pause, resume, stop, getState } from './src/engine/scheduler.js';
 import { applyStep, resetStats } from './src/engine/animator.js';
 
-import { bindControls, showDSPanel, hideDSPanel } from './src/ui/controls.js'
+import { bindControls, showDSPanel, showGraphPanel, hideDSPanel } from './src/ui/controls.js'
 import { showCode, highlightLine } from './src/ui/codePanel.js';
 import { showComplexity } from './src/ui/complexity.js';
 
@@ -38,7 +38,6 @@ import { init as initStack,  push, pop, peek as peekStack, isEmpty, JAVA_SOURCE 
     from './src/algorithms/datastructures/stack/index.js';
 import { init as initQueue,  enqueue, dequeue, peek as peekQueue, JAVA_SOURCE as JAVA_QUEUE }
     from './src/algorithms/datastructures/queue/index.js';
-// Importi:
 import { init as initLL, insertAtHead, insertAtTail, insertAfterValue,
          deleteLL, searchLL, JAVA_SOURCE as JAVA_LL }
     from './src/algorithms/datastructures/linkedlist/index.js';
@@ -47,7 +46,6 @@ import { init as initHM, put, get, remove, JAVA_SOURCE as JAVA_HM }
 
 // ─── Regjistri i algoritmeve ──────────────────────────────────────
 // Çdo hyrje mban: gjeneratorin, kodin Java, dhe kategorinë.
-// main.js e konsulton këtë regjistër kur klikohet një buton.
 const ALGORITHMS = {
     // Sorting
     bubble:    { gen: (arr) => bubbleSort(arr),    java: JAVA_BUBBLE,    category: 'sorting',   name: 'Bubble Sort'    },
@@ -66,8 +64,8 @@ const ALGORITHMS = {
     // Trees
     bst:       { gen: () => bstAlgorithm(), java: JAVA_BST, category: 'bst', name: 'BST' },
 
-    // Graphs
-    dijkstra:  { gen: (g) => dijkstra(g), java: JAVA_DIJKSTRA, category: 'graph', name: 'Dijkstra' },
+   // Graphs
+    dijkstra:  { gen: (g, src) => dijkstra(g, src), java: JAVA_DIJKSTRA, category: 'graph', name: 'Dijkstra' },
     kruskal:   { gen: (g) => kruskal(g),  java: JAVA_KRUSKAL,  category: 'graph', name: 'Kruskal'  },
 
     // Data Structures
@@ -100,7 +98,7 @@ function selectAlgorithm(algoKey) {
 
     // Inicializo varësisht nga kategoria
     const cat = algo.category;
-if (cat === 'sorting' || cat === 'searching') {
+    if (cat === 'sorting' || cat === 'searching') {
         hideDSPanel();
         document.getElementById('bst-input-group').style.display = 'none';
         document.querySelector('.size-control').style.display = '';
@@ -122,6 +120,8 @@ if (cat === 'sorting' || cat === 'searching') {
         hideDSPanel();
         document.getElementById('bst-input-group').style.display = 'none';
         document.querySelector('.size-control').style.display = 'none';
+        initGraph();
+        showGraphPanel((op, ...args) => runGraphOperation(op, ...args));
         document.getElementById('btn-run').disabled = false;
         document.getElementById('btn-reset').disabled = false;
 
@@ -153,11 +153,9 @@ function runAlgorithm() {
     if (isPaused) { resume(); return; }
 
     // Nëse po ekzekutohet, ndaloje së pari
-    // scheduler.js e menaxhon me activeRunId
     if (isRunning) stop();
 
-    // Reset stats para çdo run të ri — pa këtë
-    // numrat grumbullohen nga run-i i mëparshëm
+    // Reset stats para çdo run të ri
     resetStats();
     currentGen = null;
 
@@ -170,7 +168,12 @@ function runAlgorithm() {
         const target = parseInt(prompt('Shkruaj numrin për të kërkuar:') || '0');
         currentGen = algo.gen([...currentArray], target);
     } else if (cat === 'graph') {
-        return;
+    const graph = getGraph();
+    if (!graph) return;
+    const sourceInput = document.getElementById('graph-source-node');
+    const sourceId = (sourceInput?.value.trim()) || 'A';
+    currentGen = algo.gen(graph, sourceId);
+
     } else if (cat === 'datastructures') {
         return;
     }
@@ -236,6 +239,8 @@ function resetAlgorithm() {
         currentBars = renderBars(currentArray);
     } else if (cat === 'bst') {
         rerenderBST(null);
+    } else if (cat === 'graph') {
+        initGraph();
     } else if (cat === 'datastructures') {
         initDataStructure(currentAlgo);
     }
@@ -245,7 +250,6 @@ function resetAlgorithm() {
 }
 
 // ─── Lidhja me Data Structure operations (nga UI) ─────────────────
-// Thirret nga controls.js kur përdoruesi klikon push/pop/enqueue/etj.
 function runDSOperation(operation, ...args) {
     if (!currentAlgo) return;
     const cat = ALGORITHMS[currentAlgo].category;
@@ -262,11 +266,11 @@ function runDSOperation(operation, ...args) {
         if (operation === 'dequeue') gen = dequeue();
         if (operation === 'peek')    gen = peekQueue();
     } else if (currentAlgo === 'linkedlist') {
-    if (operation === 'insertHead')  gen = insertAtHead(parseInt(args[0]));
-    if (operation === 'insertTail')  gen = insertAtTail(parseInt(args[0]));
-    if (operation === 'insertAfter') gen = insertAfterValue(parseInt(args[0]), parseInt(args[1]));
-    if (operation === 'delete')      gen = deleteLL(parseInt(args[0]));
-    if (operation === 'search')      gen = searchLL(parseInt(args[0]));
+        if (operation === 'insertHead')  gen = insertAtHead(parseInt(args[0]));
+        if (operation === 'insertTail')  gen = insertAtTail(parseInt(args[0]));
+        if (operation === 'insertAfter') gen = insertAfterValue(parseInt(args[0]), parseInt(args[1]));
+        if (operation === 'delete')      gen = deleteLL(parseInt(args[0]));
+        if (operation === 'search')      gen = searchLL(parseInt(args[0]));
     } else if (currentAlgo === 'hashmap') {
         if (operation === 'put')    gen = put(args[0], args[1]);
         if (operation === 'get')    gen = get(args[0]);
@@ -284,6 +288,13 @@ function runDSOperation(operation, ...args) {
         () => {},
         speedValue
     );
+}
+
+// ─── Lidhja me Graph operations (nga UI) ──────────────────────────
+// Thirret nga controls.js kur përdoruesi shton nyje/skaj te grafi
+function runGraphOperation(operation, ...args) {
+    if (operation === 'addNode') addNode(args[0].trim());
+    if (operation === 'addEdge') addEdge(args[0].trim(), args[1].trim(), args[2]);
 }
 
 // ─── Lidhja e butonave të sidebar-it ──────────────────────────────
@@ -305,6 +316,7 @@ document.getElementById('btn-run').addEventListener('click', () => {
 document.getElementById('btn-pause').addEventListener('click', () => pause());
 document.getElementById('btn-reset').addEventListener('click', resetAlgorithm);
 document.getElementById('btn-step').addEventListener('click', stepAlgorithm);
+
 // ─── BST Input Buttons ────────────────────────────────────────────
 document.getElementById('btn-bst-run').addEventListener('click', () => {
     const input = document.getElementById('bst-values-input').value.trim() || '5,3,7,1,4';
@@ -342,9 +354,6 @@ document.getElementById('speed-slider').addEventListener('input', (e) => {
 document.getElementById('size-slider').addEventListener('input', (e) => {
     document.getElementById('size-value').textContent = e.target.value;
 
-    // Slider ndryshon array-in — ndalojmë çdo animacion aktiv
-    // pa stop(), animatori aplikonte hapa mbi array-in e vjetër
-    // dhe stats grumbulloheshin gabimisht
     stop();
     resetStats();
     currentGen = null;
