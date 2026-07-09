@@ -1,3 +1,22 @@
+/* ── Fontet lokale (offline, jo CDN) ── */
+@font-face {
+    font-family: 'Inter';
+    src: url('../vendor/fonts/Inter.woff2') format('woff2-variations'),
+         url('../vendor/fonts/Inter.woff2') format('woff2');
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'JetBrains Mono';
+    src: url('../vendor/fonts/JetBrainsMono.woff2') format('woff2-variations'),
+         url('../vendor/fonts/JetBrainsMono.woff2') format('woff2');
+    font-weight: 100 800;
+    font-style: normal;
+    font-display: swap;
+}
+
 /* ── Reset & Variables ── */
 *, *::before, *::after {
     margin: 0;
@@ -14,9 +33,9 @@
 
     /* Aksentet */
     --accent-blue:   #4f8ef7;
-    --accent-green:  #3dd68c;
+    --accent-green:  #10b981;
     --accent-orange: #f7934f;
-    --accent-red:    #f75f5f;
+    --accent-red:    #fb7185;
     --accent-purple: #a78bfa;
 
     /* Teksti */
@@ -34,8 +53,8 @@
     --header-height:    64px;
 
     /* Tipografia */
-    --font-main: 'Segoe UI', system-ui, sans-serif;
-    --font-mono: 'Fira Code', 'Cascadia Code', monospace;
+   --font-main: 'Inter', 'Segoe UI', system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
 
     /* Tranzicionet */
     --transition: 0.2s ease;
@@ -117,13 +136,47 @@ button {
     margin-bottom: 8px;
 }
 
+/* ── Dropdown (details/summary) — zëvendëson h3 statik ── */
 .algo-group-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     font-size: 0.7rem;
     font-weight: 600;
     color: var(--text-muted);
     text-transform: uppercase;
     letter-spacing: 1px;
     padding: 8px 8px 6px;
+    cursor: pointer;
+    list-style: none;
+    transition: color var(--transition);
+}
+
+/* Fsheh shigjetën default të browser-it (Chrome/Safari) */
+.algo-group-title::-webkit-details-marker {
+    display: none;
+}
+
+.algo-group-title:hover {
+    color: var(--text-primary);
+}
+
+.algo-group-title .chevron {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    transition: transform var(--transition);
+}
+
+/* Rrotullo shigjetën kur grupi është i hapur */
+.algo-group[open] > .algo-group-title .chevron {
+    transform: rotate(180deg);
+}
+
+.algo-group-items {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-top: 2px;
 }
 
 .algo-btn {
@@ -207,6 +260,35 @@ button {
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 
+/* ── Utility: Glassmorphism & Glow (bazuar në DESIGN.md të Stitch) ── */
+:root {
+    --surface-glass: rgba(33, 36, 56, 0.7);
+    --glass-blur: 12px;
+}
+
+.icon {
+    width: 20px;
+    height: 20px;
+    fill: currentColor;   /* trashëgon ngjyrën e tekstit të elementit prind */
+    flex-shrink: 0;
+}
+
+.glass-panel {
+    background-color: var(--surface-glass);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid var(--border);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+}
+
+/* Glow — aureolë e ndjeshme rreth elementit, ngjyra sipas kuptimit */
+.glow-primary   { box-shadow: 0 0 16px 2px rgba(79, 142, 247, 0.35); }
+.glow-secondary { box-shadow: 0 0 16px 2px rgba(16, 185, 129, 0.35); }
+.glow-orange    { box-shadow: 0 0 16px 2px rgba(247, 147, 79, 0.35); }
+.glow-red       { box-shadow: 0 0 16px 2px rgba(251, 113, 133, 0.35); }
+.glow-purple    { box-shadow: 0 0 16px 2px rgba(167, 139, 250, 0.35); }
+
+
 /* ── Responsive — Tablet ── */
 @media (max-width: 1024px) {
     :root {
@@ -245,6 +327,15 @@ button {
         display: none;
     }
 
+    /* Në mobile s'ka dropdown — të gjitha butonat shfaqen horizontalisht */
+    .algo-group-items {
+        display: flex !important;
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 4px;
+        margin-top: 0;
+    }
+
     .algo-btn {
         width: auto;
         white-space: nowrap;
@@ -258,3 +349,4 @@ button {
         max-height: 280px;
     }
 }
+
