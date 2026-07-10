@@ -12,10 +12,11 @@
     <link rel="stylesheet" href="styles/code-panel.css">
 </head>
 <body>
+    <div style="display:none" id="icon-sprite-holder"></div>
 
     <!-- HEADER -->
     <header class="app-header">
-        <h1 class="app-title">Vizualizues Algoritmesh</h1>
+        <h1 class="app-title">AlgoPro IDE</h1>
         <p class="app-subtitle">Shiko algoritmet duke u ekzekutuar — hap pas hapi</p>
     </header>
 
@@ -25,42 +26,118 @@
         <!-- ZONA 1 — Lista e algoritmeve -->
         <aside class="sidebar">
 
-            <div class="algo-group">
-                <h3 class="algo-group-title">🔍 Kërkim</h3>
-                <button class="algo-btn" data-algorithm="linear" data-category="searching">Linear Search</button>
-                <button class="algo-btn" data-algorithm="binary" data-category="searching">Binary Search</button>
-            </div>
+            <details class="algo-group">
+                <summary class="algo-group-title">
+                    <span>Kërkim</span>
+                    <span class="chevron">▾</span>
+                </summary>
+                <div class="algo-group-items">
+                    <button class="algo-btn" data-algorithm="linear" data-category="searching">
+                        <svg class="icon"><use href="#icon-search"></use></svg>
+                        <span>Linear Search</span>
+                    </button>
+                    <button class="algo-btn" data-algorithm="binary" data-category="searching">
+                        <svg class="icon"><use href="#icon-search_check"></use></svg>
+                        <span>Binary Search</span>
+                    </button>
+                </div>
+            </details>
 
-            <div class="algo-group">
-                <h3 class="algo-group-title">📊 Renditje</h3>
-                <button class="algo-btn" data-algorithm="bubble"    data-category="sorting">Bubble Sort</button>
-                <button class="algo-btn" data-algorithm="insertion" data-category="sorting">Insertion Sort</button>
-                <button class="algo-btn" data-algorithm="selection" data-category="sorting">Selection Sort</button>
-                <button class="algo-btn" data-algorithm="merge"     data-category="sorting">Merge Sort</button>
-                <button class="algo-btn" data-algorithm="quick"     data-category="sorting">Quick Sort</button>
-                <button class="algo-btn" data-algorithm="shell"     data-category="sorting">Shell Sort</button>
-                <button class="algo-btn" data-algorithm="heap"      data-category="sorting">Heap Sort</button>
-                <button class="algo-btn" data-algorithm="radix"     data-category="sorting">Radix Sort</button>
-            </div>
+            <details class="algo-group" open>
+                <summary class="algo-group-title">
+                    <span>Renditje</span>
+                    <span class="chevron">▾</span>
+                </summary>
+                <div class="algo-group-items">
+                    <button class="algo-btn" data-algorithm="bubble" data-category="sorting">
+                        <svg class="icon"><use href="#icon-sort"></use></svg>
+                        <span>Bubble Sort</span>
+                    </button>
+                    <button class="algo-btn" data-algorithm="insertion" data-category="sorting">
+                        <svg class="icon"><use href="#icon-layers"></use></svg>
+                        <span>Insertion Sort</span>
+                    </button>
+                    <button class="algo-btn" data-algorithm="selection" data-category="sorting">
+                        <svg class="icon"><use href="#icon-grid_view"></use></svg>
+                        <span>Selection Sort</span>
+                    </button>
+                    <button class="algo-btn" data-algorithm="merge" data-category="sorting">
+                        <svg class="icon"><use href="#icon-call_split"></use></svg>
+                        <span>Merge Sort</span>
+                    </button>
+                    <button class="algo-btn" data-algorithm="quick" data-category="sorting">
+                        <svg class="icon"><use href="#icon-bolt"></use></svg>
+                        <span>Quick Sort</span>
+                    </button>
+                    <button class="algo-btn" data-algorithm="shell" data-category="sorting">
+                        <svg class="icon"><use href="#icon-reorder"></use></svg>
+                        <span>Shell Sort</span>
+                    </button>
+                    <button class="algo-btn" data-algorithm="heap" data-category="sorting">
+                        <svg class="icon"><use href="#icon-account_tree"></use></svg>
+                        <span>Heap Sort</span>
+                    </button>
+                    <button class="algo-btn" data-algorithm="radix" data-category="sorting">
+                        <svg class="icon"><use href="#icon-grid_on"></use></svg>
+                        <span>Radix Sort</span>
+                    </button>
+                </div>
+            </details>
 
-            <div class="algo-group">
-                <h3 class="algo-group-title">🌳 BST</h3>
-                <button class="algo-btn" data-algorithm="bst" data-category="bst">BST Operations</button>
-            </div>
+            <details class="algo-group">
+                <summary class="algo-group-title">
+                    <span>BST</span>
+                    <span class="chevron">▾</span>
+                </summary>
+                <div class="algo-group-items">
+                    <button class="algo-btn" data-algorithm="bst" data-category="bst">
+                        <svg class="icon"><use href="#icon-lan"></use></svg>
+                        <span>BST Operations</span>
+                    </button>
+                </div>
+            </details>
 
-           <div class="algo-group">
-                <h3 class="algo-group-title">🕸️ Grafe</h3>
-                <button class="algo-btn" data-algorithm="dijkstra" data-category="graph">Dijkstra</button>
-                <button class="algo-btn" data-algorithm="kruskal"  data-category="graph">Kruskal</button>
-            </div>
+            <details class="algo-group">
+                <summary class="algo-group-title">
+                    <span>Grafe</span>
+                    <span class="chevron">▾</span>
+                </summary>
+                <div class="algo-group-items">
+                    <button class="algo-btn" data-algorithm="dijkstra" data-category="graph">
+                        <svg class="icon"><use href="#icon-route"></use></svg>
+                        <span>Dijkstra</span>
+                    </button>
+                    <button class="algo-btn" data-algorithm="kruskal" data-category="graph">
+                        <svg class="icon"><use href="#icon-hub"></use></svg>
+                        <span>Kruskal</span>
+                    </button>
+                </div>
+            </details>
 
-            <div class="algo-group">
-                <h3 class="algo-group-title">📦 Struktura të Dhënash</h3>
-                <button class="algo-btn" data-algorithm="stack"      data-category="datastructures">Stack</button>
-                <button class="algo-btn" data-algorithm="queue"      data-category="datastructures">Queue</button>
-                <button class="algo-btn" data-algorithm="linkedlist" data-category="datastructures">Linked List</button>
-                <button class="algo-btn" data-algorithm="hashmap"    data-category="datastructures">HashMap</button>
-            </div>
+            <details class="algo-group">
+                <summary class="algo-group-title">
+                    <span>Struktura të Dhënash</span>
+                    <span class="chevron">▾</span>
+                </summary>
+                <div class="algo-group-items">
+                    <button class="algo-btn" data-algorithm="stack" data-category="datastructures">
+                        <svg class="icon"><use href="#icon-vertical_align_top"></use></svg>
+                        <span>Stack</span>
+                    </button>
+                    <button class="algo-btn" data-algorithm="queue" data-category="datastructures">
+                        <svg class="icon"><use href="#icon-queue"></use></svg>
+                        <span>Queue</span>
+                    </button>
+                    <button class="algo-btn" data-algorithm="linkedlist" data-category="datastructures">
+                        <svg class="icon"><use href="#icon-view_stream"></use></svg>
+                        <span>Linked List</span>
+                    </button>
+                    <button class="algo-btn" data-algorithm="hashmap" data-category="datastructures">
+                        <svg class="icon"><use href="#icon-database"></use></svg>
+                        <span>HashMap</span>
+                    </button>
+                </div>
+            </details>
 
         </aside>
 
@@ -101,7 +178,6 @@
             </div>
 
             <!-- Kontrolluesit -->
-           <!-- Kontrolluesit -->
             <div class="controls-bar">
 
                 <div class="control-buttons">
@@ -145,12 +221,23 @@
         <aside class="code-panel">
             <div class="code-panel-header">
                 <h3>Kodi Java</h3>
-                <span class="code-lang-badge">Java</span>
+                <div class="code-panel-header-right">
+                    <button id="btn-copy-code" class="icon-btn" title="Kopjo kodin">
+                        <svg class="icon"><use href="#icon-content_copy"></use></svg>
+                    </button>
+                    <span class="code-lang-badge">Java</span>
+                </div>
             </div>
             <pre><code id="java-code-display" class="language-java">// Zgjidh një algoritëm për të parë kodin</code></pre>
         </aside>
 
     </main>
+
+    <script>
+fetch('assets/icons-sprite.svg')
+  .then(r => r.text())
+  .then(svg => document.getElementById('icon-sprite-holder').innerHTML = svg);
+</script>
 
 <!-- Librarite -->
     <script src="vendor/d3.v7.min.js"></script>

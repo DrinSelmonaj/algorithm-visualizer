@@ -288,6 +288,74 @@ button {
 .glow-red       { box-shadow: 0 0 16px 2px rgba(251, 113, 133, 0.35); }
 .glow-purple    { box-shadow: 0 0 16px 2px rgba(167, 139, 250, 0.35); }
 
+/* ── Kapitulli 1: Sidebar me ikona + active state i ri ── */
+.algo-group-title {
+    /* mban stilin ekzistues, thjesht heqim referencën ndaj emoji tashmë të larguar nga HTML */
+}
+
+.algo-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-left: 3px solid transparent;   /* zë vend gjithmonë, s'"kërcen" layout-i në hover/active */
+}
+
+.algo-btn .icon {
+    width: 18px;
+    height: 18px;
+    color: var(--text-muted);
+    transition: color var(--transition);
+}
+
+.algo-btn:hover .icon {
+    color: var(--text-primary);
+}
+
+/* Active state i ri — border-left + tint, jo fill solid */
+.algo-btn.active {
+    background-color: rgba(79, 142, 247, 0.1);
+    border-left-color: var(--accent-blue);
+    color: var(--accent-blue);
+    font-weight: 600;
+}
+
+.algo-btn.active .icon {
+    color: var(--accent-blue);
+}
+
+/* ── Code panel header — layout i ri me buton copy ── */
+.code-panel-header-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.icon-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--text-muted);
+    transition: background var(--transition), color var(--transition);
+}
+
+.icon-btn .icon {
+    width: 16px;
+    height: 16px;
+}
+
+.icon-btn:hover {
+    background-color: var(--bg-hover);
+    color: var(--text-primary);
+}
+
+.icon-btn.copied {
+    color: var(--accent-green);
+}
+
 
 /* ── Responsive — Tablet ── */
 @media (max-width: 1024px) {

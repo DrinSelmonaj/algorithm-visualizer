@@ -383,3 +383,18 @@ function resetButtons() {
 
 // ─── Eksporto runDSOperation për controls.js ─────────────────────
 export { runDSOperation };
+
+// ── KAPITULLI 1: Buton Copy për Kodin Java ──────────────────────────
+const btnCopyCode = document.getElementById('btn-copy-code');
+if (btnCopyCode) {
+    btnCopyCode.addEventListener('click', async () => {
+        const codeEl = document.getElementById('java-code-display');
+        try {
+            await navigator.clipboard.writeText(codeEl.textContent);
+            btnCopyCode.classList.add('copied');
+            setTimeout(() => btnCopyCode.classList.remove('copied'), 1200);
+        } catch (err) {
+            console.error('Kopjimi dështoi:', err);
+        }
+    });
+}
