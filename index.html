@@ -12,6 +12,42 @@
     <link rel="stylesheet" href="styles/code-panel.css">
 </head>
 <body>
+    <body>
+    <!-- ── Skeleton Loading — mbulon gjithë faqen derisa fontet+layout të stabilizohen ── -->
+    <div id="page-skeleton">
+        <div class="skel-header">
+            <div class="skel shimmer" style="width:160px; height:24px;"></div>
+            <div class="skel shimmer" style="width:280px; height:14px; margin-left:16px;"></div>
+        </div>
+        <div class="skel-body">
+            <aside class="skel-sidebar">
+                <div class="skel shimmer" style="width:70%; height:12px; margin-bottom:14px;"></div>
+                <div class="skel shimmer" style="width:100%; height:34px; margin-bottom:8px;"></div>
+                <div class="skel shimmer" style="width:100%; height:34px; margin-bottom:8px;"></div>
+                <div class="skel shimmer" style="width:100%; height:34px; margin-bottom:20px;"></div>
+                <div class="skel shimmer" style="width:60%; height:12px; margin-bottom:14px;"></div>
+                <div class="skel shimmer" style="width:100%; height:34px; margin-bottom:8px;"></div>
+                <div class="skel shimmer" style="width:100%; height:34px; margin-bottom:8px;"></div>
+                <div class="skel shimmer" style="width:100%; height:34px; margin-bottom:8px;"></div>
+                <div class="skel shimmer" style="width:100%; height:34px;"></div>
+            </aside>
+            <main class="skel-main">
+                <div class="skel shimmer" style="width:220px; height:22px; margin-bottom:20px;"></div>
+                <div class="skel shimmer" style="flex:1; width:100%;"></div>
+                <div class="skel shimmer" style="width:340px; height:56px; margin:16px auto;"></div>
+            </main>
+            <aside class="skel-code">
+                <div class="skel shimmer" style="width:80px; height:16px; margin-bottom:18px;"></div>
+                <div class="skel shimmer" style="width:90%; height:12px; margin-bottom:10px;"></div>
+                <div class="skel shimmer" style="width:75%; height:12px; margin-bottom:10px;"></div>
+                <div class="skel shimmer" style="width:85%; height:12px; margin-bottom:10px;"></div>
+                <div class="skel shimmer" style="width:60%; height:12px; margin-bottom:10px;"></div>
+                <div class="skel shimmer" style="width:80%; height:12px;"></div>
+            </aside>
+        </div>
+    </div>
+
+    <div style="display:none" id="icon-sprite-holder"></div>
     <div style="display:none" id="icon-sprite-holder"></div>
 
     <!-- HEADER -->
@@ -146,13 +182,24 @@
 
             <div class="algo-info-bar">
                 <h2 id="active-algo-name">Zgjidh një algoritëm</h2>
-                <div class="complexity-badges">
-                    <span class="badge" id="badge-time">Time: —</span>
-                    <span class="badge" id="badge-space">Space: —</span>
+                <div class="algo-info-bar-right">
+                    <div class="complexity-badges">
+                        <span class="badge" id="badge-time">Time: —</span>
+                        <span class="badge" id="badge-space">Space: —</span>
+                    </div>
+                    <!-- Custom Input — shfaqet vetëm për Sorting/Searching -->
+                    <div class="custom-input-group">
+                        <input type="text" id="custom-array-input"
+                               aria-label="Vlerat e tua"
+                               placeholder="p.sh. 15, 42, 8" class="ds-input" style="width:150px;">
+                        <button id="btn-custom-apply" class="btn btn-primary">Përdor</button>
+                        <button id="btn-custom-clear" class="btn btn-secondary">✕ Random</button>
+                        <span id="custom-input-feedback" class="custom-input-feedback"></span>
+                    </div>
                 </div>
             </div>
 
-            <!-- SVG — mbushet dinamikisht nga renderer-at -->
+          <!-- SVG — mbushet dinamikisht nga renderer-at -->
             <div class="svg-container">
                 <svg id="main-svg" width="100%" height="400">
                     <text x="50%" y="50%" text-anchor="middle" class="svg-placeholder">
@@ -161,14 +208,14 @@
                 </svg>
             </div>
 
-            <!-- Statistikat live -->
-            <div class="stats-bar">
+            <!-- Statistikat live — kartelë glassmorphism, poshtë SVG-së -->
+            <div class="stats-bar glass-panel">
                 <div class="stat">
                     <span class="stat-label">Krahasime</span>
                     <span class="stat-value" id="stat-comparisons">0</span>
                 </div>
                 <div class="stat">
-                    <span class="stat-label">Ndërrrime</span>
+                    <span class="stat-label" id="stat-swaps-label">Ndërrime</span>
                     <span class="stat-value" id="stat-swaps">0</span>
                 </div>
                 <div class="stat">
@@ -180,11 +227,19 @@
             <!-- Kontrolluesit -->
             <div class="controls-bar">
 
-                <div class="control-buttons">
-                    <button id="btn-run"   class="btn btn-primary"   disabled>▶ Ekzekuto</button>
-                    <button id="btn-pause" class="btn btn-secondary" disabled>⏸ Pauzë</button>
-                    <button id="btn-reset" class="btn btn-secondary" disabled>↺ Rikthe</button>
-                    <button id="btn-step"  class="btn btn-secondary" disabled>⏭ Hap</button>
+               <div class="control-buttons">
+                    <button id="btn-run" class="btn-circle btn-circle-primary glow-primary" disabled title="Ekzekuto">
+                        <svg class="icon"><use href="#icon-play_arrow"></use></svg>
+                    </button>
+                    <button id="btn-pause" class="btn-circle" disabled title="Pauzë">
+                        <svg class="icon"><use href="#icon-pause"></use></svg>
+                    </button>
+                    <button id="btn-reset" class="btn-circle" disabled title="Rikthe">
+                        <svg class="icon"><use href="#icon-replay"></use></svg>
+                    </button>
+                    <button id="btn-step" class="btn-circle" disabled title="Hap">
+                        <svg class="icon"><use href="#icon-skip_next"></use></svg>
+                    </button>
                 </div>
 
                 <div class="speed-control">
@@ -207,7 +262,7 @@
                            placeholder="p.sh. 5,3,7,1,4" class="ds-input" style="width:150px;">
                     <button id="btn-bst-run" class="btn btn-primary">Krijo pemën</button>
                     <input type="number" id="bst-search-input"
-                           placeholder="Kërko vlerën..." class="ds-input ds-input--small">
+                           placeholder="Vlera" title="Kërko vlerën" class="ds-input ds-input--small">
                     <button id="btn-bst-search" class="btn btn-secondary">Kërko</button>
                 </div>
 
@@ -245,6 +300,25 @@ fetch('assets/icons-sprite.svg')
 
     <!-- Entry point -->
     <script type="module" src="main.js"></script>
+    <!-- Heq skeleton-in kur fontet + layout të jenë gati (jo më herët) -->
+    <script>
+        Promise.all([
+            document.fonts.ready,
+            new Promise(resolve => {
+                if (document.readyState === 'complete') resolve();
+                else window.addEventListener('load', resolve);
+            })
+        ]).then(() => {
+            // Pak buffer shtesë (200ms) — siguron që edhe reflow i fundit i mundshëm të përfundojë 
+            setTimeout(() => {
+                const skel = document.getElementById('page-skeleton');
+                if (!skel) return;
+                skel.style.opacity = '0';
+                setTimeout(() => skel.remove(), 400);
+            }, 200);
+        });
+    </script>
+</body>
 
 </body>
 </html>

@@ -417,4 +417,87 @@ button {
         max-height: 280px;
     }
 }
+/* ── Skeleton Loading (full-page, style YouTube) ── */
+#page-skeleton {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background-color: var(--bg-primary);
+    display: flex;
+    flex-direction: column;
+    transition: opacity 0.4s ease;
+}
+
+.skel-header {
+    height: var(--header-height);
+    display: flex;
+    align-items: center;
+    padding: 0 24px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+}
+
+.skel-body {
+    flex: 1;
+    display: grid;
+    grid-template-columns: var(--sidebar-width) 1fr var(--code-panel-width);
+    overflow: hidden;
+}
+
+.skel-sidebar {
+    padding: 16px 12px;
+    border-right: 1px solid var(--border);
+}
+
+.skel-main {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+}
+
+.skel-code {
+    padding: 16px;
+    border-left: 1px solid var(--border);
+}
+
+.skel {
+    background-color: var(--bg-card);
+    border-radius: 6px;
+}
+
+.skel.shimmer {
+    position: relative;
+    overflow: hidden;
+}
+
+.skel.shimmer::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-image: linear-gradient(
+        90deg,
+        rgba(255,255,255,0) 0%,
+        rgba(255,255,255,0.06) 20%,
+        rgba(255,255,255,0.12) 50%,
+        rgba(255,255,255,0.06) 80%,
+        rgba(255,255,255,0) 100%
+    );
+    transform: translateX(-100%);
+    animation: skeleton-shimmer 1.6s infinite;
+}
+
+@keyframes skeleton-shimmer {
+    100% { transform: translateX(100%); }
+}
+
+/* Në mobile — s'ka kuptim struktura 3-kolonëshe, thjesht fshih skeleton-in shpejt */
+@media (max-width: 768px) {
+    .skel-body {
+        grid-template-columns: 1fr;
+    }
+    .skel-sidebar,
+    .skel-code {
+        display: none;
+    }
+}
 

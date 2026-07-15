@@ -2,15 +2,15 @@
 .controls-bar {
     display: flex;
     align-items: center;
-    gap: 24px;
+    gap: 16px;
     padding: 14px 24px;
     background-color: var(--bg-secondary);
     border-top: 1px solid var(--border);
     flex-shrink: 0;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+    overflow-x: auto;
 }
-
-/* ── Buttons ── */
+/* ── Buttons (btn drejtkëndësh — ende në përdorim te BST/DS panels) ── */
 .control-buttons {
     display: flex;
     gap: 8px;
@@ -57,6 +57,57 @@
 .btn-secondary:hover:not(:disabled) {
     background-color: var(--bg-hover);
     border-color: var(--accent-blue);
+}
+
+/* ── Kapitulli 2: Butona rrethorë (play/pause/reset/step) ── */
+.btn-circle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    transition: background var(--transition),
+                color var(--transition),
+                border-color var(--transition),
+                transform 0.1s ease,
+                box-shadow var(--transition);
+}
+
+.btn-circle .icon {
+    width: 22px;
+    height: 22px;
+}
+
+.btn-circle:hover:not(:disabled) {
+    background-color: var(--bg-hover);
+    border-color: var(--accent-blue);
+    color: var(--text-primary);
+}
+
+.btn-circle:active:not(:disabled) {
+    transform: scale(0.93);
+}
+
+.btn-circle:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    box-shadow: none !important;
+}
+
+.btn-circle-primary {
+    background-color: var(--accent-blue);
+    border-color: var(--accent-blue);
+    color: #fff;
+}
+
+.btn-circle-primary:hover:not(:disabled) {
+    background-color: #6a9ef8;
+    border-color: #6a9ef8;
+    color: #fff;
 }
 
 /* ── Speed Control ── */
@@ -164,6 +215,7 @@ input[type="range"]::-moz-range-thumb {
 .search-input-group input[type="number"]:focus {
     border-color: var(--accent-blue);
 }
+
 /* ── Data Structures Panel ── */
 #ds-controls {
     display: flex;
@@ -218,17 +270,65 @@ input[type="range"]::-moz-range-thumb {
     align-items: center;
     gap: 8px;
 }
+/* ── Kapitulli 2: Custom Input (vlera manuale sorting/searching) ── */
+.custom-input-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.custom-input-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.custom-input-feedback {
+    font-size: 0.75rem;
+    min-height: 14px;
+    font-family: var(--font-mono);
+}
+
+.custom-input-feedback.error {
+    color: var(--accent-red);
+}
+
+.custom-input-feedback.success {
+    color: var(--accent-green);
+}
+
+input[type="range"]:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+
+input[type="range"]:disabled::-webkit-slider-thumb {
+    cursor: not-allowed;
+}
 
 /* ── Mobile ── */
 @media (max-width: 768px) {
     .controls-bar {
-        padding: 10px 12px;
-        gap: 12px;
-    }
+    padding: 10px 12px;
+    gap: 12px;
+    flex-wrap: wrap;
+    overflow-x: visible;
+}
 
     .btn {
         padding: 7px 12px;
         font-size: 0.8rem;
+    }
+
+    .btn-circle {
+        width: 38px;
+        height: 38px;
+    }
+
+    .btn-circle .icon {
+        width: 18px;
+        height: 18px;
     }
 
     input[type="range"]#speed-slider,
