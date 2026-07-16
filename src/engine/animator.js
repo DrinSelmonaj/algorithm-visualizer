@@ -1,20 +1,22 @@
 // src/engine/animator.js
 
 import { updateStats } from '../ui/controls.js';
+import { syncArrayState } from './sortRenderer.js';
 
 const stats = {
     comparisons: 0,
     swaps:       0,
+    writes:      0,
     step:        0
 };
 
 function resetStats() {
     stats.comparisons = 0;
     stats.swaps       = 0;
+    stats.writes      = 0;
     stats.step        = 0;
     updateStats(stats);
 }
-
 function applyStep(step, bars, category) {
     // Rrit hapin për çdo step — por JO për 'sorted' dhe 'rerender'
     // sepse ato janë efekte vizuale, jo hapa logjike
@@ -56,12 +58,14 @@ function applySortStep(step, bars) {
         case 'swap':
             stats.swaps++;
             step.indices.forEach(i => setBarState(bars[i], 'swap'));
-            swapBarPositions(bars, step.indices[0], step.indices[1], step.state);
+            swapBarPositions(bars, step.indices[0], step.indices[1]);
+            if (step.state) syncArrayState(step.state);
             break;
 
-        case 'overwrite':
-            // Overwrite nuk është swap — nuk rrit swaps
-            // Merge dhe Radix e përdorin këtë
+       case 'overwrite':
+            // Overwrite nuk është swap — rrit 'writes', jo 'swaps'
+            // Insertion/Shell (zhvendosje) + Merge/Radix (kopjim) e përdorin këtë
+            stats.writes++;
             if (step.value != null && step.maxValue != null) {
                 updateBarHeight(bars[step.index], step.value, step.maxValue);
             } else if (step.state) {
@@ -70,6 +74,7 @@ function applySortStep(step, bars) {
                 updateBarHeight(bars[step.index], step.value, maxVal);
             }
             setBarState(bars[step.index], 'swap');
+            if (step.state) syncArrayState(step.state);
             break;
 
         case 'sorted':
@@ -128,7 +133,7 @@ function clearBarStates(bars) {
     });
 }
 
-function swapBarPositions(bars, i, j, newState) {
+function swapBarPositions(bars, i, j) {
     if (!bars[i] || !bars[j]) return;
     const xI = parseFloat(bars[i].getAttribute('transform').match(/translate\(([^,]+)/)[1]);
     const xJ = parseFloat(bars[j].getAttribute('transform').match(/translate\(([^,]+)/)[1]);
