@@ -12,9 +12,10 @@ function updateStats(delta = {}) {
         const el = document.getElementById('stat-comparisons');
         if (el) el.textContent = delta.comparisons;
     }
-    if (delta.swaps != null) {
+    if (delta.swaps != null || delta.writes != null) {
         const el = document.getElementById('stat-swaps');
-        if (el) el.textContent = delta.swaps;
+        // Vetëm njëri prej të dyve është >0 për çdo algoritëm — kombinimi është gjithmonë korrekt
+        if (el) el.textContent = (delta.swaps || 0) + (delta.writes || 0);
     }
     if (delta.step != null) {
         const el = document.getElementById('stat-step');
@@ -137,8 +138,9 @@ function bindControls(onDSOp) {
     // bindControls ruhet për lidhje shtesë nëse nevojitet
     window.__dsOpMain = onDSOp;
 }
-// Paneli për shtim dinamik nyjesh/skajesh te grafet (Dijkstra/Kruskal)
-const GRAPH_PANEL = `
+// Paneli për shtim dinamik nyjesh/skajesh te grafet (Dijkstra/Kruskal) —
+// pjesa bazë e përbashkët për të dy algoritmet.
+const GRAPH_PANEL_BASE = `
     <div class="ds-ops" id="graph-panel">
         <div class="ds-input-row">
             <input type="text" id="graph-node-input" placeholder="ID nyje (p.sh. G)" class="ds-input ds-input--small">
@@ -150,7 +152,13 @@ const GRAPH_PANEL = `
             <input type="number" id="graph-weight-input" placeholder="Pesha" class="ds-input ds-input--small">
             <button class="btn btn-primary" onclick="window.__graphOp('addEdge', document.getElementById('graph-source-input').value, document.getElementById('graph-target-input').value, document.getElementById('graph-weight-input').value)">Shto Lidhje</button>
         </div>
-    </div>
+    </div>`;
+
+// Rreshti "nyja fillestare" — VETËM Dijkstra e përdor kuptimplotë (ndikon
+// rezultatin real). Kruskal punon mbi skaje globalisht të renditura + Union-
+// Find, s'ka nocion "nisje" fare — MST-ja del identike pavarësisht nyjes.
+// Mbaje jashtë GRAPH_PANEL_BASE, shtoje vetëm kur showGraphPanel() e kërkon.
+const GRAPH_SOURCE_ROW = `
     <div class="ds-input-row">
     <input type="text" id="graph-source-node" placeholder="Nyja fillestare (default A)" class="ds-input ds-input--small">
 </div>`;
@@ -158,12 +166,14 @@ const GRAPH_PANEL = `
 /**
  * Shfaq panelin e editimit të grafit — thirret nga main.js kur cat === 'graph'.
  * Ndjek të njëjtin pattern si showDSPanel() për konsistencë.
+ * @param {Function} graphOpCallback — window.__graphOp nga main.js
+ * @param {boolean} showSourceNode — true vetëm për Dijkstra (Kruskal s'e ka nevojë)
  */
-function showGraphPanel(graphOpCallback) {
+function showGraphPanel(graphOpCallback, showSourceNode = false) {
     window.__graphOp = graphOpCallback;
     const container = document.getElementById('ds-controls');
     if (!container) return;
-    container.innerHTML = GRAPH_PANEL;
+    container.innerHTML = GRAPH_PANEL_BASE + (showSourceNode ? GRAPH_SOURCE_ROW : '');
     container.style.display = 'flex';
 }
 export { updateStats, resetStats, showDSPanel, hideDSPanel, showGraphPanel, bindControls };

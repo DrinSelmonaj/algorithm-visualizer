@@ -1,7 +1,7 @@
 // main.js — Pika e hyrjes së aplikacionit
 // Importon të gjitha modulet dhe lidh UI me engine.
 
-import { render as renderBars, markAllSorted, generateArray, generateSortedArray } from './src/engine/sortRenderer.js';
+import { render as renderBars, markAllSorted, generateArray, generateSortedArray, resetSortRenderer, onResizeRerender } from './src/engine/sortRenderer.js';
 import { rerender as rerenderBST } from './src/engine/bstRenderer.js';
 import { initGraph, getGraph, addNode, addEdge } from './src/ui/graphBuilder.js';
 
@@ -48,15 +48,14 @@ import { init as initHM, put, get, remove, JAVA_SOURCE as JAVA_HM }
 // Çdo hyrje mban: gjeneratorin, kodin Java, dhe kategorinë.
 const ALGORITHMS = {
     // Sorting
-    bubble:    { gen: (arr) => bubbleSort(arr),    java: JAVA_BUBBLE,    category: 'sorting',   name: 'Bubble Sort'    },
-    insertion: { gen: (arr) => insertionSort(arr), java: JAVA_INSERTION, category: 'sorting',   name: 'Insertion Sort' },
-    selection: { gen: (arr) => selectionSort(arr), java: JAVA_SELECTION, category: 'sorting',   name: 'Selection Sort' },
-    merge:     { gen: (arr) => mergeSort(arr),     java: JAVA_MERGE,     category: 'sorting',   name: 'Merge Sort'     },
-    quick:     { gen: (arr) => quickSort(arr),     java: JAVA_QUICK,     category: 'sorting',   name: 'Quick Sort'     },
-    shell:     { gen: (arr) => shellSort(arr),     java: JAVA_SHELL,     category: 'sorting',   name: 'Shell Sort'     },
-    heap:      { gen: (arr) => heapSort(arr),      java: JAVA_HEAP,      category: 'sorting',   name: 'Heap Sort'      },
-    radix:     { gen: (arr) => radixSort(arr),     java: JAVA_RADIX,     category: 'sorting',   name: 'Radix Sort'     },
-
+    bubble:    { gen: (arr) => bubbleSort(arr),    java: JAVA_BUBBLE,    category: 'sorting',   name: 'Bubble Sort',    statType: 'swap'  },
+    insertion: { gen: (arr) => insertionSort(arr), java: JAVA_INSERTION, category: 'sorting',   name: 'Insertion Sort', statType: 'write' },
+    selection: { gen: (arr) => selectionSort(arr), java: JAVA_SELECTION, category: 'sorting',   name: 'Selection Sort', statType: 'swap'  },
+    merge:     { gen: (arr) => mergeSort(arr),     java: JAVA_MERGE,     category: 'sorting',   name: 'Merge Sort',     statType: 'write' },
+    quick:     { gen: (arr) => quickSort(arr),     java: JAVA_QUICK,     category: 'sorting',   name: 'Quick Sort',     statType: 'swap'  },
+    shell:     { gen: (arr) => shellSort(arr),     java: JAVA_SHELL,     category: 'sorting',   name: 'Shell Sort',     statType: 'write' },
+    heap:      { gen: (arr) => heapSort(arr),      java: JAVA_HEAP,      category: 'sorting',   name: 'Heap Sort',      statType: 'swap'  },
+    radix:     { gen: (arr) => radixSort(arr),     java: JAVA_RADIX,     category: 'sorting',   name: 'Radix Sort',     statType: 'write' },
     // Searching
     linear:    { gen: (arr, target) => linearSearch(arr, target), java: JAVA_LINEAR, category: 'searching', name: 'Linear Search' },
     binary:    { gen: (arr, target) => binarySearch(arr, target), java: JAVA_BINARY, category: 'searching', name: 'Binary Search' },
@@ -65,7 +64,7 @@ const ALGORITHMS = {
     bst:       { gen: () => bstAlgorithm(), java: JAVA_BST, category: 'bst', name: 'BST' },
 
    // Graphs
-    dijkstra:  { gen: (g, src) => dijkstra(g, src), java: JAVA_DIJKSTRA, category: 'graph', name: 'Dijkstra' },
+    dijkstra:  { gen: (g, src) => dijkstra(g, src), java: JAVA_DIJKSTRA, category: 'graph', name: 'Dijkstra', needsSourceNode: true },
     kruskal:   { gen: (g) => kruskal(g),  java: JAVA_KRUSKAL,  category: 'graph', name: 'Kruskal'  },
 
     // Data Structures
@@ -77,10 +76,78 @@ const ALGORITHMS = {
 
 // ─── Gjendja globale ──────────────────────────────────────────────
 let currentAlgo    = null;   // çelësi i ALGORITHMS
+let customArray    = null;   // array-i manual i përdoruesit — null = përdor gjenerim random
 let currentBars    = [];     // referencat SVG të shufrave (sort/search)
 let currentArray   = [];     // array aktual
 let currentGen     = null;   // gjeneratori aktual
 let speedValue     = 2;      // 1 | 2 | 3
+
+// KRITIKE: sortRenderer.js rindërton vetë bar-at (svg.innerHTML = '') kur
+// dritarja ndryshon madhësi gjatë një xhirimi aktiv, prodhon elementë DOM
+// të rinj — pa këtë, currentBars mbetet duke treguar te elementët e vjetër
+// të shkëputur, dhe applyStep() vazhdon "punën" në heshtje mbi hiç (shufrat
+// mbeten të ngrira në pamje, ndërsa comparisons/swaps vazhdojnë të rriten,
+// sepse ato jetojnë të pavarura nga DOM-i, në animator.js).
+onResizeRerender((newBars) => { currentBars = newBars; });
+
+/**
+ * Parson tekstin e Custom Input në array numrash.
+ * Kthen null nëse input-i është i pavlefshëm (bosh, pa numra të vlefshëm, < 2 elemente).
+ * Përndryshe kthen { values, filteredCount } — filteredCount numëron sa tokena
+ * u shkruan nga përdoruesi por u refuzuan (jo numër, ose jashtë 0–999), në mënyrë
+ * që thirrësi të mund t'i njoftojë përdoruesit saktësisht sa u injoruan.
+ * @param {string} str
+ * @returns {{values: number[], filteredCount: number}|null}
+ */
+function parseCustomArray(str) {
+    if (!str || !str.trim()) return null;
+    const rawTokens = str.split(',').map(s => s.trim()).filter(s => s.length > 0);
+    const nums = rawTokens
+        .map(s => parseInt(s, 10))
+        .filter(n => !isNaN(n) && n >= 0 && n <= 999);
+    if (nums.length < 2 || nums.length > 100) return null;
+    return { values: nums, filteredCount: rawTokens.length - nums.length };
+}
+
+/**
+ * Kthen array-in që duhet vizualizuar — custom nëse është aktiv, përndryshe random.
+ * Qendërzon logjikën që më parë ishte e përsëritur 3 herë në main.js.
+ * @param {number} size
+ * @param {string} cat - 'sorting' ose 'searching'
+ * @returns {number[]}
+ */
+function getWorkingArray(size, cat) {
+    if (customArray) {
+        // Binary Search kërkon array të renditur — sorting e ruan siç e fusi përdoruesi
+        return cat === 'searching'
+            ? [...customArray].sort((a, b) => a - b)
+            : [...customArray];
+    }
+    return cat === 'searching'
+        ? generateSortedArray(size)
+        : generateArray(size);
+}
+
+/**
+ * Shfaq mesazh te #custom-input-feedback dhe e fshin vetë pas 3.5s.
+ * Zëvendëson qasjen e mëparshme (fshirje reaktive te Run/Step/Reset) me një
+ * mekanizëm të vetëm, qendror — më e thjeshtë sepse s'duhet më të mendojmë
+ * ku tjetër mund të mbetet "ngjitur" mesazhi, thjesht zhduket vetë.
+ * @param {string} message
+ * @param {'success'|'error'} type
+ */
+let feedbackTimer = null;
+function showCustomFeedback(message, type) {
+    const feedback = document.getElementById('custom-input-feedback');
+    if (!feedback) return;
+    clearTimeout(feedbackTimer);
+    feedback.textContent = message;
+    feedback.className = `custom-input-feedback ${type}`;
+    feedbackTimer = setTimeout(() => {
+        feedback.textContent = '';
+        feedback.className = 'custom-input-feedback';
+    }, 3500);
+}
 
 // ─── Kur klikohet një buton algoritmi ────────────────────────────
 function selectAlgorithm(algoKey) {
@@ -88,10 +155,16 @@ function selectAlgorithm(algoKey) {
     currentAlgo = algoKey;
     const algo = ALGORITHMS[algoKey];
 
-    // Emri dhe kompleksiteti
+ // Emri dhe kompleksiteti
     document.getElementById('active-algo-name').textContent = algo.name;
     showComplexity(algoKey);
     showCode(algo.java);
+
+    // Etiketa e statit "Ndërrime"/"Shkrime" ndryshon sipas mënyrës si punon algoritmi
+    const swapsLabel = document.getElementById('stat-swaps-label');
+   if (swapsLabel) {
+        swapsLabel.textContent = algo.statType === 'write' ? 'Mbishkrime' : 'Ndërrime';
+    }
 
     resetStats();
     resetButtons();
@@ -102,34 +175,39 @@ function selectAlgorithm(algoKey) {
         hideDSPanel();
         document.getElementById('bst-input-group').style.display = 'none';
         document.querySelector('.size-control').style.display = '';
+        document.querySelector('.custom-input-group').style.display = '';
         const size = parseInt(document.getElementById('size-slider').value);
-        currentArray = cat === 'searching'
-            ? generateSortedArray(size)
-            : generateArray(size);
+        currentArray = getWorkingArray(size, cat);
         currentBars = renderBars(currentArray);
         enableButtons(['run', 'step', 'reset']);
 
     } else if (cat === 'bst') {
         hideDSPanel();
+        resetSortRenderer();
         document.getElementById('bst-input-group').style.display = 'flex';
         document.querySelector('.size-control').style.display = 'none';
+        document.querySelector('.custom-input-group').style.display = 'none';
         rerenderBST(null);
         enableButtons(['reset']);
 
     } else if (cat === 'graph') {
         hideDSPanel();
+        resetSortRenderer();
         document.getElementById('bst-input-group').style.display = 'none';
         document.querySelector('.size-control').style.display = 'none';
+        document.querySelector('.custom-input-group').style.display = 'none';
         initGraph();
-        showGraphPanel((op, ...args) => runGraphOperation(op, ...args));
+        showGraphPanel((op, ...args) => runGraphOperation(op, ...args), !!algo.needsSourceNode);
         document.getElementById('btn-run').disabled = false;
         document.getElementById('btn-reset').disabled = false;
 
     } else if (cat === 'datastructures') {
         hideDSPanel();
+        resetSortRenderer();
         showDSPanel(algoKey, (op, ...args) => runDSOperation(op, ...args));
         document.getElementById('bst-input-group').style.display = 'none';
         document.querySelector('.size-control').style.display = 'none';
+        document.querySelector('.custom-input-group').style.display = 'none';
         initDataStructure(algoKey);
         enableButtons(['reset']);
     }
@@ -171,7 +249,7 @@ function runAlgorithm() {
     const graph = getGraph();
     if (!graph) return;
     const sourceInput = document.getElementById('graph-source-node');
-    const sourceId = (sourceInput?.value.trim()) || 'A';
+    const sourceId = (sourceInput?.value?.trim()) || 'A';
     currentGen = algo.gen(graph, sourceId);
 
     } else if (cat === 'datastructures') {
@@ -222,7 +300,10 @@ function stepAlgorithm() {
 }
 
 // ─── Reset ────────────────────────────────────────────────────────
-function resetAlgorithm() {
+// forceRegenerate=false (default, butoni "Rikthe"): ripërdor currentArray siç është.
+// forceRegenerate=true ("Përdor"/"✕ Random"): rithirr getWorkingArray() sepse
+// customArray sapo ndryshoi (u vendos ose u pastrua) — currentArray DUHET rifreskuar.
+function resetAlgorithm(forceRegenerate = false) {
     stop();
     currentGen = null;
     resetStats();
@@ -232,10 +313,15 @@ function resetAlgorithm() {
     const cat  = algo.category;
 
     if (cat === 'sorting' || cat === 'searching') {
-        const size = parseInt(document.getElementById('size-slider').value);
-        currentArray = cat === 'searching'
-            ? generateSortedArray(size)
-            : generateArray(size);
+        // MOS rithirr getWorkingArray() këtu (përveç kur kërkohet eksplicit) —
+        // do prodhonte array TË RI random. currentArray s'mutohet kurrë nga
+        // xhirimi (gjeneratori merr [...currentArray], një kopje), ndaj tashmë
+        // mban array-in origjinal të saktë. Rikthe = vetëm rivendos gjendjen
+        // vizuale/animacionin, jo të dhënat.
+        if (forceRegenerate) {
+            const size = parseInt(document.getElementById('size-slider').value);
+            currentArray = getWorkingArray(size, cat);
+        }
         currentBars = renderBars(currentArray);
     } else if (cat === 'bst') {
         rerenderBST(null);
@@ -314,7 +400,7 @@ document.getElementById('btn-run').addEventListener('click', () => {
 });
 
 document.getElementById('btn-pause').addEventListener('click', () => pause());
-document.getElementById('btn-reset').addEventListener('click', resetAlgorithm);
+document.getElementById('btn-reset').addEventListener('click', () => resetAlgorithm());
 document.getElementById('btn-step').addEventListener('click', stepAlgorithm);
 
 // ─── BST Input Buttons ────────────────────────────────────────────
@@ -363,9 +449,7 @@ document.getElementById('size-slider').addEventListener('input', (e) => {
 
     if (cat === 'sorting' || cat === 'searching') {
         const size = parseInt(e.target.value);
-        currentArray = cat === 'searching'
-            ? generateSortedArray(size)
-            : generateArray(size);
+        currentArray = getWorkingArray(size, cat);
         currentBars = renderBars(currentArray);
         resetButtons();
         enableButtons(['run', 'step', 'reset']);
@@ -398,3 +482,67 @@ if (btnCopyCode) {
         }
     });
 }
+
+// ── KAPITULLI 2: Custom Input — vlera manuale për sorting/searching ──
+document.getElementById('btn-custom-apply').addEventListener('click', () => {
+    const raw = document.getElementById('custom-array-input').value;
+    const parsed = parseCustomArray(raw);
+
+    if (!parsed) {
+        showCustomFeedback('Duhen 2–100 numra (0–999), të ndarë me presje.', 'error');
+        return;
+    }
+
+    customArray = parsed.values;
+    showCustomFeedback(
+        parsed.filteredCount > 0
+            ? `${parsed.values.length} elemente u ngarkuan (${parsed.filteredCount} u injoruan — NaN ose jashtë 0–999).`
+            : `${parsed.values.length} elemente u ngarkuan.`,
+        'success'
+    );
+
+    document.getElementById('size-slider').disabled = true;
+    document.getElementById('size-value').textContent = parsed.values.length;
+
+    resetAlgorithm(true);
+});
+
+document.getElementById('btn-custom-clear').addEventListener('click', () => {
+    clearTimeout(feedbackTimer);
+    customArray = null;
+    document.getElementById('custom-array-input').value = '';
+    document.getElementById('custom-input-feedback').textContent = '';
+    document.getElementById('custom-input-feedback').className = 'custom-input-feedback';
+
+    document.getElementById('size-slider').disabled = false;
+    document.getElementById('size-value').textContent = document.getElementById('size-slider').value;
+
+    resetAlgorithm(true);
+});
+
+// ── KAPITULLI 2: Enter → kliko butonin primary përkatës ──────────────
+document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Enter') return;
+    if (e.target.tagName !== 'INPUT') return;
+
+    // BST — 2 input-e specifike, secili me buton të vetin
+    if (e.target.id === 'bst-values-input') {
+        document.getElementById('btn-bst-run')?.click();
+        return;
+    }
+    if (e.target.id === 'bst-search-input') {
+        document.getElementById('btn-bst-search')?.click();
+        return;
+    }
+    if (e.target.id === 'custom-array-input') {
+        document.getElementById('btn-custom-apply')?.click();
+        return;
+    }
+
+    // DS panels (Stack/Queue/LinkedList/HashMap) + Graph panel —
+    // kliko btn-primary e parë brenda të njëjtit rresht
+    const row = e.target.closest('.ds-input-row');
+    if (row) {
+        row.querySelector('.btn-primary')?.click();
+    }
+});
