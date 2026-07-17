@@ -171,10 +171,15 @@ function markAllSorted(bars) {
     });
 }
 
-function generateSortedArray(size) {
-    return Array.from({ length: size }, (_, i) =>
-        Math.floor((i / size) * 95) + 5
+// Njësoj si generateArray() (vlera random 5-100), por i renditur —
+// binary search kërkon array të renditur. Më parë ishte formulë deterministike
+// e varur vetëm nga 'size' — prodhonte TË NJËJTIN array çdo herë, prandaj
+// "✕ Random" te Kërkimi dukej sikur s'bënte asgjë.
+function generateSortedArray(size, min = 5, max = 100) {
+    const arr = Array.from({ length: size }, () =>
+        Math.floor(Math.random() * (max - min + 1)) + min
     );
+    return arr.sort((a, b) => a - b);
 }
 
 export { render, markAllSorted, generateArray, generateSortedArray, resetSortRenderer, onResizeRerender, syncArrayState };

@@ -149,6 +149,18 @@ function showCustomFeedback(message, type) {
 }
 
 // ─── Kur klikohet një buton algoritmi ────────────────────────────
+
+// Aktivizon/çaktivizon TË GJITHA input/button brenda një kontejneri (selector
+// CSS). Përdoret te selectAlgorithm() dhe gjendja fillestare (para zgjedhjes
+// së algoritmit) — përndryshe input-et e BST/Custom Input/Elementet mbeten
+// gjithmonë të klikueshme, edhe kur s'ka kuptim (asnjë algoritëm aktiv, ose
+// kategori tjetër aktive).
+function setGroupEnabled(selector, enabled) {
+    const container = document.querySelector(selector);
+    if (!container) return;
+    container.querySelectorAll('input, button').forEach(el => { el.disabled = !enabled; });
+}
+
 function selectAlgorithm(algoKey) {
     stop();
     currentAlgo = algoKey;
@@ -175,6 +187,9 @@ function selectAlgorithm(algoKey) {
         document.getElementById('bst-input-group').style.display = 'none';
         document.querySelector('.size-control').style.display = '';
         document.querySelector('.custom-input-group').style.display = '';
+        setGroupEnabled('.size-control', true);
+        setGroupEnabled('.custom-input-group', true);
+        setGroupEnabled('#bst-input-group', false);
         const size = parseInt(document.getElementById('size-slider').value);
         currentArray = getWorkingArray(size, cat);
         currentBars = renderBars(currentArray);
@@ -186,6 +201,9 @@ function selectAlgorithm(algoKey) {
         document.getElementById('bst-input-group').style.display = 'flex';
         document.querySelector('.size-control').style.display = 'none';
         document.querySelector('.custom-input-group').style.display = 'none';
+        setGroupEnabled('#bst-input-group', true);
+        setGroupEnabled('.size-control', false);
+        setGroupEnabled('.custom-input-group', false);
         initBST(); // pastron root+uidCount NË BST.JS, jo vetëm SVG-në (rerenderBST(null) i vjetër)
         enableButtons(['reset']);
 
@@ -195,6 +213,9 @@ function selectAlgorithm(algoKey) {
         document.getElementById('bst-input-group').style.display = 'none';
         document.querySelector('.size-control').style.display = 'none';
         document.querySelector('.custom-input-group').style.display = 'none';
+        setGroupEnabled('#bst-input-group', false);
+        setGroupEnabled('.size-control', false);
+        setGroupEnabled('.custom-input-group', false);
         initGraph();
         showGraphPanel((op, ...args) => runGraphOperation(op, ...args), !!algo.needsSourceNode);
         document.getElementById('btn-run').disabled = false;
@@ -207,6 +228,9 @@ function selectAlgorithm(algoKey) {
         document.getElementById('bst-input-group').style.display = 'none';
         document.querySelector('.size-control').style.display = 'none';
         document.querySelector('.custom-input-group').style.display = 'none';
+        setGroupEnabled('#bst-input-group', false);
+        setGroupEnabled('.size-control', false);
+        setGroupEnabled('.custom-input-group', false);
         initDataStructure(algoKey);
         enableButtons(['reset']);
     }
@@ -625,3 +649,11 @@ document.addEventListener('keydown', (e) => {
         row.querySelector('.btn-primary')?.click();
     }
 });
+
+// ─── Gjendja fillestare (asnjë algoritëm ende i zgjedhur) ─────────
+// Ekrani "Zgjidh një algoritëm nga lista" duhet të mbetet thjesht orientues —
+// asnjë input/buton s'ka kuptim funksional pa currentAlgo. selectAlgorithm()
+// i aktivizon këto vetëm pasi përdoruesi klikon një algoritëm konkret.
+setGroupEnabled('.custom-input-group', false);
+setGroupEnabled('.size-control', false);
+setGroupEnabled('#bst-input-group', false);
