@@ -115,6 +115,17 @@
     transition: fill 0.15s ease;
 }
 
+.sort-bar rect.bar-default,
+.sort-bar rect.bar-compare,
+.sort-bar rect.bar-swap,
+.sort-bar rect.bar-sorted,
+.sort-bar rect.bar-pivot,
+.sort-bar rect.bar-found,
+.sort-bar rect.bar-search {
+    stroke: rgba(255, 255, 255, 0.14);
+    stroke-width: 1px;
+}
+
 .sort-bar text {
     fill: var(--text-secondary);
     font-size: 11px;
@@ -190,6 +201,13 @@ svg rect {
     pointer-events: none;
 }
 
+.graph-dist-label {
+    fill: var(--accent-orange);
+    font-size: 12px;
+    font-weight: 700;
+    dominant-baseline: auto;   /* mbivendos .graph-node text (central) — distanca ulet mbi nyje, jo në qendër */
+}
+
 .graph-node:hover circle {
     stroke: var(--accent-blue);
 }
@@ -215,6 +233,28 @@ svg rect {
 .graph-edge.active           { stroke: var(--accent-blue);   stroke-width: 3; }
 .graph-edge.in-tree          { stroke: var(--accent-green);  stroke-width: 3; }
 .graph-edge.considering      { stroke: var(--accent-orange); stroke-width: 2; }
+
+/* ── Kapitulli: Status live (Graf + Struktura të dhënash) ── */
+
+.algo-status {
+    display: flex;
+    align-items: center;
+    width: fit-content;
+    max-width: 90%;
+    min-height: 36px;
+    margin: 0 auto 16px;
+    padding: 8px 18px;
+    border-radius: 10px;
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    color: var(--text-primary);
+    opacity: 0;
+    transition: opacity 0.15s ease;
+}
+
+.algo-status:not(:empty) {
+    opacity: 1;
+}
 
 /* ── Kapitulli 2: Stats bar lundrues (jo më rresht statik) ── */
 

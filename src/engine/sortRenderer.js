@@ -62,6 +62,28 @@ function render(array, svgId = 'main-svg') {
 
     svg.innerHTML = '';
 
+    // Kapitulli 3: efekt glass+glow — box-shadow s'aplikohet mbi <rect> SVG,
+    // ndaj përdorim <filter> real. feGaussianBlur turbullon një kopje të
+    // vetë formës (SourceGraphic, që tashmë ka ngjyrën e gjendjes — blu/
+    // portokalli/kuq/gjelbër/vjollcë), feMerge e vendos atë kopje të
+    // turbulluar POSHTË origjinalit të mprehtë → glow që përshtatet
+    // automatikisht me çdo ngjyrë gjendjeje, pa filtra të veçantë për secilën.
+    const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+    defs.innerHTML = `
+        <filter id="bar-glow" x="-60%" y="-60%" width="220%" height="220%">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="3.5" result="blur"/>
+            <feMerge>
+                <feMergeNode in="blur"/>
+                <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+        </filter>
+        <linearGradient id="bar-glass" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%"  stop-color="#ffffff" stop-opacity="0.22"/>
+            <stop offset="55%" stop-color="#ffffff" stop-opacity="0.04"/>
+            <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+        </linearGradient>`;
+    svg.appendChild(defs);
+
     const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
     g.setAttribute('transform', `translate(${SVG_PADDING}, ${SVG_PADDING})`);
     svg.appendChild(g);
@@ -84,7 +106,21 @@ function render(array, svgId = 'main-svg') {
         barRect.setAttribute('width',  barWidth);
         barRect.setAttribute('height', barHeight);
         barRect.setAttribute('rx',     3);
+        barRect.setAttribute('filter', 'url(#bar-glow)');
         barRect.classList.add('bar-default');
+
+        // Sheen "xhami" — rect e dytë, e njëjta madhësi, gradient i bardhë
+        // gjysmë-transparent nga lart-poshtë. pointer-events:none që të mos
+        // ndërhyjë me asnjë interaksion; s'ka classList gjendjeje, ndaj
+        // mbetet e pandryshuar pavarësisht ngjyrës aktuale të barRect.
+        const barSheen = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        barSheen.setAttribute('x',      0);
+        barSheen.setAttribute('y',      y);
+        barSheen.setAttribute('width',  barWidth);
+        barSheen.setAttribute('height', barHeight);
+        barSheen.setAttribute('rx',     3);
+        barSheen.setAttribute('fill',   'url(#bar-glass)');
+        barSheen.setAttribute('pointer-events', 'none');
 
         const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
         label.setAttribute('x', barWidth / 2);
@@ -92,6 +128,7 @@ function render(array, svgId = 'main-svg') {
         label.textContent = barWidth >= 14 ? value : '';
 
         barGroup.appendChild(barRect);
+        barGroup.appendChild(barSheen);
         barGroup.appendChild(label);
         g.appendChild(barGroup);
         bars.push(barGroup);

@@ -16,6 +16,9 @@ function resetStats() {
     stats.writes      = 0;
     stats.step        = 0;
     updateStats(stats);
+
+    const statusEl = document.getElementById('algo-status');
+    if (statusEl) statusEl.textContent = '';
 }
 function applyStep(step, bars, category) {
     // Rrit hapin për çdo step — por JO për 'sorted' dhe 'rerender'
@@ -109,6 +112,15 @@ function applySortStep(step, bars) {
             }
             break;
     }
+
+    // 'info' (kërkim filloi) dhe hapi final ('found' ose 'compare' me indices
+    // bosh + message te binary/linear search) — hapat e ndërmjetëm krahasimi
+    // s'kanë message, ndaj s'e prekin statusin: targeti mbetet i dukshëm deri
+    // sa kërkimi të përfundojë
+    if (step.message) {
+        const el = document.getElementById('algo-status');
+        if (el) el.textContent = step.message;
+    }
 }
 
 function setBarState(bar, state) {
@@ -144,13 +156,20 @@ function swapBarPositions(bars, i, j) {
 
 function updateBarHeight(bar, value, maxValue) {
     if (!bar || !maxValue) return;
-    const rect  = bar.querySelector('rect');
+    const [rect, sheen] = bar.querySelectorAll('rect');
     const label = bar.querySelector('text');
     const svgH  = document.getElementById('main-svg').getBoundingClientRect().height - 48;
     const newH  = (value / maxValue) * svgH;
     if (rect) {
         rect.setAttribute('height', newH);
         rect.setAttribute('y', svgH - newH);
+    }
+    // sheen-i "xhami" (rect #2, mbivendosje pa gjendje) duhet të ndjekë
+    // saktësisht të njëjtën lartësi/pozicion si barRect, përndryshe mbetet
+    // vizualisht i pasinkronizuar pas çdo hapi 'overwrite'.
+    if (sheen) {
+        sheen.setAttribute('height', newH);
+        sheen.setAttribute('y', svgH - newH);
     }
     if (label) {
         label.setAttribute('y', svgH - newH - 6);
@@ -185,6 +204,11 @@ function applyBSTStep(step) {
         case 'rerender':
             if (step.render) step.render();
             break;
+    }
+
+    if (step.message) {
+        const el = document.getElementById('algo-status');
+        if (el) el.textContent = step.message;
     }
 }
 
@@ -224,6 +248,24 @@ function applyGraphStep(step) {
             if (step.edges) step.edges.forEach(id => highlightGraphEdge(id, 'in-tree'));
             break;
     }
+
+    // step.distances vjen si { nodeId: vlerë } nga dijkstra.js (snap()) — jo
+    // te çdo lloj hapi, prandaj kontrollojmë ekzistencën para se të përditësojmë
+    if (step.distances) updateGraphDistanceLabels(step.distances);
+
+    if (step.message) {
+        const el = document.getElementById('algo-status');
+        if (el) el.textContent = step.message;
+    }
+}
+
+// Përditëson etiketën .graph-dist-label brenda çdo grupi <g id="graph-node-X">
+// me distancën aktuale nga step.distances (p.sh. { A: 0, B: 4, C: '∞' })
+function updateGraphDistanceLabels(distances) {
+    Object.entries(distances).forEach(([nodeId, dist]) => {
+        const label = document.querySelector(`#graph-node-${nodeId} .graph-dist-label`);
+        if (label) label.textContent = dist;
+    });
 }
 
 function highlightGraphNode(nodeId, state) {
@@ -273,7 +315,7 @@ function applyDataStructureStep(step) {
     }
 
     if (step.message) {
-        const el = document.getElementById('ds-message');
+        const el = document.getElementById('algo-status');
         if (el) el.textContent = step.message;
     }
 }
