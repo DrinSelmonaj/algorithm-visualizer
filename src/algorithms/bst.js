@@ -115,12 +115,11 @@ function* bstSearch(value) {
     yield { type: 'visit', javaLine: 28, message: `${value} nuk u gjet.` };
 }
 
-// Eksporti i funksionit kryesor që thërret main.js
-// Vlerat default demostrojnë insert + search
+// Eksporti i funksionit kryesor që thërret main.js (butoni "Krijo pemën")
+// VETËM ndërton pemën — kërkimi është veprim i veçantë, eksplicit (btn-bst-search)
 function* bstAlgorithm(values = [5, 3, 7, 1, 4, 6, 8]) {
     init();
     for (const v of values) yield* bstInsert(v);
-    yield* bstSearch(values[0]);
 }
 
 export { bstAlgorithm, bstInsert, bstSearch, init, JAVA_SOURCE };

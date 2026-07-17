@@ -53,7 +53,11 @@ function* kruskal(graph = DEFAULT_GRAPH) {
         return true;
     }
 
-    yield { type: 'visit', javaLine: 21, message: `Skajet e renditura: ${sorted.map(e => `${e.source}-${e.target}(${e.weight})`).join(', ')}.` };
+    yield { type: 'visit', javaLine: 21, message: `Skajet e renditura: ${sorted.map(e => {
+        const su = typeof e.source === 'object' ? e.source.id : e.source;
+        const sv = typeof e.target === 'object' ? e.target.id : e.target;
+        return `${su}-${sv}(${e.weight})`;
+    }).join(', ')}.` };
 
     let totalWeight = 0;
 

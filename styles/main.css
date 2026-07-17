@@ -78,6 +78,14 @@ button {
     outline: none;
 }
 
+/* Fokusi i tastierës (Tab) duhet të mbetet i dukshëm për aksesueshmëri —
+   outline:none sipër hiqte edhe këtë. :focus-visible aktivizohet vetëm për
+   navigim me tastierë, jo për klikim me mi, pra pamja me mi mbetet e njëjtë. */
+button:focus-visible {
+    outline: 2px solid var(--accent-blue);
+    outline-offset: 2px;
+}
+
 /* ── Header ── */
 .app-header {
     height: var(--header-height);
@@ -500,4 +508,3 @@ button {
         display: none;
     }
 }
-

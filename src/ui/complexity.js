@@ -6,8 +6,8 @@ const COMPLEXITY = {
     insertion:  { time: 'O(n²)',      space: 'O(1)'    },
     selection:  { time: 'O(n²)',      space: 'O(1)'    },
     merge:      { time: 'O(n log n)', space: 'O(n)'    },
-    quick:      { time: 'O(n log n)', space: 'O(log n)'},
-    shell:      { time: 'O(n log n)', space: 'O(1)'    },
+    quick:      { time: 'O(n log n)', space: 'O(log n)', timeNote: 'Mesatarja: O(n log n). Rasti më i keq (pivot i keq, p.sh. array tashmë i renditur): O(n²).' },
+    shell:      { time: 'O(n log n)', space: 'O(1)',     timeNote: 'Varet nga sekuenca e gap-eve. Me gap-e klasike (n/2, n/4...): rasti më i keq O(n²).' },
     heap:       { time: 'O(n log n)', space: 'O(1)'    },
     radix:      { time: 'O(nk)',      space: 'O(n+k)'  },
     linear:     { time: 'O(n)',       space: 'O(1)'    },
@@ -29,7 +29,15 @@ function showComplexity(algoKey) {
     const data = COMPLEXITY[algoKey] || { time: '—', space: '—' };
     const timeEl  = document.getElementById('badge-time');
     const spaceEl = document.getElementById('badge-space');
-    if (timeEl)  timeEl.textContent  = `Time: ${data.time}`;
+
+    // timeNote: rasti i rastit-mesatar ndryshon dukshëm nga rasti më i keq (Quick/
+    // Shell) — badge-i mbetet kompakt, tregohet '*' + hover tooltip me shpjegimin,
+    // në vend që të zgjerojmë vetë pilulën (do thyente stilin Ch.0-3 ekzistues).
+    if (timeEl) {
+        timeEl.textContent = `Time: ${data.time}${data.timeNote ? ' *' : ''}`;
+        if (data.timeNote) timeEl.title = data.timeNote;
+        else timeEl.removeAttribute('title');
+    }
     if (spaceEl) spaceEl.textContent = `Space: ${data.space}`;
 }
 

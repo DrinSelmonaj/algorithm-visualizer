@@ -208,6 +208,10 @@
                 </svg>
             </div>
 
+            <!-- Statusi/mesazhi live i hapit aktual — i përbashkët për Graf + Struktura
+                 të dhënash (animator.js e mbush me step.message nga gjeneratori) -->
+            <div id="algo-status" class="algo-status glass-panel"></div>
+
             <!-- Statistikat live — kartelë glassmorphism, poshtë SVG-së -->
             <div class="stats-bar glass-panel">
                 <div class="stat">
@@ -228,16 +232,16 @@
             <div class="controls-bar">
 
                <div class="control-buttons">
-                    <button id="btn-run" class="btn-circle btn-circle-primary glow-primary" disabled title="Ekzekuto">
+                    <button id="btn-run" class="btn-circle btn-circle-primary glow-primary" disabled title="Ekzekuto" aria-label="Ekzekuto">
                         <svg class="icon"><use href="#icon-play_arrow"></use></svg>
                     </button>
-                    <button id="btn-pause" class="btn-circle" disabled title="Pauzë">
+                    <button id="btn-pause" class="btn-circle" disabled title="Pauzë" aria-label="Pauzë">
                         <svg class="icon"><use href="#icon-pause"></use></svg>
                     </button>
-                    <button id="btn-reset" class="btn-circle" disabled title="Rikthe">
+                    <button id="btn-reset" class="btn-circle" disabled title="Rikthe" aria-label="Rikthe">
                         <svg class="icon"><use href="#icon-replay"></use></svg>
                     </button>
-                    <button id="btn-step" class="btn-circle" disabled title="Hap">
+                    <button id="btn-step" class="btn-circle" disabled title="Hap" aria-label="Hap pas hapi">
                         <svg class="icon"><use href="#icon-skip_next"></use></svg>
                     </button>
                 </div>
@@ -277,7 +281,7 @@
             <div class="code-panel-header">
                 <h3>Kodi Java</h3>
                 <div class="code-panel-header-right">
-                    <button id="btn-copy-code" class="icon-btn" title="Kopjo kodin">
+                    <button id="btn-copy-code" class="icon-btn" title="Kopjo kodin" aria-label="Kopjo kodin">
                         <svg class="icon"><use href="#icon-content_copy"></use></svg>
                     </button>
                     <span class="code-lang-badge">Java</span>

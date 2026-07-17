@@ -18,13 +18,15 @@ function* binarySearch(array, target) {
     const arr = [...array];
     let low = 0, high = arr.length - 1;
 
+    yield { type: 'info', message: `Kërkojmë: ${target}` };
+
     while (low <= high) {
         const mid = Math.floor((low + high) / 2);
 
         yield { type: 'compare', indices: [mid], javaLine: 5 };
 
         if (arr[mid] === target) {
-            yield { type: 'found', indices: [mid], javaLine: 6 };
+            yield { type: 'found', indices: [mid], javaLine: 6, message: `${target} u gjet në indeksin ${mid}.` };
             return;
         }
 

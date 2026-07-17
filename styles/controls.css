@@ -146,6 +146,11 @@ input[type="range"] {
     transition: background var(--transition);
 }
 
+input[type="range"]:focus-visible {
+    outline: 2px solid var(--accent-blue);
+    outline-offset: 4px;
+}
+
 input[type="range"]#speed-slider {
     width: 100px;
 }
