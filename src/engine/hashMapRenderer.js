@@ -37,15 +37,16 @@ function render(buckets, svgId = 'main-svg') {
 
     for (let i = 0; i < BUCKET_COUNT; i++) {
         const y = START_Y + i * ROW_GAP;
-        drawBucket(svg, i, y);
-        drawChain(svg, buckets[i] || [], y);
+        const entries = buckets[i] || [];
+        drawBucket(svg, i, y, entries.length > 0);
+        drawChain(svg, entries, y);
     }
 }
 
-function drawBucket(svg, index, y) {
+function drawBucket(svg, index, y, occupied = false) {
     const g = svgEl('g');
     g.id = `hm-bucket-${index}`;
-    g.setAttribute('class', 'ds-bucket hm-bucket');
+    g.setAttribute('class', 'ds-bucket hm-bucket' + (occupied ? ' hm-bucket-occupied' : ''));
 
     const rect = svgEl('rect');
     setAttrs(rect, { x: START_X, y: y - BUCKET_H / 2, width: BUCKET_W, height: BUCKET_H, rx: 6 });

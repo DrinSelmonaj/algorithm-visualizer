@@ -35,9 +35,14 @@ function render(head, svgId = 'main-svg') {
     let cur = head;
     while (cur && nodes.length < MAX_VIS) { nodes.push(cur); cur = cur.next; }
 
+    // reachedEnd = arritëm null-in real brenda MAX_VIS — nyja e fundit e
+    // dukshme ËSHTË tail-i i vërtetë (jo thjesht e fundit para "+N more")
+    const reachedEnd = !cur;
+
     nodes.forEach((node, i) => {
         const x = START_X + i * (NODE_W + GAP);
-        drawNode(svg, node, x, i === 0);
+        const isTail = reachedEnd && i === nodes.length - 1;
+        drawNode(svg, node, x, i === 0, isTail);
         if (i < nodes.length - 1) drawArrow(svg, x + NODE_W, CENTER_Y, x + NODE_W + GAP, CENTER_Y);
     });
 
@@ -45,7 +50,11 @@ function render(head, svgId = 'main-svg') {
         const lastX = START_X + (nodes.length - 1) * (NODE_W + GAP);
         drawArrow(svg, lastX + NODE_W, CENTER_Y, lastX + NODE_W + 40, CENTER_Y);
         drawNull(svg, lastX + NODE_W + 46, CENTER_Y);
-        drawHeadLabel(svg, START_X + NODE_W / 2);
+        // Nyje e vetme = head DHE tail njëkohësisht — një etiketë e kombinuar
+        // në vend që HEAD/TAIL të mbivendosen mbi njëra-tjetrën
+        const singleNode = reachedEnd && nodes.length === 1;
+        drawHeadLabel(svg, START_X + NODE_W / 2, singleNode ? 'HEAD / TAIL' : 'HEAD');
+        if (reachedEnd && !singleNode) drawTailLabel(svg, lastX + NODE_W / 2);
     } else {
         drawNull(svg, START_X, CENTER_Y);
     }
@@ -58,10 +67,11 @@ function render(head, svgId = 'main-svg') {
     }
 }
 
-function drawNode(svg, node, x, isHead) {
+function drawNode(svg, node, x, isHead, isTail = false) {
     const g = svgEl('g');
     g.id = `ll-node-${node.id}`;
-    g.setAttribute('class', 'ds-node ll-node');
+    g.setAttribute('class', 'ds-node ll-node' +
+        (isHead ? ' ll-node-head' : '') + (isTail ? ' ll-node-tail' : ''));
 
     const rect = svgEl('rect');
     setAttrs(rect, { x, y: CENTER_Y - NODE_H / 2, width: NODE_W, height: NODE_H, rx: 6 });
@@ -96,10 +106,17 @@ function drawNull(svg, x, y) {
     svg.appendChild(text);
 }
 
-function drawHeadLabel(svg, x) {
+function drawHeadLabel(svg, x, label = 'HEAD') {
     const text = svgEl('text');
-    setAttrs(text, { x, y: CENTER_Y - NODE_H / 2 - 14, 'text-anchor': 'middle', class: 'ds-pointer-label' });
-    text.textContent = 'HEAD';
+    setAttrs(text, { x, y: CENTER_Y - NODE_H / 2 - 14, 'text-anchor': 'middle', class: 'ds-pointer-label ds-pointer-label--head' });
+    text.textContent = label;
+    svg.appendChild(text);
+}
+
+function drawTailLabel(svg, x) {
+    const text = svgEl('text');
+    setAttrs(text, { x, y: CENTER_Y - NODE_H / 2 - 14, 'text-anchor': 'middle', class: 'ds-pointer-label ds-pointer-label--tail' });
+    text.textContent = 'TAIL';
     svg.appendChild(text);
 }
 

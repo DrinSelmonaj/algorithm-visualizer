@@ -122,8 +122,8 @@
 .sort-bar rect.bar-pivot,
 .sort-bar rect.bar-found,
 .sort-bar rect.bar-search {
-    stroke: rgba(255, 255, 255, 0.14);
     stroke-width: 1px;
+    transition: fill 0.15s ease, fill-opacity 0.15s ease, stroke 0.15s ease, stroke-width 0.15s ease;
 }
 
 .sort-bar text {
@@ -133,14 +133,53 @@
     text-anchor: middle;
 }
 
-/* Gjendjet e bars — ngjyrat ndryshojnë sipas gjendjes */
-.bar-default  { fill: var(--accent-blue);   }
-.bar-compare  { fill: var(--accent-orange); }
-.bar-swap     { fill: var(--accent-red);    }
-.bar-sorted   { fill: var(--accent-green);  }
-.bar-pivot    { fill: var(--accent-purple); }
-.bar-found    { fill: var(--accent-green);  }
-.bar-search   { fill: var(--accent-orange); }
+/* Gjendjet e bars — fill translucent + stroke me ngjyrë (jo fill solid siç
+   ishte më parë). Hierarki vizuale e qëllimshme: 'default' shumë i zbehtë
+   dhe pa glow, gjendjet aktive (krahasim/ndërrim/gjetje/pivot) dalin qartë
+   në pah me stroke më të trashë + glow. Përputhet me spec-in Stitch
+   (bg-X/opacity + border-X + pro-glow-X nga mockup-et e reja).
+   filter: none/url(#bar-glow) mbivendos atributin SVG të vendosur në JS
+   (sortRenderer.js) — CSS ka përparësi mbi presentation attributes. */
+.bar-default {
+    fill: var(--bg-card);
+    fill-opacity: 0.6;
+    stroke: rgba(255, 255, 255, 0.08);
+    filter: none;
+}
+
+.bar-compare,
+.bar-search {
+    fill: var(--accent-orange);
+    fill-opacity: 0.16;
+    stroke: var(--accent-orange);
+    stroke-width: 2px;
+    filter: url(#bar-glow);
+}
+
+.bar-swap {
+    fill: var(--accent-red);
+    fill-opacity: 0.18;
+    stroke: var(--accent-red);
+    stroke-width: 2px;
+    filter: url(#bar-glow);
+}
+
+.bar-sorted,
+.bar-found {
+    fill: var(--accent-green);
+    fill-opacity: 0.2;
+    stroke: var(--accent-green);
+    stroke-width: 2px;
+    filter: url(#bar-glow);
+}
+
+.bar-pivot {
+    fill: var(--accent-purple);
+    fill-opacity: 0.18;
+    stroke: var(--accent-purple);
+    stroke-width: 2px;
+    filter: url(#bar-glow);
+}
 
 svg text {
     fill: var(--text-primary);   /* default: teksti brenda SVG-ve lexohet qartë mbi sfond të errët */
@@ -332,4 +371,182 @@ svg rect {
     .stat-value {
         font-size: 1rem;
     }
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   Struktura të Dhënash: Stack / Queue / Linked List / HashMap
+   .ds-cell (Stack, Queue), .ds-node (LinkedList), .ds-bucket + .ds-entry
+   (HashMap) s'kishin ASNJË stil CSS më parë — kutitë ishin default SVG
+   (fill i zi, pa border), praktikisht të padukshme mbi sfondin e errët.
+   ID-të dhe klasat bazë (ds-cell/ds-node/ds-bucket/ds-entry) NUK preken —
+   animator.js (applyDataStructureStep/highlightDSNode) varet prej tyre.
+   ══════════════════════════════════════════════════════════════════ */
+
+/* Bazë e përbashkët — "kutia" e çdo elementi (qelizë Stack/Queue, nyje
+   LinkedList, bucket/entry HashMap) */
+.ds-cell rect,
+.ds-node rect,
+.ds-bucket rect,
+.ds-entry rect {
+    fill: var(--bg-card);
+    stroke: var(--border);
+    stroke-width: 1px;
+    transition: fill 0.15s ease, stroke 0.15s ease, stroke-width 0.15s ease;
+}
+
+.ds-cell text,
+.ds-node text,
+.ds-bucket text,
+.ds-entry text {
+    fill: var(--text-primary);
+    font-family: var(--font-mono);
+    font-size: 15px;
+    font-weight: 700;
+}
+
+/* Pointer aktiv — Front/Rear (Queue), Top (Stack): kufi ngjyre që dallohet
+   nga kutitë e zakonshme, njësoj si Head/Tail (LinkedList) më poshtë */
+.queue-front rect,
+.stack-top rect {
+    stroke: var(--accent-blue);
+    stroke-width: 2px;
+}
+
+.queue-rear rect {
+    stroke: var(--accent-green);
+    stroke-width: 2px;
+}
+
+/* Head/Tail (LinkedList) — blu për fillimin, jeshile për fundin */
+.ll-node-head rect { stroke: var(--accent-blue);  stroke-width: 2px; }
+.ll-node-tail rect { stroke: var(--accent-green); stroke-width: 2px; }
+
+/* Etiketat FRONT/REAR/TOP/HEAD/TAIL sipër/poshtë kutive */
+.ds-pointer-label {
+    fill: var(--text-muted);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.ds-pointer-label--head { fill: var(--accent-blue);  }
+.ds-pointer-label--tail { fill: var(--accent-green); }
+
+/* Vija ndarëse brenda kutisë (value | next te LinkedList, key | val te HashMap) */
+.ds-divider {
+    stroke: var(--border);
+    stroke-width: 1px;
+}
+
+/* Etiketa index — Stack [i], HashMap [i] */
+.ds-index-label {
+    fill: var(--text-muted);
+    font-family: var(--font-mono);
+    font-size: 11px;
+}
+
+/* "null" — fundi i zinxhirit (LinkedList/HashMap) */
+.ds-null-label {
+    fill: var(--text-muted);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-style: italic;
+}
+
+/* "+N more" kur ka më shumë elementë sesa hapësira e dukshme (MAX_VIS) */
+.ds-overflow-label {
+    fill: var(--text-muted);
+    font-family: var(--font-mono);
+    font-size: 12px;
+}
+
+/* Baza e Stack-ut / vija e drejtimit dequeue↔enqueue te Queue */
+.ds-base-line,
+.ds-direction-line {
+    stroke: var(--border);
+    stroke-width: 1.5px;
+}
+
+.ds-dir-label {
+    fill: var(--text-muted);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Shigjetat LinkedList/HashMap */
+.ll-arrow, .hm-arrow {
+    stroke: var(--text-muted);
+    stroke-width: 1.5px;
+}
+
+.ll-arrowhead {
+    fill: var(--text-muted);
+}
+
+/* HashMap: KEY (jeshile, si "hash key") vs VAL (blu, si "vlerë") — dallim i
+   qartë ngjyrash mes dy gjysmave të një entry-je, njësoj si mockup-i Stitch */
+.hm-key {
+    fill: var(--accent-green);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.hm-val {
+    fill: var(--accent-blue);
+    font-family: var(--font-mono);
+    font-size: 12px;
+}
+
+/* Bucket i zënë (≥1 entry) — kufi + tint jeshil, dallon menjëherë nga
+   bucket-et bosh (shumica, stil default) pa pasur nevojë për ikonë */
+.hm-bucket-occupied rect {
+    fill: rgba(16, 185, 129, 0.08);
+    stroke: var(--accent-green);
+}
+
+.hm-bucket-occupied .ds-index-label {
+    fill: var(--accent-green);
+}
+
+/* ── Gjendjet e highlight-it — aplikuara nga animator.js
+   (applyDataStructureStep/highlightDSNode) te g.ds-cell/.ds-node/.ds-bucket/
+   .ds-entry përkatës. Këto klasa (inserting/deleting/comparing/found/hashing)
+   ekzistonin tashmë në logjikën JS, thjesht s'kishin ngjyra për t'u parë. ── */
+.ds-cell.inserting rect, .ds-node.inserting rect,
+.ds-bucket.inserting rect, .ds-entry.inserting rect {
+    fill: rgba(16, 185, 129, 0.16);
+    stroke: var(--accent-green);
+    stroke-width: 2px;
+}
+
+.ds-cell.deleting rect, .ds-node.deleting rect,
+.ds-bucket.deleting rect, .ds-entry.deleting rect {
+    fill: rgba(251, 113, 133, 0.16);
+    stroke: var(--accent-red);
+    stroke-width: 2px;
+}
+
+.ds-cell.comparing rect, .ds-node.comparing rect,
+.ds-bucket.comparing rect, .ds-entry.comparing rect {
+    fill: rgba(247, 147, 79, 0.16);
+    stroke: var(--accent-orange);
+    stroke-width: 2px;
+}
+
+.ds-cell.found rect, .ds-node.found rect,
+.ds-bucket.found rect, .ds-entry.found rect {
+    fill: rgba(16, 185, 129, 0.22);
+    stroke: var(--accent-green);
+    stroke-width: 2px;
+}
+
+.ds-bucket.hashing rect {
+    fill: rgba(79, 142, 247, 0.16);
+    stroke: var(--accent-blue);
+    stroke-width: 2px;
 }
