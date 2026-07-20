@@ -119,6 +119,7 @@ function render(array, svgId = 'main-svg') {
         barSheen.setAttribute('width',  barWidth);
         barSheen.setAttribute('height', barHeight);
         barSheen.setAttribute('rx',     3);
+        barSheen.classList.add('bar-sheen');
         barSheen.setAttribute('fill',   'url(#bar-glass)');
         barSheen.setAttribute('pointer-events', 'none');
 

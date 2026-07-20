@@ -112,9 +112,14 @@
 .sort-bar rect {
     rx: 4px;
     ry: 4px;
-    transition: fill 0.15s ease;
 }
 
+/* SHËNIM: qëllimisht PA transition në fill/stroke/fill-opacity — me
+   shpejtësi animacioni të lartë, syri/screenshot mund ta kapë bar-in në
+   mes të një fade-i (ende duke kaluar nga default drejt portokalli/kuq),
+   duke lënë përshtypjen e gabuar se "vetëm korniza ndryshon ngjyrë, jo
+   mbushja". Ndryshimi i gjendjes këtu duhet të jetë i MENJËHERSHËM —
+   qartësia e gjendjes gjatë xhirimit prioritet mbi një look "smooth". */
 .sort-bar rect.bar-default,
 .sort-bar rect.bar-compare,
 .sort-bar rect.bar-swap,
@@ -122,8 +127,7 @@
 .sort-bar rect.bar-pivot,
 .sort-bar rect.bar-found,
 .sort-bar rect.bar-search {
-    stroke-width: 1px;
-    transition: fill 0.15s ease, fill-opacity 0.15s ease, stroke 0.15s ease, stroke-width 0.15s ease;
+    transition: none;
 }
 
 .sort-bar text {
@@ -133,52 +137,76 @@
     text-anchor: middle;
 }
 
-/* Gjendjet e bars — fill translucent + stroke me ngjyrë (jo fill solid siç
-   ishte më parë). Hierarki vizuale e qëllimshme: 'default' shumë i zbehtë
-   dhe pa glow, gjendjet aktive (krahasim/ndërrim/gjetje/pivot) dalin qartë
-   në pah me stroke më të trashë + glow. Përputhet me spec-in Stitch
-   (bg-X/opacity + border-X + pro-glow-X nga mockup-et e reja).
+/* Gjendjet e bars — vetëm veprimet dhe rezultatet e rëndësishme përdorin
+   ngjyrë të plotë: swap = kuq, sorted = gjelbër, found (targeti) = blu,
+   pivot = vjollcë, krahasim = portokalli.
    filter: none/url(#bar-glow) mbivendos atributin SVG të vendosur në JS
-   (sortRenderer.js) — CSS ka përparësi mbi presentation attributes. */
-.bar-default {
+   (sortRenderer.js) — CSS ka përparësi mbi presentation attributes.
+   RREGULL: çdo selektor këtu ka SAKTËSISHT specificitetin ".sort-bar
+   rect.bar-X" (2 klasa + element) — i njëjtë me bllokun e përbashkët sipër,
+   që stroke-width/stroke të mos "humbasin" ndaj tij (bug i konfirmuar). */
+.sort-bar rect.bar-default {
     fill: var(--bg-card);
     fill-opacity: 0.6;
     stroke: rgba(255, 255, 255, 0.08);
+    stroke-width: 1px;
     filter: none;
 }
 
-.bar-compare,
-.bar-search {
+.sort-bar rect.bar-search {
+    fill: var(--bg-card);
+    fill-opacity: 0.6;
+    stroke: rgba(255, 255, 255, 0.08);
+    stroke-width: 1px;
+    filter: none;
+}
+
+.sort-bar rect.bar-compare {
     fill: var(--accent-orange);
-    fill-opacity: 0.16;
+    fill-opacity: 1;
     stroke: var(--accent-orange);
     stroke-width: 2px;
     filter: url(#bar-glow);
 }
 
-.bar-swap {
+.sort-bar rect.bar-swap {
     fill: var(--accent-red);
-    fill-opacity: 0.18;
+    fill-opacity: 1;
     stroke: var(--accent-red);
     stroke-width: 2px;
     filter: url(#bar-glow);
 }
 
-.bar-sorted,
-.bar-found {
+.sort-bar rect.bar-sorted {
     fill: var(--accent-green);
-    fill-opacity: 0.2;
+    fill-opacity: 1;
     stroke: var(--accent-green);
     stroke-width: 2px;
     filter: url(#bar-glow);
 }
 
-.bar-pivot {
+.sort-bar rect.bar-found {
+    fill: var(--accent-blue);
+    fill-opacity: 1;
+    stroke: var(--accent-blue);
+    stroke-width: 2px;
+    filter: url(#bar-glow);
+}
+
+.sort-bar rect.bar-pivot {
     fill: var(--accent-purple);
-    fill-opacity: 0.18;
+    fill-opacity: 1;
     stroke: var(--accent-purple);
     stroke-width: 2px;
     filter: url(#bar-glow);
+}
+
+/* The shine is a separate rect above the coloured bar. It must stay
+   transparent; otherwise the generic SVG-rect rule below hides the fill. */
+.sort-bar rect.bar-sheen {
+    fill: url(#bar-glass);
+    stroke: none;
+    stroke-width: 0;
 }
 
 svg text {

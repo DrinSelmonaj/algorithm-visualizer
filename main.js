@@ -91,7 +91,7 @@ onResizeRerender((newBars) => { currentBars = newBars; });
 
 /**
  * Parson tekstin e Custom Input në array numrash.
- * Kthen null nëse input-i është i pavlefshëm (bosh, pa numra të vlefshëm, < 2 elemente).
+ * Kthen null nëse input-i është i pavlefshëm (bosh, pa numra të vlefshëm, jashtë 5–45 elementeve).
  * Përndryshe kthen { values, filteredCount } — filteredCount numëron sa tokena
  * u shkruan nga përdoruesi por u refuzuan (jo numër, ose jashtë 0–999), në mënyrë
  * që thirrësi të mund t'i njoftojë përdoruesit saktësisht sa u injoruan.
@@ -102,9 +102,9 @@ function parseCustomArray(str) {
     if (!str || !str.trim()) return null;
     const rawTokens = str.split(',').map(s => s.trim()).filter(s => s.length > 0);
     const nums = rawTokens
-        .map(s => parseInt(s, 10))
-        .filter(n => !isNaN(n) && n >= 0 && n <= 999);
-    if (nums.length < 2 || nums.length > 100) return null;
+        .map(s => Number(s))
+        .filter(n => Number.isInteger(n) && n >= 0 && n <= 999);
+    if (nums.length < 5 || nums.length > 45) return null;
     return { values: nums, filteredCount: rawTokens.length - nums.length };
 }
 
@@ -165,6 +165,13 @@ function selectAlgorithm(algoKey) {
     stop();
     currentAlgo = algoKey;
     const algo = ALGORITHMS[algoKey];
+
+    // Linked List ekzekuton operacionet drejtpërdrejt nga paneli i vet;
+    // kontrollet globale Run/Pause/Step/Speed do të ishin të tepërta.
+    document.querySelector('.controls-bar')?.classList.toggle(
+        'controls-bar--linkedlist',
+        algoKey === 'linkedlist'
+    );
 
  // Emri dhe kompleksiteti
     document.getElementById('active-algo-name').textContent = algo.name;
@@ -292,6 +299,7 @@ function runAlgorithm() {
 
     setButtonState('pause', false);
     setButtonState('run', true);
+    setButtonState('step', true);
 
     run(
         currentGen,
@@ -303,6 +311,7 @@ function runAlgorithm() {
             if (cat === 'sorting') markAllSorted(currentBars);
             setButtonState('run', false);
             setButtonState('pause', true);
+            setButtonState('step', false);
         },
         speedValue
     );
@@ -428,7 +437,20 @@ function runDSOperation(operation, ...args) {
             if (val === null) { alert('Shkruaj një numër të plotë të vlefshëm.'); return; }
             if (operation === 'insertHead') gen = insertAtHead(val);
             if (operation === 'insertTail') gen = insertAtTail(val);
-            if (operation === 'delete')     gen = deleteLL(val);
+            if (operation === 'delete') {
+                const rawNext = String(args[1] ?? '').trim();
+                const nextIsNull = args[2] === true;
+                if (nextIsNull && rawNext !== '') {
+                    alert('Përdor ose "Pas saj" ose "Next = null", jo të dyja.');
+                    return;
+                }
+                const nextValue = rawNext === '' ? null : parseValidInt(rawNext);
+                if (rawNext !== '' && nextValue === null) {
+                    alert('"Pas saj" duhet të jetë një numër i plotë i vlefshëm.');
+                    return;
+                }
+                gen = deleteLL(val, nextValue, nextIsNull);
+            }
             if (operation === 'search')     gen = searchLL(val);
         } else if (operation === 'insertAfter') {
             const val   = parseValidInt(args[0]);
@@ -592,7 +614,7 @@ document.getElementById('btn-custom-apply').addEventListener('click', () => {
     const parsed = parseCustomArray(raw);
 
     if (!parsed) {
-        showCustomFeedback('Duhen 2–100 numra (0–999), të ndarë me presje.', 'error');
+        showCustomFeedback('Duhen 5–45 numra (0–999), të ndarë me presje.', 'error');
         return;
     }
 
@@ -617,8 +639,11 @@ document.getElementById('btn-custom-clear').addEventListener('click', () => {
     document.getElementById('custom-input-feedback').textContent = '';
     document.getElementById('custom-input-feedback').className = 'custom-input-feedback';
 
-    document.getElementById('size-slider').disabled = false;
-    document.getElementById('size-value').textContent = document.getElementById('size-slider').value;
+    const sizeSlider = document.getElementById('size-slider');
+    const randomSize = Math.floor(Math.random() * 41) + 5; // 5–45 elemente
+    sizeSlider.disabled = false;
+    sizeSlider.value = randomSize;
+    document.getElementById('size-value').textContent = randomSize;
 
     resetAlgorithm(true);
 });

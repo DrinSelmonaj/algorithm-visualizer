@@ -78,8 +78,14 @@ const DS_PANELS = {
                 onclick="window.__dsOp('insertAfter', document.getElementById('ds-input').value, document.getElementById('ds-after').value)">
                 → Pas vlerës
             </button>
+            <input type="number" id="ds-delete-next"
+                   placeholder="Pas saj (Fshi)" class="ds-input ds-input--small"
+                   title="Opsionale: fshi vlerën që ndiqet menjëherë nga kjo vlerë">
+            <label class="ds-null-next-option" title="Fshin vetëm nyjen e zgjedhur që është tail">
+                <input type="checkbox" id="ds-delete-next-null"> Next = null
+            </label>
             <button class="btn btn-secondary"
-                onclick="window.__dsOp('delete', document.getElementById('ds-input').value)">
+                onclick="window.__dsOp('delete', document.getElementById('ds-input').value, document.getElementById('ds-delete-next').value, document.getElementById('ds-delete-next-null').checked)">
                 Fshi
             </button>
             <button class="btn btn-secondary"

@@ -27,13 +27,23 @@ function render(head, svgId = 'main-svg') {
     const svg = document.getElementById(svgId);
     if (!svg) return;
     svg.innerHTML = '';
-    svg.setAttribute('viewBox', '0 0 700 320');
 
     addArrowDefs(svg);
 
     const nodes = [];
     let cur = head;
     while (cur && nodes.length < MAX_VIS) { nodes.push(cur); cur = cur.next; }
+
+    // 700 units nuk mjaftojnë për 5–6 nyje: nyja e gjashtë fillon në x=780.
+    // Zgjero viewBox-in sipas përmbajtjes që të përfshihen edhe shigjeta/null
+    // (dhe etiketa "+N more" kur ka nyje të fshehura) pa dalë jashtë SVG-së.
+    const lastX = nodes.length
+        ? START_X + (nodes.length - 1) * (NODE_W + GAP)
+        : START_X;
+    const contentEnd = nodes.length
+        ? lastX + NODE_W + (cur ? 250 : 110)
+        : START_X + 100;
+    svg.setAttribute('viewBox', `0 0 ${Math.max(700, contentEnd)} 320`);
 
     // reachedEnd = arritëm null-in real brenda MAX_VIS — nyja e fundit e
     // dukshme ËSHTË tail-i i vërtetë (jo thjesht e fundit para "+N more")
@@ -47,7 +57,6 @@ function render(head, svgId = 'main-svg') {
     });
 
     if (nodes.length > 0) {
-        const lastX = START_X + (nodes.length - 1) * (NODE_W + GAP);
         drawArrow(svg, lastX + NODE_W, CENTER_Y, lastX + NODE_W + 40, CENTER_Y);
         drawNull(svg, lastX + NODE_W + 46, CENTER_Y);
         // Nyje e vetme = head DHE tail njëkohësisht — një etiketë e kombinuar

@@ -37,12 +37,12 @@ const JAVA_SOURCE =
         }
     }
 
-    public void delete(int value) {
+    public void delete(int value, Integer nextValue, boolean nextIsNull) {
         if (head == null) return;
-        if (head.value == value) { head = head.next; return; }
+        if (head.value == value && (nextIsNull ? head.next == null : (nextValue == null || (head.next != null && head.next.value == nextValue)))) { head = head.next; return; }
         Node prev = head, cur = head.next;
         while (cur != null) {
-            if (cur.value == value) { prev.next = cur.next; return; }
+            if (cur.value == value && (nextIsNull ? cur.next == null : (nextValue == null || (cur.next != null && cur.next.value == nextValue)))) { prev.next = cur.next; return; }
             prev = cur; cur = cur.next;
         }
     }
@@ -207,27 +207,32 @@ function* insertAfterValue(value, target) {
 }
 
 // ── DELETE ─────────────────────────────────────────────────────────
-function* deleteLL(value) {
+function* deleteLL(value, nextValue = null, nextIsNull = false) {
+    const usesNextValue = nextValue !== null || nextIsNull;
+    const matchesTarget = (node) => node.value === value &&
+        (!usesNextValue || (nextIsNull ? node.next === null : (node.next && node.next.value === nextValue)));
+    const targetDescription = usesNextValue ? `${value} → ${nextIsNull ? 'null' : nextValue}` : String(value);
+
     if (!head) {
         yield { type: 'compare', dsType: 'linkedlist', message: 'Lista është bosh.', javaLine: 36 };
         return;
     }
 
-    if (head.value === value) {
-        yield { type: 'delete', dsType: 'linkedlist', nodeId: `ll-node-${head.id}`, message: `head (${value}) do të hiqet.`, javaLine: 37 };
+    if (matchesTarget(head)) {
+        yield { type: 'delete', dsType: 'linkedlist', nodeId: `ll-node-${head.id}`, message: `head (${targetDescription}) do të hiqet.`, javaLine: 37 };
         head = head.next;
-        yield { type: 'rerender', dsType: 'linkedlist', render: () => render(head), message: `${value} u hoq. head u ndryshua.`, javaLine: 37 };
+        yield { type: 'rerender', dsType: 'linkedlist', render: () => render(head), message: `${targetDescription} u hoq. head u ndryshua.`, javaLine: 37 };
         return;
     }
 
     let prev = head, cur = head.next;
     while (cur) {
-        yield { type: 'compare', dsType: 'linkedlist', nodeId: `ll-node-${cur.id}`, message: `Kontrollojmë nyjen ${cur.value}.`, javaLine: 40 };
+        yield { type: 'compare', dsType: 'linkedlist', nodeId: `ll-node-${cur.id}`, message: usesNextValue ? `Kontrollojmë çiftin ${cur.value} → ${cur.next ? cur.next.value : 'null'}.` : `Kontrollojmë nyjen ${cur.value}.`, javaLine: 40 };
 
-        if (cur.value === value) {
-            yield { type: 'delete', dsType: 'linkedlist', nodeId: `ll-node-${cur.id}`, message: `Gjendëm ${value} — rilidhet: ${prev.value}.next → ${cur.next ? cur.next.value : 'null'}.`, javaLine: 40 };
+        if (matchesTarget(cur)) {
+            yield { type: 'delete', dsType: 'linkedlist', nodeId: `ll-node-${cur.id}`, message: `Gjendëm ${targetDescription} — rilidhet: ${prev.value}.next → ${cur.next ? cur.next.value : 'null'}.`, javaLine: 40 };
             prev.next = cur.next;
-            yield { type: 'rerender', dsType: 'linkedlist', render: () => render(head), message: `${value} u hoq. Lista u rilidhë.`, javaLine: 40 };
+            yield { type: 'rerender', dsType: 'linkedlist', render: () => render(head), message: `${targetDescription} u hoq. Lista u rilidhë.`, javaLine: 40 };
             return;
         }
 
@@ -235,7 +240,7 @@ function* deleteLL(value) {
         cur  = cur.next;
     }
 
-    yield { type: 'compare', dsType: 'linkedlist', message: `${value} nuk u gjet.`, javaLine: 39 };
+    yield { type: 'compare', dsType: 'linkedlist', message: `${targetDescription} nuk u gjet.`, javaLine: 39 };
 }
 
 // ── SEARCH ─────────────────────────────────────────────────────────
