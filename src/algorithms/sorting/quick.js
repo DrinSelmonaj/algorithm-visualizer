@@ -47,7 +47,7 @@ function* partition(arr, low, high) {
     let i = low - 1;
 
     // Thekso pivot-in
-    yield { type: 'compare', indices: [high, high], javaLine: 11 };
+    yield { type: 'pivot', index: high, javaLine: 11 };
 
     for (let j = low; j < high; j++) {
         yield { type: 'compare', indices: [j, high], javaLine: 13 };
