@@ -1,7 +1,7 @@
 // src/engine/animator.js
 
 import { updateStats } from '../ui/controls.js';
-import { syncArrayState } from './sortRenderer.js';
+import { syncArrayState, getUsableHeight } from './sortRenderer.js';
 
 const stats = {
     comparisons: 0,
@@ -158,12 +158,14 @@ function updateBarHeight(bar, value, maxValue) {
     if (!bar || !maxValue) return;
     const [rect, sheen] = bar.querySelectorAll('rect');
     const label = bar.querySelector('text');
-    const svgH  = document.getElementById('main-svg').getBoundingClientRect().height - 48;
+    const svgH  = getUsableHeight();
     const newH  = (value / maxValue) * svgH;
+
     if (rect) {
         rect.setAttribute('height', newH);
         rect.setAttribute('y', svgH - newH);
     }
+
     // sheen-i "xhami" (rect #2, mbivendosje pa gjendje) duhet të ndjekë
     // saktësisht të njëjtën lartësi/pozicion si barRect, përndryshe mbetet
     // vizualisht i pasinkronizuar pas çdo hapi 'overwrite'.

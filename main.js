@@ -189,6 +189,15 @@ function selectAlgorithm(algoKey) {
 
     // Inicializo varësisht nga kategoria
     const cat = algo.category;
+
+    // Krahasime/Ndërrime/Hapi s'kanë kuptim algoritmik për Stack/Queue/
+    // LinkedList/HashMap (s'janë operacione krahasimi apo renditjeje) —
+    // fshihe krejt panelin në vend të shfaqjes së zerove pa kuptim.
+    document.querySelector('.stats-bar')?.classList.toggle(
+        'stats-bar--hidden',
+        cat === 'datastructures'
+    );
+
     if (cat === 'sorting' || cat === 'searching') {
         hideDSPanel();
         document.getElementById('bst-input-group').style.display = 'none';
@@ -376,6 +385,8 @@ function resetAlgorithm(forceRegenerate = false) {
         initGraph();
     } else if (cat === 'datastructures') {
         initDataStructure(currentAlgo);
+        setGroupEnabled('.ds-ops', true);   // Reset mund të ndërpresë një operacion në
+                                             // ekzekutim (onFinish() s'thirret kur stopRequest=true)
     }
 
     resetButtons();
@@ -478,13 +489,16 @@ function runDSOperation(operation, ...args) {
 
     if (!gen) return;
 
+    setGroupEnabled('.ds-ops', false);   // mbyll panelin — parandalon operacion të dytë
+                                          // të nisë mbi gjeneratorin ende aktiv
+
     run(
         gen,
         (step) => {
             applyStep(step, [], 'datastructures');
             if (step.javaLine) highlightLine(step.javaLine);
         },
-        () => {},
+        () => { setGroupEnabled('.ds-ops', true); },   // rihap kur mbaron natyrshëm
         speedValue
     );
 }

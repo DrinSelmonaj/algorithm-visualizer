@@ -334,6 +334,11 @@ svg rect {
     overflow: hidden;
     flex-shrink: 0;
 }
+/* Krahasime/Ndërrime/Hapi janë koncepte të renditjes/kërkimit — s'kanë
+   kuptim për Stack/Queue/LinkedList/HashMap. Toggle-uar nga selectAlgorithm(). */
+.stats-bar--hidden {
+    display: none;
+}
 
 .stat {
     display: flex;

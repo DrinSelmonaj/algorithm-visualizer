@@ -31,7 +31,17 @@ function render(buckets, svgId = 'main-svg') {
     const svg = document.getElementById(svgId);
     if (!svg) return;
     svg.innerHTML = '';
-    svg.setAttribute('viewBox', `0 0 700 ${START_Y + BUCKET_COUNT * ROW_GAP + 20}`);
+
+    // 700 njësi mjaftojnë vetëm për ~4 entries/bucket; nëse koliziona e
+    // kalojnë këtë, zinxhiri del jashtë viewBox-it (bug i konfirmuar).
+    // Gjejmë zinxhirin më të gjatë dhe zgjerojmë viewBox-in vetëm nëse duhet.
+    const maxChainLen = Math.max(0, ...Array.from({ length: BUCKET_COUNT }, (_, i) => (buckets[i] || []).length));
+    const chainStartX = START_X + BUCKET_W + 30;
+    const neededWidth  = maxChainLen > 0
+        ? chainStartX + maxChainLen * (CHAIN_W + CHAIN_GAP) + 40
+        : chainStartX + 60;
+
+    svg.setAttribute('viewBox', `0 0 ${Math.max(700, neededWidth)} ${START_Y + BUCKET_COUNT * ROW_GAP + 20}`);
 
     addArrowDefs(svg);
 

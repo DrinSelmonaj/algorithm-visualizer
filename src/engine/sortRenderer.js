@@ -183,4 +183,11 @@ function generateSortedArray(size, min = 5, max = 100) {
     return arr.sort((a, b) => a - b);
 }
 
-export { render, markAllSorted, generateArray, generateSortedArray, resetSortRenderer, onResizeRerender, syncArrayState };
+function getUsableHeight(svgId = 'main-svg') {
+    const svg = document.getElementById(svgId);
+    if (!svg) return 0;
+    const rect = svg.getBoundingClientRect();
+    return rect.height - SVG_PADDING * 2 - LABEL_OFFSET;
+}
+
+export { render, markAllSorted, generateArray, generateSortedArray, resetSortRenderer, onResizeRerender, syncArrayState, getUsableHeight };
