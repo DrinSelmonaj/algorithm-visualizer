@@ -42,20 +42,24 @@ const DEFAULT_GRAPH = {
 
 function* dijkstra(graph = DEFAULT_GRAPH, sourceId = 'A') {
     const nodes = graph.nodes.map(n => n.id);
-    const dist  = {};
-    const prev  = {};              // gjurmon nyjen paraardhëse për rindërtim rruge
+    const dist  = Object.create(null);
+    const prev  = Object.create(null); // gjurmon nyjen paraardhëse për rindërtim rruge
     const visited = new Set();
 
     nodes.forEach(id => { dist[id] = Infinity; prev[id] = null; });
     dist[sourceId] = 0;
 
-    const snap = () => {
-        const d = {};
-        nodes.forEach(id => { d[id] = dist[id] === Infinity ? '∞' : dist[id]; });
-        return d;
+    const snap = (updatedNodeId = null) => {
+        const distances = Object.create(null);
+        const predecessors = Object.create(null);
+        nodes.forEach(id => {
+            distances[id] = dist[id] === Infinity ? '∞' : dist[id];
+            predecessors[id] = prev[id];
+        });
+        return { distances, predecessors, sourceId, updatedNodeId };
     };
 
-    yield { type: 'current', nodeId: `graph-node-${sourceId}`, distances: snap(), javaLine: 8, message: `Nisim nga ${sourceId}. Të gjitha distancat = ∞.` };
+    yield { type: 'current', nodeId: `graph-node-${sourceId}`, distanceState: snap(), javaLine: 8, message: `Nisim nga ${sourceId}. Të gjitha distancat = ∞.` };
 
     while (visited.size < nodes.length) {
         let u = null;
@@ -66,7 +70,7 @@ function* dijkstra(graph = DEFAULT_GRAPH, sourceId = 'A') {
         if (u === null || dist[u] === Infinity) break;
         visited.add(u);
 
-        yield { type: 'visit', nodeId: `graph-node-${u}`, distances: snap(), javaLine: 11, message: `Procesojmë ${u} (dist = ${dist[u]}).` };
+        yield { type: 'visit', nodeId: `graph-node-${u}`, distanceState: snap(), javaLine: 11, message: `Procesojmë ${u} (dist = ${dist[u]}).` };
 
         // RREGULLIM: grafi është I PANDREJTUAR (undirected) vizualisht — një skaj
         // { source: 'A', target: 'D' } lejon lëvizje edhe A→D edhe D→A.
@@ -96,7 +100,7 @@ function* dijkstra(graph = DEFAULT_GRAPH, sourceId = 'A') {
             if (candidate < dist[v]) {
                 dist[v] = candidate;
                 prev[v] = u;        // ruaj paraardhësin për rindërtim rruge
-                yield { type: 'edge-accept', edgeId: eid, distances: snap(), javaLine: 15, message: `Përditësojmë dist[${v}] = ${candidate}.` };
+                yield { type: 'edge-accept', edgeId: eid, distanceState: snap(v), javaLine: 15, message: `Përditësojmë dist[${v}] = ${candidate}.` };
             } else {
                 yield { type: 'edge-reject', edgeId: eid, javaLine: 15, message: `${candidate} ≥ dist[${v}] = ${dist[v]}. Pa ndryshim.` };
             }
@@ -128,7 +132,7 @@ function* dijkstra(graph = DEFAULT_GRAPH, sourceId = 'A') {
         type: 'shortest',
         path: shortestNodes.map(id => `graph-node-${id}`),
         edges: shortestEdges,
-        distances: snap(),
+        distanceState: snap(),
         javaLine: 18,
         message: `Dijkstra përfundoi. Pema e rrugëve më të shkurtra theksohet në jeshile.`
     };

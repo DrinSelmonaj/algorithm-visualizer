@@ -78,12 +78,6 @@ function render(graph, svgId = 'main-svg') {
         .attr('text-anchor', 'middle')
         .attr('dominant-baseline', 'central')
         .text(d => d.id);
-    nodeSel.append('text')
-        .attr('class', 'graph-dist-label')
-        .attr('text-anchor', 'middle')
-        .attr('dy', -26)
-        .text('');
-
     simulation = d3.forceSimulation(graph.nodes)
         .force('link', d3.forceLink(graph.edges).id(d => d.id).distance(110))
         .force('charge', d3.forceManyBody().strength(-350))
