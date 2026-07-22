@@ -3,6 +3,7 @@
 
 import { render as renderBars, markAllSorted, generateArray, generateSortedArray, resetSortRenderer, onResizeRerender } from './src/engine/sortRenderer.js';
 import { initGraph, getGraph, addNode, addEdge } from './src/ui/graphBuilder.js';
+import { cloneGraph } from './src/graph/model.js';
 
 import { run, stepOnce, pause, resume, stop, getState } from './src/engine/scheduler.js';
 import { applyStep, resetStats } from './src/engine/animator.js';
@@ -10,6 +11,7 @@ import { applyStep, resetStats } from './src/engine/animator.js';
 import { bindControls, showDSPanel, showGraphPanel, hideDSPanel } from './src/ui/controls.js'
 import { showCode, highlightLine } from './src/ui/codePanel.js';
 import { showComplexity } from './src/ui/complexity.js';
+import { hideDistancePanel } from './src/ui/distancePanel.js';
 
 // ── Sorting algorithms ────────────────────────────────────────────
 import { bubbleSort,    JAVA_SOURCE as JAVA_BUBBLE    } from './src/algorithms/sorting/bubble.js';
@@ -26,7 +28,7 @@ import { linearSearch, JAVA_SOURCE as JAVA_LINEAR } from './src/algorithms/searc
 import { binarySearch, JAVA_SOURCE as JAVA_BINARY } from './src/algorithms/searching/binary.js';
 
 // ── Trees ─────────────────────────────────────────────────────────
-import { bstAlgorithm, bstSearch, init as initBST,
+import { bstAlgorithm, bstInsert, bstSearch, bstDelete, bstTraverse, init as initBST,
          JAVA_SOURCE as JAVA_BST } from './src/algorithms/bst.js'
 // ── Graphs ────────────────────────────────────────────────────────
 import { dijkstra, JAVA_SOURCE as JAVA_DIJKSTRA } from './src/algorithms/graph/dijkstra.js';
@@ -163,14 +165,19 @@ function setGroupEnabled(selector, enabled) {
 
 function selectAlgorithm(algoKey) {
     stop();
+    hideDistancePanel();
     currentAlgo = algoKey;
     const algo = ALGORITHMS[algoKey];
 
-    // Linked List ekzekuton operacionet drejtpërdrejt nga paneli i vet;
-    // kontrollet globale Run/Pause/Step/Speed do të ishin të tepërta.
+    // Strukturat e të dhënave i nisin operacionet drejtpërdrejt nga paneli i
+    // tyre; kontrollet globale Run/Pause/Step/Speed do të ishin të tepërta.
     document.querySelector('.controls-bar')?.classList.toggle(
-        'controls-bar--linkedlist',
-        algoKey === 'linkedlist'
+        'controls-bar--datastructures',
+        algo.category === 'datastructures'
+    );
+    document.querySelector('.controls-bar')?.classList.toggle(
+        'controls-bar--bst',
+        algoKey === 'bst'
     );
 
  // Emri dhe kompleksiteti
@@ -234,6 +241,7 @@ function selectAlgorithm(algoKey) {
         setGroupEnabled('.custom-input-group', false);
         initGraph();
         showGraphPanel((op, ...args) => runGraphOperation(op, ...args), !!algo.needsSourceNode);
+        setGroupEnabled('#graph-panel', true);
         document.getElementById('btn-run').disabled = false;
         document.getElementById('btn-reset').disabled = false;
 
@@ -282,11 +290,13 @@ function runAlgorithm() {
     if (cat === 'sorting') {
         currentGen = algo.gen([...currentArray]);
     } else if (cat === 'searching') {
-        const target = parseInt(prompt('Shkruaj numrin për të kërkuar:') || '0');
+        const target = requestSearchTarget();
+        if (target === null) return;
         currentGen = algo.gen([...currentArray], target);
     } else if (cat === 'graph') {
-        const graph = getGraph();
-        if (!graph) return;
+        const editableGraph = getGraph();
+        if (!editableGraph) return;
+        const graph = cloneGraph(editableGraph);
         let sourceId = 'A';
         if (algo.needsSourceNode) {
             const sourceInput = document.getElementById('graph-source-node');
@@ -309,6 +319,7 @@ function runAlgorithm() {
     setButtonState('pause', false);
     setButtonState('run', true);
     setButtonState('step', true);
+    if (cat === 'graph') setGroupEnabled('#graph-panel', false);
 
     run(
         currentGen,
@@ -318,11 +329,13 @@ function runAlgorithm() {
         },
         () => {
             if (cat === 'sorting') markAllSorted(currentBars);
+            if (cat === 'graph') setGroupEnabled('#graph-panel', true);
             setButtonState('run', false);
             setButtonState('pause', true);
             setButtonState('step', false);
         },
-        speedValue
+        speedValue,
+        () => handleExecutionError(cat)
     );
 }
 
@@ -336,7 +349,8 @@ function stepAlgorithm() {
         if (cat === 'sorting') {
             currentGen = algo.gen([...currentArray]);
         } else if (cat === 'searching') {
-            const target = parseInt(prompt('Shkruaj numrin për të kërkuar:') || '0');
+            const target = requestSearchTarget();
+            if (target === null) return;
             currentGen = algo.gen([...currentArray], target);
         } else {
             return;
@@ -381,8 +395,11 @@ function resetAlgorithm(forceRegenerate = false) {
         currentBars = renderBars(currentArray);
     } else if (cat === 'bst') {
         initBST(); // pastron root+uidCount NË BST.JS, jo vetëm SVG-në
+        setGroupEnabled('#bst-input-group', true);
     } else if (cat === 'graph') {
         initGraph();
+        hideDistancePanel();
+        setGroupEnabled('#graph-panel', true);
     } else if (cat === 'datastructures') {
         initDataStructure(currentAlgo);
         setGroupEnabled('.ds-ops', true);   // Reset mund të ndërpresë një operacion në
@@ -413,7 +430,29 @@ function resetAlgorithm(forceRegenerate = false) {
 function parseValidInt(str) {
     if (str == null || String(str).trim() === '') return null;
     const n = Number(str);
-    return Number.isFinite(n) ? Math.trunc(n) : null;
+    return Number.isInteger(n) ? n : null;
+}
+
+function requestSearchTarget() {
+    const raw = prompt('Shkruaj numrin e plotë për të kërkuar:');
+    if (raw === null) return null;
+    const target = parseValidInt(raw);
+    if (target === null) {
+        alert('Shkruaj një numër të plotë të vlefshëm.');
+        return null;
+    }
+    return target;
+}
+
+function handleExecutionError(category) {
+    console.error('Ekzekutimi dështoi.');
+    const status = document.getElementById('algo-status');
+    if (status) status.textContent = 'Ndodhi një gabim. Riprovo ose përdor Rikthe.';
+    if (category === 'graph') setGroupEnabled('#graph-panel', true);
+    setButtonState('run', false);
+    setButtonState('pause', true);
+    setButtonState('step', false);
+    setButtonState('reset', false);
 }
 
 // ─── Lidhja me Data Structure operations (nga UI) ─────────────────
@@ -473,8 +512,8 @@ function runDSOperation(operation, ...args) {
     } else if (currentAlgo === 'hashmap') {
         const key = String(args[0] ?? '').trim();
         if (operation === 'put') {
-            const value = String(args[1] ?? '').trim();
-            if (!key || !value) { alert('Kërkohen edhe Key edhe Value.'); return; }
+            const value = parseValidInt(args[1]);
+            if (!key || value === null) { alert('Kërkohen Key dhe një vlerë e plotë e vlefshme.'); return; }
             gen = put(key, value);
         }
         if (operation === 'get') {
@@ -499,15 +538,21 @@ function runDSOperation(operation, ...args) {
             if (step.javaLine) highlightLine(step.javaLine);
         },
         () => { setGroupEnabled('.ds-ops', true); },   // rihap kur mbaron natyrshëm
-        speedValue
+        speedValue,
+        () => handleExecutionError('datastructures')
     );
 }
 
 // ─── Lidhja me Graph operations (nga UI) ──────────────────────────
 // Thirret nga controls.js kur përdoruesi shton nyje/skaj te grafi
 function runGraphOperation(operation, ...args) {
-    if (operation === 'addNode') addNode(args[0].trim());
-    if (operation === 'addEdge') addEdge(args[0].trim(), args[1].trim(), args[2]);
+    if (getState().isRunning) return;
+    const result = operation === 'addNode'
+        ? addNode(args[0].trim())
+        : operation === 'addEdge'
+            ? addEdge(args[0].trim(), args[1].trim(), args[2])
+            : null;
+    if (result && !result.ok) alert(result.error);
 }
 
 // ─── Lidhja e butonave të sidebar-it ──────────────────────────────
@@ -542,34 +587,76 @@ document.getElementById('btn-pause').addEventListener('click', () => {
 document.getElementById('btn-reset').addEventListener('click', () => resetAlgorithm());
 document.getElementById('btn-step').addEventListener('click', stepAlgorithm);
 
-// ─── BST Input Buttons ────────────────────────────────────────────
+// ─── BST Operations ───────────────────────────────────────────────
+function runBSTOperation(generator) {
+    if (!generator) return;
+    currentGen = generator;
+    resetStats();
+    document.querySelectorAll('.bst-node.traversed')
+        .forEach(node => node.classList.remove('traversed'));
+    setGroupEnabled('#bst-input-group', false);
+    setButtonState('pause', false);
+    setButtonState('run', true);
+    setButtonState('step', true);
+
+    run(
+        currentGen,
+        (step) => { applyStep(step, [], 'bst'); if (step.javaLine) highlightLine(step.javaLine); },
+        () => {
+            currentGen = null;
+            setGroupEnabled('#bst-input-group', true);
+            setButtonState('run', false);
+            setButtonState('pause', true);
+            setButtonState('step', true);
+        },
+        speedValue,
+        () => {
+            currentGen = null;
+            setGroupEnabled('#bst-input-group', true);
+            handleExecutionError('bst');
+        }
+    );
+}
+
+function getBSTOperationValue() {
+    const value = parseValidInt(document.getElementById('bst-operation-input').value);
+    if (value === null) {
+        alert('Shkruaj një numër të plotë të vlefshëm.');
+        return null;
+    }
+    return value;
+}
+
 document.getElementById('btn-bst-run').addEventListener('click', () => {
     const input = document.getElementById('bst-values-input').value.trim() || '5,3,7,1,4';
-    const vals  = input.split(',')
-        .map(s => parseInt(s.trim(), 10))
-        .filter(n => !isNaN(n) && n > 0);
+    const vals = input.split(',').map(s => parseValidInt(s.trim()));
 
-    if (vals.length === 0) return;
-    resetStats();
-    const gen = bstAlgorithm(vals);
-    run(
-        gen,
-        (step) => { applyStep(step, [], 'bst'); if (step.javaLine) highlightLine(step.javaLine); },
-        () => {},
-        speedValue
-    );
+    if (vals.some(n => n === null || n <= 0)) {
+        alert('Vlerat e BST duhet të jenë numra të plotë pozitivë, të ndarë me presje.');
+        return;
+    }
+    runBSTOperation(bstAlgorithm(vals));
 });
 
 document.getElementById('btn-bst-search').addEventListener('click', () => {
-    const target = parseValidInt(document.getElementById('bst-search-input').value);
-    if (target === null) return;
-    const gen = bstSearch(target);
-    run(
-        gen,
-        (step) => { applyStep(step, [], 'bst'); if (step.javaLine) highlightLine(step.javaLine); },
-        () => {},
-        speedValue
-    );
+    const target = getBSTOperationValue();
+    if (target !== null) runBSTOperation(bstSearch(target));
+});
+
+document.getElementById('btn-bst-insert').addEventListener('click', () => {
+    const value = getBSTOperationValue();
+    if (value !== null) runBSTOperation(bstInsert(value));
+});
+
+document.getElementById('btn-bst-delete').addEventListener('click', () => {
+    const value = getBSTOperationValue();
+    if (value !== null) runBSTOperation(bstDelete(value));
+});
+
+['inorder', 'preorder', 'postorder'].forEach(mode => {
+    document.getElementById(`btn-bst-${mode}`).addEventListener('click', () => {
+        runBSTOperation(bstTraverse(mode));
+    });
 });
 
 document.getElementById('speed-slider').addEventListener('input', (e) => {
@@ -672,7 +759,7 @@ document.addEventListener('keydown', (e) => {
         document.getElementById('btn-bst-run')?.click();
         return;
     }
-    if (e.target.id === 'bst-search-input') {
+    if (e.target.id === 'bst-operation-input') {
         document.getElementById('btn-bst-search')?.click();
         return;
     }

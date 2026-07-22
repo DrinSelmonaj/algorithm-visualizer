@@ -248,6 +248,9 @@ svg rect {
 .bst-node.found circle     { fill: var(--accent-green);  stroke: var(--accent-green);  }
 .bst-node.inserting circle { fill: var(--accent-purple); stroke: var(--accent-purple); }
 .bst-node.deleting circle  { fill: var(--accent-red);    stroke: var(--accent-red);    }
+.bst-node.replacing circle { fill: var(--accent-orange); stroke: var(--accent-orange); }
+.bst-node.traversed circle { fill: rgba(16, 185, 129, 0.2); stroke: var(--accent-green); }
+.bst-node.traversed.visiting circle { fill: var(--accent-blue); stroke: var(--accent-blue); }
 .bst-edge.active           { stroke: var(--accent-blue); }
 
 /* ── Graph Nodes (Dijkstra / Kruskal) ── */
@@ -266,13 +269,6 @@ svg rect {
     text-anchor: middle;
     dominant-baseline: central;
     pointer-events: none;
-}
-
-.graph-dist-label {
-    fill: var(--accent-orange);
-    font-size: 12px;
-    font-weight: 700;
-    dominant-baseline: auto;   /* mbivendos .graph-node text (central) — distanca ulet mbi nyje, jo në qendër */
 }
 
 .graph-node:hover circle {
@@ -300,6 +296,48 @@ svg rect {
 .graph-edge.active           { stroke: var(--accent-blue);   stroke-width: 3; }
 .graph-edge.in-tree          { stroke: var(--accent-green);  stroke-width: 3; }
 .graph-edge.considering      { stroke: var(--accent-orange); stroke-width: 2; }
+
+/* ── Dijkstra: paneli i distancave ─────────────────────────────── */
+.distance-panel {
+    position: absolute;
+    z-index: 2;
+    top: 50%;
+    right: 16px;
+    transform: translateY(-50%);
+    width: min(238px, calc(100% - 32px));
+    padding: 13px 12px;
+    border-radius: 12px;
+    pointer-events: none;
+}
+
+.distance-panel h3 {
+    margin: 0 0 9px;
+    color: var(--text-muted);
+    font: 700 0.68rem/1 var(--font-mono);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.distance-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    align-items: center;
+    gap: 8px;
+    min-height: 29px;
+    padding: 3px 7px;
+    border-left: 3px solid transparent;
+    color: var(--text-secondary);
+    font: 0.75rem/1.2 var(--font-mono);
+    transition: background-color var(--transition), border-color var(--transition), color var(--transition);
+}
+
+.distance-value { color: var(--text-primary); font-weight: 700; }
+.distance-origin { min-width: 49px; color: var(--text-muted); font-size: 0.66rem; }
+.distance-row--source { border-left-color: var(--accent-blue); background: rgba(79, 142, 247, 0.12); }
+.distance-row--source .distance-value, .distance-row--source .distance-origin { color: var(--accent-blue); }
+.distance-row--updated { border-left-color: var(--accent-green); background: rgba(16, 185, 129, 0.13); }
+.distance-row--updated .distance-value, .distance-row--updated .distance-origin { color: var(--accent-green); }
+.distance-row--unreached, .distance-row--unreached .distance-value { color: var(--text-muted); }
 
 /* ── Kapitulli: Status live (Graf + Struktura të dhënash) ── */
 
@@ -395,6 +433,15 @@ svg rect {
     .svg-container {
         padding: 12px;
         min-height: 260px;
+    }
+
+    .distance-panel {
+        top: auto;
+        right: 12px;
+        bottom: 12px;
+        transform: none;
+        width: min(230px, calc(100% - 24px));
+        background: rgba(29, 31, 53, 0.94);
     }
 
     .stats-bar {

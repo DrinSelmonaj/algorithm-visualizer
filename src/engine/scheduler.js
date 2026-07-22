@@ -18,7 +18,7 @@ function wait(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-async function run(generator, onStep, onFinish, speed = 2) {
+async function run(generator, onStep, onFinish, speed = 2, onError = null) {
     // Nëse ka run aktiv, ndalo atë së pari
     if (isRunning) {
         stop();
@@ -32,24 +32,32 @@ async function run(generator, onStep, onFinish, speed = 2) {
     isPaused    = false;
     stopRequest = false;
 
-    for (const step of generator) {
-        // Kontrollojmë ID-në — nëse ka filluar run i ri, dil
-        if (stopRequest || myRunId !== activeRunId) break;
+    let completed = false;
+    try {
+        for (const step of generator) {
+            // Kontrollojmë ID-në — nëse ka filluar run i ri, dil
+            if (stopRequest || myRunId !== activeRunId) break;
 
-        while (isPaused && !stopRequest) {
-            await wait(100);
+            while (isPaused && !stopRequest) {
+                await wait(100);
+            }
+
+            if (stopRequest || myRunId !== activeRunId) break;
+
+            onStep(step);
+            await wait(SPEEDS[speed]);
         }
-
-        if (stopRequest || myRunId !== activeRunId) break;
-
-        onStep(step);
-        await wait(SPEEDS[speed]);
-    }
-
-    // Shëno si jo-aktiv vetëm nëse ky është run-i aktual
-    if (myRunId === activeRunId) {
-        isRunning = false;
-        if (!stopRequest) onFinish();
+        completed = !stopRequest && myRunId === activeRunId;
+    } catch (error) {
+        if (myRunId === activeRunId) onError?.(error);
+        else console.error('Gabim në një ekzekutim të vjetër:', error);
+    } finally {
+        // Çdo rrugë (edhe përjashtimi) e liron scheduler-in.
+        if (myRunId === activeRunId) {
+            isRunning = false;
+            isPaused = false;
+            if (completed) onFinish();
+        }
     }
 }
 

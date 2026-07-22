@@ -10,11 +10,24 @@
 function showCode(javaSource) {
     const el = document.getElementById('java-code-display');
     if (!el) return;
-    el.textContent = javaSource;
-    // Highlight.js ri-ngjyros elementin pas ndryshimit të tekstit
-    hljs.highlightElement(el);
-    // Fshi highlight-in e mëparshëm të rreshtit aktiv
-    clearLineHighlight();
+    el.replaceChildren();
+
+    javaSource.split('\n').forEach((line, index) => {
+        const row = document.createElement('span');
+        row.className = 'code-line';
+
+        const lineNumber = document.createElement('span');
+        lineNumber.className = 'line-number';
+        lineNumber.textContent = String(index + 1);
+
+        const content = document.createElement('span');
+        content.className = 'line-content';
+        // Highlight.js prodhon markup të sigurt nga teksti i kodit; struktura
+        // mbetet e izoluar për çdo rresht, ndaj s'kemi më regex mbi HTML.
+        content.innerHTML = hljs.highlight(line || ' ', { language: 'java', ignoreIllegals: true }).value;
+        row.append(lineNumber, content);
+        el.appendChild(row);
+    });
 }
 
 /**
@@ -27,27 +40,18 @@ function highlightLine(lineNumber) {
     const el = document.getElementById('java-code-display');
     if (!el || !lineNumber) return;
 
-    // Ndajmë kodin në rreshta, ngjyrosim rreshtin e duhur
-    const lines = el.innerHTML.split('\n');
-    if (lineNumber < 1 || lineNumber > lines.length) return;
-
-    lines[lineNumber - 1] =
-        `<span class="code-line-active">${lines[lineNumber - 1]}</span>`;
-
-    el.innerHTML = lines.join('\n');
+    const line = el.querySelector(`.code-line:nth-child(${lineNumber})`);
+    if (!line) return;
+    line.classList.add('active');
 
     // Scroll automatik te rreshti aktiv
-    const activeEl = el.querySelector('.code-line-active');
-    if (activeEl) activeEl.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    line.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
 }
 
 function clearLineHighlight() {
     const el = document.getElementById('java-code-display');
     if (!el) return;
-    // Hiq span-et e highlight-it pa prekur tekstin
-    el.innerHTML = el.innerHTML.replace(
-        /<span class="code-line-active">(.*?)<\/span>/g, '$1'
-    );
+    el.querySelectorAll('.code-line.active').forEach(line => line.classList.remove('active'));
 }
 
 export { showCode, highlightLine, clearLineHighlight };

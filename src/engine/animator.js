@@ -2,6 +2,7 @@
 
 import { updateStats } from '../ui/controls.js';
 import { syncArrayState, getUsableHeight } from './sortRenderer.js';
+import { renderDistancePanel } from '../ui/distancePanel.js';
 
 const stats = {
     comparisons: 0,
@@ -183,7 +184,7 @@ function updateBarHeight(bar, value, maxValue) {
 
 function applyBSTStep(step) {
     document.querySelectorAll('.bst-node').forEach(node => {
-        node.classList.remove('visiting', 'found', 'inserting', 'deleting');
+        node.classList.remove('visiting', 'found', 'inserting', 'deleting', 'replacing');
     });
     document.querySelectorAll('.bst-edge').forEach(edge => {
         edge.classList.remove('active');
@@ -202,6 +203,22 @@ function applyBSTStep(step) {
             break;
         case 'delete':
             if (step.nodeId) highlightBSTNode(step.nodeId, 'deleting');
+            break;
+        case 'replace':
+            if (step.nodeId) highlightBSTNode(step.nodeId, 'replacing');
+            if (step.replacementNodeId) highlightBSTNode(step.replacementNodeId, 'replacing');
+            break;
+        case 'traversal-start':
+            document.querySelectorAll('.bst-node.traversed')
+                .forEach(node => node.classList.remove('traversed'));
+            break;
+        case 'traverse':
+            if (step.nodeId) {
+                highlightBSTNode(step.nodeId, 'visiting');
+                document.getElementById(step.nodeId)?.classList.add('traversed');
+            }
+            break;
+        case 'traversal-complete':
             break;
         case 'rerender':
             if (step.render) step.render();
@@ -251,23 +268,13 @@ function applyGraphStep(step) {
             break;
     }
 
-    // step.distances vjen si { nodeId: vlerë } nga dijkstra.js (snap()) — jo
-    // te çdo lloj hapi, prandaj kontrollojmë ekzistencën para se të përditësojmë
-    if (step.distances) updateGraphDistanceLabels(step.distances);
+    // Vetëm Dijkstra dërgon distanceState; Kruskal nuk prek panelin.
+    if (step.distanceState) renderDistancePanel(step.distanceState);
 
     if (step.message) {
         const el = document.getElementById('algo-status');
         if (el) el.textContent = step.message;
     }
-}
-
-// Përditëson etiketën .graph-dist-label brenda çdo grupi <g id="graph-node-X">
-// me distancën aktuale nga step.distances (p.sh. { A: 0, B: 4, C: '∞' })
-function updateGraphDistanceLabels(distances) {
-    Object.entries(distances).forEach(([nodeId, dist]) => {
-        const label = document.querySelector(`#graph-node-${nodeId} .graph-dist-label`);
-        if (label) label.textContent = dist;
-    });
 }
 
 function highlightGraphNode(nodeId, state) {

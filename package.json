@@ -1,0 +1,9 @@
+{
+  "name": "algopro-ide",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test",
+    "check": "node --check main.js && find src -name '*.js' -exec node --check {} \\;"
+  }
+}
