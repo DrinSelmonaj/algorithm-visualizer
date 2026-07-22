@@ -204,6 +204,11 @@
                         Zgjidh një algoritëm nga lista
                     </text>
                 </svg>
+                <aside id="dijkstra-distance-panel" class="distance-panel glass-panel" hidden
+                       aria-label="Distancat aktuale të Dijkstra-s" aria-live="polite">
+                    <h3>Distancat aktuale</h3>
+                    <div id="dijkstra-distance-rows"></div>
+                </aside>
             </div>
 
             <!-- Statusi/mesazhi live i hapit aktual — i përbashkët për Graf + Struktura
@@ -260,12 +265,23 @@
 
                 <!-- BST Input — shfaqet vetëm kur BST është aktiv -->
                 <div id="bst-input-group" class="bst-input-group">
-                    <input type="text" id="bst-values-input"
-                           placeholder="p.sh. 5,3,7,1,4" class="ds-input" style="width:150px;">
-                    <button id="btn-bst-run" class="btn btn-primary">Krijo pemën</button>
-                    <input type="number" id="bst-search-input"
-                           placeholder="Vlera" title="Kërko vlerën" class="ds-input ds-input--small">
-                    <button id="btn-bst-search" class="btn btn-secondary">Kërko</button>
+                    <div class="bst-control-row">
+                        <input type="text" id="bst-values-input"
+                               placeholder="p.sh. 5,3,7,1,4" class="ds-input bst-values-input">
+                        <button id="btn-bst-run" class="btn btn-primary">Krijo pemën</button>
+                    </div>
+                    <div class="bst-control-row">
+                        <input type="number" step="1" id="bst-operation-input"
+                               placeholder="Vlera" title="Vlera për futje, fshirje ose kërkim" class="ds-input ds-input--small">
+                        <button id="btn-bst-insert" class="btn btn-primary">Fut</button>
+                        <button id="btn-bst-delete" class="btn btn-secondary">Fshi</button>
+                        <button id="btn-bst-search" class="btn btn-secondary">Kërko</button>
+                    </div>
+                    <div class="bst-control-row bst-traversal-row" aria-label="Mënyrat e traversal-it">
+                        <button id="btn-bst-inorder" class="btn btn-secondary">In-order</button>
+                        <button id="btn-bst-preorder" class="btn btn-secondary">Pre-order</button>
+                        <button id="btn-bst-postorder" class="btn btn-secondary">Post-order</button>
+                    </div>
                 </div>
 
                 <!-- DS Panel — Stack / Queue / LinkedList / HashMap -->

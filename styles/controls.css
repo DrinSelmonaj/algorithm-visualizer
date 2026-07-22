@@ -16,13 +16,18 @@
     gap: 8px;
 }
 
-/* Linked List përdor butonat e operacioneve (Head, Tail, Fshi, Kërko)
-   drejtpërdrejt. Fshih kontrollet e xhirimit që nuk i përdor, por lër
-   Reset-in që lista të mund të pastrohet. */
-.controls-bar--linkedlist #btn-run,
-.controls-bar--linkedlist #btn-pause,
-.controls-bar--linkedlist #btn-step,
-.controls-bar--linkedlist .speed-control {
+/* Strukturat e të dhënave përdorin butonat e operacioneve të panelit të vet.
+   Fshih kontrollet e xhirimit dhe shpejtësinë, por lër Rikthe për pastrim. */
+.controls-bar--datastructures #btn-run,
+.controls-bar--datastructures #btn-pause,
+.controls-bar--datastructures #btn-step,
+.controls-bar--datastructures .speed-control {
+    display: none;
+}
+
+/* BST nis operacionet nga workspace-i i vet; "Hap" global s'ka generator
+   manual të pavarur, ndaj e fshehim dhe mbajmë Play/Pauzë për rifillim. */
+.controls-bar--bst #btn-step {
     display: none;
 }
 
@@ -292,9 +297,19 @@ input[type="range"]::-moz-range-thumb {
 /* ── BST Input ── */
 .bst-input-group {
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    align-items: flex-start;
     gap: 8px;
 }
+
+.bst-control-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.bst-values-input { width: 150px; }
 /* ── Kapitulli 2: Custom Input (vlera manuale sorting/searching) ── */
 .custom-input-group {
     display: flex;
