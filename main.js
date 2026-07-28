@@ -169,6 +169,12 @@ function selectAlgorithm(algoKey) {
     currentAlgo = algoKey;
     const algo = ALGORITHMS[algoKey];
 
+// Nga zgjedhja e parë e algoritmit e tutje, controls-bar dhe badge-t/
+    // custom-input s'janë më "idle" — mbeten gjithmonë të dukshme.
+
+    document.querySelector('.controls-bar')?.classList.remove('controls-bar--idle');
+    document.querySelector('.algo-info-bar-right')?.classList.remove('algo-info-bar-right--idle');
+    
     // Strukturat e të dhënave i nisin operacionet drejtpërdrejt nga paneli i
     // tyre; kontrollet globale Run/Pause/Step/Speed do të ishin të tepërta.
     document.querySelector('.controls-bar')?.classList.toggle(
@@ -178,6 +184,13 @@ function selectAlgorithm(algoKey) {
     document.querySelector('.controls-bar')?.classList.toggle(
         'controls-bar--bst',
         algoKey === 'bst'
+    );
+    // Stack/Queue/LinkedList/HashMap kanë viewBox të vetin, fiks (max 7
+    // elemente të dukshme + "+N more") — s'kanë nevojë të shtrihen flex:1
+    // deri poshtë; kur janë bosh/vogla, kjo linte hapësirë bosh të madhe.
+    document.querySelector('.visualizer-zone')?.classList.toggle(
+        'visualizer-zone--compact',
+        algo.category === 'datastructures'
     );
 
  // Emri dhe kompleksiteti
@@ -754,13 +767,15 @@ document.addEventListener('keydown', (e) => {
     if (e.key !== 'Enter') return;
     if (e.target.tagName !== 'INPUT') return;
 
-    // BST — 2 input-e specifike, secili me buton të vetin
+    // BST — bst-values-input krijon pemën; bst-operation-input i shërben tani
+    // 3 butonave (Fut/Fshi/Kërko), ndaj Enter aktivizon primary-n (Fut),
+    // njësoj si çdo formë ku Enter s'e di cilin buton "i dedikuar" ke parasysh
     if (e.target.id === 'bst-values-input') {
         document.getElementById('btn-bst-run')?.click();
         return;
     }
     if (e.target.id === 'bst-operation-input') {
-        document.getElementById('btn-bst-search')?.click();
+        document.getElementById('btn-bst-insert')?.click();
         return;
     }
     if (e.target.id === 'custom-array-input') {

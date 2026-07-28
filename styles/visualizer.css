@@ -2,15 +2,33 @@
 .visualizer-zone {
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+   overflow-y: auto;
+    overflow-x: hidden;
     background-color: var(--bg-primary);
 }
+.visualizer-zone--idle .svg-container {
+    flex: 0 0 400px;
+    max-height: 400px;
+    margin: 24px;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+}
 
+/* Stack/Queue/LinkedList/HashMap: viewBox fiks (max 7 elemente + "+N more"),
+   s'kanë nevojë të shtrihen flex:1 deri poshtë — kur janë bosh/vogla, kjo
+   linte një hapësirë bosh të madhe nën përmbajtjen aktuale. */
+.visualizer-zone--compact .svg-container {
+    flex: 0 1 560px;
+    max-height: 560px;
+}
 /* ── Info Bar ── */
 .algo-info-bar {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    flex-wrap: wrap;
+    row-gap: 10px;
     padding: 14px 24px;
     border-bottom: 1px solid var(--border);
     flex-shrink: 0;
@@ -20,6 +38,7 @@
     font-size: 1rem;
     font-weight: 600;
     color: var(--text-primary);
+    white-space: nowrap;
 }
 
 .algo-info-bar-right {
@@ -28,6 +47,11 @@
     gap: 16px;
     flex-wrap: wrap;
 }
+/* Time/Space badges + Custom Input s'kanë kuptim para se të zgjidhet një
+   algoritëm — fshihen në gjendjen fillestare, hiqet nga selectAlgorithm(). */
+.algo-info-bar-right--idle {
+    display: none;
+}
 
 .complexity-badges {
     display: flex;
@@ -35,15 +59,18 @@
 }
 
 .badge {
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     font-weight: 600;
-    padding: 4px 12px;
+    padding: 0.3rem 0.7rem;
     border-radius: 20px;
     background-color: var(--bg-card);
     border: 1px solid var(--border);
     color: var(--text-secondary);
     font-family: var(--font-mono);
-    transition: color var(--transition), border-color var(--transition), background-color var(--transition);
+    display: inline-flex;
+    align-items: center;
+    backdrop-filter: blur(6px);
+    transition: all 0.2s ease;
 }
 
 .badge.active {
@@ -51,17 +78,20 @@
     border-color: var(--accent-green);
 }
 
-/* Badge specifike sipas tipit — Time (Tertiary/koral) vs Space (Secondary/jeshile) */
-#badge-time {
-    background-color: rgba(251, 113, 133, 0.12);
-    border-color: rgba(251, 113, 133, 0.35);
-    color: var(--accent-red);
+/* Badge uniforme — blu, siç kërkon draft-i visual-theme.css (aty ku #38bdf8
+   përdoret për Time/Space); përdoret accent-blue ekzistues (#4f8ef7) në vend
+   të bluas së re të temës, që të mos ketë dy nuanca blu të ndryshme në UI. */
+#badge-time,
+#badge-space {
+    background-color: rgba(79, 142, 247, 0.1);
+    border-color: rgba(79, 142, 247, 0.25);
+    color: var(--accent-blue);
 }
 
-#badge-space {
-    background-color: rgba(16, 185, 129, 0.12);
-    border-color: rgba(16, 185, 129, 0.35);
-    color: var(--accent-green);
+#badge-time:hover,
+#badge-space:hover {
+    background-color: rgba(79, 142, 247, 0.2);
+    border-color: var(--accent-blue);
 }
 
 /* ── Kapitulli 2: Custom Input, tani brenda algo-info-bar (jo controls-bar) ── */
@@ -324,20 +354,37 @@ svg rect {
     align-items: center;
     gap: 8px;
     min-height: 29px;
-    padding: 3px 7px;
+    padding: 0.5rem 0.75rem;
+    margin-bottom: 0.35rem;
+    border-radius: 8px;
+    border: 1px solid transparent;
     border-left: 3px solid transparent;
+    background: rgba(15, 23, 42, 0.4);
     color: var(--text-secondary);
     font: 0.75rem/1.2 var(--font-mono);
-    transition: background-color var(--transition), border-color var(--transition), color var(--transition);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.distance-row:last-child {
+    margin-bottom: 0;
 }
 
 .distance-value { color: var(--text-primary); font-weight: 700; }
 .distance-origin { min-width: 49px; color: var(--text-muted); font-size: 0.66rem; }
 .distance-row--source { border-left-color: var(--accent-blue); background: rgba(79, 142, 247, 0.12); }
 .distance-row--source .distance-value, .distance-row--source .distance-origin { color: var(--accent-blue); }
-.distance-row--updated { border-left-color: var(--accent-green); background: rgba(16, 185, 129, 0.13); }
+.distance-row--updated {
+    border-left-color: var(--accent-green);
+    background: rgba(16, 185, 129, 0.13);
+    animation: pulseHighlight 0.8s ease-out;
+}
 .distance-row--updated .distance-value, .distance-row--updated .distance-origin { color: var(--accent-green); }
-.distance-row--unreached, .distance-row--unreached .distance-value { color: var(--text-muted); }
+.distance-row--unreached, .distance-row--unreached .distance-value { color: var(--text-muted); opacity: 0.4; }
+
+@keyframes pulseHighlight {
+    0% { transform: scale(1.02); box-shadow: 0 0 15px rgba(16, 185, 129, 0.5); }
+    100% { transform: scale(1); box-shadow: none; }
+}
 
 /* ── Kapitulli: Status live (Graf + Struktura të dhënash) ── */
 
