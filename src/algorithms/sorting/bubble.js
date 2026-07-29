@@ -23,19 +23,28 @@ function* bubbleSort(array) {
     for (let i = 0; i < n - 1; i++) {
         for (let j = 0; j < n - i - 1; j++) {
             // Krahasim — animator e ngjyros çiftin
-            yield { type: 'compare', indices: [j, j + 1], javaLine: 6 };
+            yield {
+                type: 'compare', indices: [j, j + 1], javaLine: 6,
+                message: `Krahasojmë arr[${j}]=${arr[j]} me arr[${j + 1}]=${arr[j + 1]}.`
+            };
 
             if (arr[j] > arr[j + 1]) {
                 [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
                 // Ndërrrim — animator e bën swap-in vizual
-                yield { type: 'swap', indices: [j, j + 1], state: [...arr], javaLine: 9 };
+                yield {
+                    type: 'swap', indices: [j, j + 1], state: [...arr], javaLine: 9,
+                    message: `${arr[j + 1]} > ${arr[j]} — ndërrojmë arr[${j}] me arr[${j + 1}].`
+                };
             }
         }
         // Elementi i fundit i pasit është në pozicionin e tij final
-        yield { type: 'sorted', index: n - i - 1, javaLine: 4 };
+        yield {
+            type: 'sorted', index: n - i - 1, javaLine: 4,
+            message: `arr[${n - i - 1}]=${arr[n - i - 1]} është në vendin përfundimtar.`
+        };
     }
 
-    yield { type: 'sorted', index: 0 };
+    yield { type: 'sorted', index: 0, message: `arr[0]=${arr[0]} është në vendin përfundimtar. Renditja përfundoi.` };
 }
 
 export { bubbleSort, JAVA_SOURCE };

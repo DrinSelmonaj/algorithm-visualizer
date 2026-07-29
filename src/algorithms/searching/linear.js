@@ -16,7 +16,7 @@ function* linearSearch(array, target) {
     yield { type: 'info', message: `Kërkojmë: ${target}` };
 
     for (let i = 0; i < arr.length; i++) {
-        yield { type: 'compare', indices: [i], javaLine: 3 };
+        yield { type: 'compare', indices: [i], javaLine: 3, message: `Krahasojmë arr[${i}]=${arr[i]} me ${target}.` };
         if (arr[i] === target) {
             yield { type: 'found', indices: [i], javaLine: 4, message: `${target} u gjet në indeksin ${i}.` };
             return;

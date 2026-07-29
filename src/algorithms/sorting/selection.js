@@ -26,19 +26,25 @@ function* selectionSort(array) {
         let minIdx = i;
 
         for (let j = i + 1; j < n; j++) {
-            yield { type: 'compare', indices: [j, minIdx], javaLine: 7 };
+            yield {
+                type: 'compare', indices: [j, minIdx], javaLine: 7,
+                message: `Krahasojmë arr[${j}]=${arr[j]} me minIdx aktual arr[${minIdx}]=${arr[minIdx]}.`
+            };
             if (arr[j] < arr[minIdx]) minIdx = j;
         }
 
         if (minIdx !== i) {
             [arr[i], arr[minIdx]] = [arr[minIdx], arr[i]];
-            yield { type: 'swap', indices: [i, minIdx], state: [...arr], javaLine: 12 };
+            yield {
+                type: 'swap', indices: [i, minIdx], state: [...arr], javaLine: 12,
+                message: `Minimumi ${arr[i]} u gjet te indeksi ${minIdx} — ndërrojmë me arr[${i}].`
+            };
         }
 
-        yield { type: 'sorted', index: i, javaLine: 4 };
+        yield { type: 'sorted', index: i, javaLine: 4, message: `arr[${i}]=${arr[i]} është në vendin përfundimtar.` };
     }
 
-    yield { type: 'sorted', index: n - 1 };
+    yield { type: 'sorted', index: n - 1, message: `arr[${n - 1}]=${arr[n - 1]} është në vendin përfundimtar. Renditja përfundoi.` };
 }
 
 export { selectionSort, JAVA_SOURCE };

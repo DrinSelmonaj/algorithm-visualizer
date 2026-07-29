@@ -27,21 +27,33 @@ function* shellSort(array) {
             const temp = arr[i];
             let j = i;
 
-            yield { type: 'compare', indices: [j, j - gap], javaLine: 8 };
+            yield {
+                type: 'compare', indices: [j, j - gap], javaLine: 8,
+                message: `gap=${gap}. Krahasojmë arr[${j}]=${arr[j]} me arr[${j - gap}]=${arr[j - gap]}.`
+            };
 
             while (j >= gap && arr[j - gap] > temp) {
                 arr[j] = arr[j - gap];
-                yield { type: 'overwrite', index: j, value: arr[j], state: [...arr], javaLine: 9 };
+                yield {
+                    type: 'overwrite', index: j, value: arr[j], state: [...arr], javaLine: 9,
+                    message: `arr[${j - gap}]=${arr[j]} > ${temp} — zhvendosim te arr[${j}].`
+                };
                 j -= gap;
-                if (j >= gap) yield { type: 'compare', indices: [j, j - gap], javaLine: 8 };
+                if (j >= gap) yield {
+                    type: 'compare', indices: [j, j - gap], javaLine: 8,
+                    message: `gap=${gap}. Krahasojmë temp=${temp} me arr[${j - gap}]=${arr[j - gap]}.`
+                };
             }
 
             arr[j] = temp;
-            yield { type: 'overwrite', index: j, value: temp, state: [...arr], javaLine: 11 };
+            yield {
+                type: 'overwrite', index: j, value: temp, state: [...arr], javaLine: 11,
+                message: `Vendosim temp=${temp} te arr[${j}].`
+            };
         }
     }
 
-    for (let i = 0; i < n; i++) yield { type: 'sorted', index: i };
+    for (let i = 0; i < n; i++) yield { type: 'sorted', index: i, message: `arr[${i}]=${arr[i]} është pjesë e rezultatit të renditur.` };
 }
 
 export { shellSort, JAVA_SOURCE };

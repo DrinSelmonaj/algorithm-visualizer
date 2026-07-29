@@ -29,7 +29,7 @@ function* mergeSort(array) {
     yield* mergeSortHelper(arr, 0, arr.length - 1);
     // Shënoji të gjithë si të renditur në fund
     for (let i = 0; i < arr.length; i++) {
-        yield { type: 'sorted', index: i };
+        yield { type: 'sorted', index: i, message: `arr[${i}]=${arr[i]} është pjesë e rezultatit të renditur.` };
     }
 }
 
@@ -47,23 +47,35 @@ function* merge(arr, l, m, r) {
     let i = 0, j = 0, k = l;
 
     while (i < left.length && j < right.length) {
-        yield { type: 'compare', indices: [l + i, m + 1 + j], javaLine: 16 };
+        yield {
+            type: 'compare', indices: [l + i, m + 1 + j], javaLine: 16,
+            message: `Krahasojmë ${left[i]} (majtas) me ${right[j]} (djathtas).`
+        };
         if (left[i] <= right[j]) {
             arr[k++] = left[i++];
         } else {
             arr[k++] = right[j++];
         }
-        yield { type: 'overwrite', index: k - 1, value: arr[k - 1], state: [...arr], javaLine: 16 };
+        yield {
+            type: 'overwrite', index: k - 1, value: arr[k - 1], state: [...arr], javaLine: 16,
+            message: `Vendosim ${arr[k - 1]} te arr[${k - 1}] (vlera më e vogël).`
+        };
     }
 
     while (i < left.length) {
         arr[k++] = left[i++];
-        yield { type: 'overwrite', index: k - 1, value: arr[k - 1], state: [...arr], javaLine: 18 };
+        yield {
+            type: 'overwrite', index: k - 1, value: arr[k - 1], state: [...arr], javaLine: 18,
+            message: `Kopjojmë mbetjen e majtë ${arr[k - 1]} te arr[${k - 1}].`
+        };
     }
 
     while (j < right.length) {
         arr[k++] = right[j++];
-        yield { type: 'overwrite', index: k - 1, value: arr[k - 1], state: [...arr], javaLine: 19 };
+        yield {
+            type: 'overwrite', index: k - 1, value: arr[k - 1], state: [...arr], javaLine: 19,
+            message: `Kopjojmë mbetjen e djathtë ${arr[k - 1]} te arr[${k - 1}].`
+        };
     }
 }
 

@@ -28,13 +28,13 @@ function* quickSort(array) {
     const arr = [...array];
     yield* quickSortHelper(arr, 0, arr.length - 1);
     for (let i = 0; i < arr.length; i++) {
-        yield { type: 'sorted', index: i };
+        yield { type: 'sorted', index: i, message: `arr[${i}]=${arr[i]} është pjesë e rezultatit të renditur.` };
     }
 }
 
 function* quickSortHelper(arr, low, high) {
     if (low >= high) {
-        if (low === high) yield { type: 'sorted', index: low };
+        if (low === high) yield { type: 'sorted', index: low, message: `arr[${low}]=${arr[low]} — element i vetëm, tashmë i renditur.` };
         return;
     }
     const pi = yield* partition(arr, low, high);
@@ -47,20 +47,29 @@ function* partition(arr, low, high) {
     let i = low - 1;
 
     // Thekso pivot-in
-    yield { type: 'pivot', index: high, javaLine: 11 };
+    yield { type: 'pivot', index: high, javaLine: 11, message: `Pivot = arr[${high}] = ${pivot}.` };
 
     for (let j = low; j < high; j++) {
-        yield { type: 'compare', indices: [j, high], javaLine: 13 };
+        yield {
+            type: 'compare', indices: [j, high], javaLine: 13,
+            message: `Krahasojmë arr[${j}]=${arr[j]} me pivot=${pivot}.`
+        };
         if (arr[j] <= pivot) {
             i++;
             [arr[i], arr[j]] = [arr[j], arr[i]];
-            yield { type: 'swap', indices: [i, j], state: [...arr], javaLine: 15 };
+            yield {
+                type: 'swap', indices: [i, j], state: [...arr], javaLine: 15,
+                message: `${arr[j]} ≤ pivot — ndërrojmë arr[${i}] me arr[${j}].`
+            };
         }
     }
 
     [arr[i + 1], arr[high]] = [arr[high], arr[i + 1]];
-    yield { type: 'swap', indices: [i + 1, high], state: [...arr], javaLine: 18 };
-    yield { type: 'sorted', index: i + 1 };
+    yield {
+        type: 'swap', indices: [i + 1, high], state: [...arr], javaLine: 18,
+        message: `Vendosim pivot-in ${arr[i + 1]} në pozicionin e tij final ${i + 1}.`
+    };
+    yield { type: 'sorted', index: i + 1, message: `arr[${i + 1}]=${arr[i + 1]} (pivot) është në vendin përfundimtar.` };
 
     return i + 1;
 }
