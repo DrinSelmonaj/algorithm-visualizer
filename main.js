@@ -9,6 +9,7 @@ import { run, stepOnce, pause, resume, stop, getState } from './src/engine/sched
 import { applyStep, resetStats } from './src/engine/animator.js';
 
 import { bindControls, showDSPanel, showGraphPanel, hideDSPanel } from './src/ui/controls.js'
+import { initAlgoSearch } from './src/ui/algoSearch.js';
 import { showCode, highlightLine } from './src/ui/codePanel.js';
 import { showComplexity } from './src/ui/complexity.js';
 import { hideDistancePanel } from './src/ui/distancePanel.js';
@@ -798,3 +799,4 @@ document.addEventListener('keydown', (e) => {
 setGroupEnabled('.custom-input-group', false);
 setGroupEnabled('.size-control', false);
 setGroupEnabled('#bst-input-group', false);
+initAlgoSearch();

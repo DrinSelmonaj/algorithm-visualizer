@@ -144,6 +144,63 @@ button:focus-visible {
     margin-bottom: 8px;
 }
 
+/* ── Kërkim funksional mbi algoritmet ── */
+.algo-search {
+    position: relative;
+    flex-shrink: 0;
+}
+
+.algo-search-input {
+    width: 100%;
+    padding: 8px 12px 8px 32px;
+    background-color: rgba(15, 23, 42, 0.6);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-family: var(--font-main);
+    font-size: 0.83rem;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+.algo-search-input::placeholder {
+    color: var(--text-muted);
+}
+
+.algo-search-input:focus {
+    border-color: var(--accent-blue);
+    box-shadow: 0 0 0 3px rgba(79, 142, 247, 0.25);
+}
+
+.algo-search-icon {
+    position: absolute;
+    left: 9px;
+    top: 50%;
+    width: 15px;
+    height: 15px;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    pointer-events: none;
+}
+
+.algo-search-empty {
+    display: none;
+    margin: 0 0 8px;
+    padding: 10px 8px;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.78rem;
+}
+
+.algo-search-empty--visible {
+    display: block;
+}
+
+.algo-group--hidden,
+.algo-btn--hidden {
+    display: none;
+}
+
 /* ── Dropdown (details/summary) — zëvendëson h3 statik ── */
 .algo-group-title {
     display: flex;
