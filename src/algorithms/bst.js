@@ -144,27 +144,33 @@ function* bstSearch(value) {
         }
     }
 
-    yield { type: 'visit', javaLine: 28, message: `${value} nuk u gjet.` };
+    yield { type: 'visit', javaLine: 26, message: `${value} nuk u gjet.` };
 }
 
 // ── DELETE ───────────────────────────────────────────────────────
 // Përdor successor-in in-order për rastin me dy fëmijë, ashtu si kodi Java.
+// javaLine-t këtu ndjekin deleteRec() rresht për rresht (30-41 në JAVA_SOURCE);
+// rastet majtas/djathtas janë dinamike, njësoj si te bstInsert.
 function* bstDelete(value) {
     if (!root) {
-        yield { type: 'visit', javaLine: 28, message: 'Pema është bosh.' };
+        yield { type: 'visit', javaLine: 31, message: 'Pema është bosh.' };
         return;
     }
 
     let parent = null;
     let cur = root;
     while (cur && cur.value !== value) {
-        yield { type: 'visit', nodeId: `bst-node-${cur.id}`, javaLine: 30, message: `Kërkojmë ${value}: kontrollojmë ${cur.value}.` };
+        const goingLeft = value < cur.value;
+        yield {
+            type: 'visit', nodeId: `bst-node-${cur.id}`, javaLine: goingLeft ? 32 : 33,
+            message: `Kërkojmë ${value}: ${goingLeft ? `${value} < ${cur.value} — majtas` : `${value} > ${cur.value} — djathtas`}.`
+        };
         parent = cur;
-        cur = value < cur.value ? cur.left : cur.right;
+        cur = goingLeft ? cur.left : cur.right;
     }
 
     if (!cur) {
-        yield { type: 'visit', javaLine: 29, message: `${value} nuk u gjet — pema nuk ndryshon.` };
+        yield { type: 'visit', javaLine: 31, message: `${value} nuk u gjet — pema nuk ndryshon.` };
         return;
     }
 
@@ -175,38 +181,39 @@ function* bstDelete(value) {
     };
 
     if (!cur.left && !cur.right) {
-        yield { type: 'delete', nodeId: `bst-node-${cur.id}`, javaLine: 33, message: `${value} është leaf — e heqim drejtpërdrejt.` };
+        yield { type: 'delete', nodeId: `bst-node-${cur.id}`, javaLine: 35, message: `${value} është leaf — e heqim drejtpërdrejt.` };
         replaceChild(cur, null);
-        yield { type: 'rerender', render: () => rerender(root), javaLine: 33, message: `${value} u fshi.` };
+        yield { type: 'rerender', render: () => rerender(root), javaLine: 35, message: `${value} u fshi.` };
         return;
     }
 
     if (!cur.left || !cur.right) {
         const child = cur.left || cur.right;
+        const childLine = !cur.left ? 35 : 36; // node.left == null → line 35, node.right == null → line 36
         yield {
             type: 'replace', nodeId: `bst-node-${cur.id}`, replacementNodeId: `bst-node-${child.id}`,
-            javaLine: 34, message: `${value} ka një fëmijë — ${child.value} zë vendin e saj.`
+            javaLine: childLine, message: `${value} ka një fëmijë — ${child.value} zë vendin e saj.`
         };
         replaceChild(cur, child);
-        yield { type: 'rerender', render: () => rerender(root), javaLine: 34, message: `${value} u fshi dhe lidhja u rivendos.` };
+        yield { type: 'rerender', render: () => rerender(root), javaLine: childLine, message: `${value} u fshi dhe lidhja u rivendos.` };
         return;
     }
 
     let successorParent = cur;
     let successor = cur.right;
-    yield { type: 'visit', nodeId: `bst-node-${successor.id}`, javaLine: 35, message: `Gjejmë successor-in: nisim te nënpema e djathtë (${successor.value}).` };
+    yield { type: 'visit', nodeId: `bst-node-${successor.id}`, javaLine: 37, message: `Gjejmë successor-in: nisim te nënpema e djathtë (${successor.value}).` };
     while (successor.left) {
         successorParent = successor;
         successor = successor.left;
-        yield { type: 'visit', nodeId: `bst-node-${successor.id}`, javaLine: 40, message: `Lëvizim majtas te ${successor.value} për minimumin.` };
+        yield { type: 'visit', nodeId: `bst-node-${successor.id}`, javaLine: 44, message: `Lëvizim majtas te ${successor.value} për minimumin.` };
     }
 
     yield {
         type: 'replace', nodeId: `bst-node-${cur.id}`, replacementNodeId: `bst-node-${successor.id}`,
-        javaLine: 36, message: `Successori ${successor.value} zëvendëson ${cur.value}.`
+        javaLine: 37, message: `Successori ${successor.value} zëvendëson ${cur.value}.`
     };
     cur.value = successor.value;
-    yield { type: 'delete', nodeId: `bst-node-${successor.id}`, javaLine: 37, message: `Fshijmë successor-in e vjetër ${successor.value}.` };
+    yield { type: 'delete', nodeId: `bst-node-${successor.id}`, javaLine: 38, message: `Fshijmë successor-in e vjetër ${successor.value}.` };
     if (successorParent.left === successor) successorParent.left = successor.right;
     else successorParent.right = successor.right;
     yield { type: 'rerender', render: () => rerender(root), javaLine: 37, message: `${value} u fshi; successor-i u vendos në pozicionin e saj.` };

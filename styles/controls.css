@@ -10,6 +10,12 @@
     flex-wrap: nowrap;
     overflow-x: auto;
 }
+/* Gjithë controls-bar-i s'ka kuptim para se të zgjidhet një algoritëm —
+   fshihet në gjendjen fillestare, hiqet nga selectAlgorithm(). */
+.controls-bar--idle {
+    display: none;
+}
+
 /* ── Buttons (btn drejtkëndësh — ende në përdorim te BST/DS panels) ── */
 .control-buttons {
     display: flex;
@@ -36,13 +42,12 @@
     align-items: center;
     gap: 6px;
     padding: 8px 16px;
-    border-radius: 6px;
+    border-radius: 8px;
     font-size: 0.85rem;
     font-weight: 600;
-    transition: background var(--transition),
-                color var(--transition),
-                opacity var(--transition),
-                transform 0.1s ease;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: all 0.2s ease;
 }
 
 .btn:active:not(:disabled) {
@@ -55,25 +60,26 @@
 }
 
 .btn-primary {
-    background-color: var(--accent-blue);
+    background: linear-gradient(135deg, var(--accent-blue), #3a72d1);
     color: #fff;
+    box-shadow: 0 4px 12px rgba(79, 142, 247, 0.3);
 }
 
 .btn-primary:hover:not(:disabled) {
-    background-color: #6a9ef8;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(79, 142, 247, 0.45);
 }
 
 .btn-secondary {
-    background-color: var(--bg-card);
+    background-color: rgba(255, 255, 255, 0.05);
     color: var(--text-primary);
     border: 1px solid var(--border);
 }
 
 .btn-secondary:hover:not(:disabled) {
-    background-color: var(--bg-hover);
-    border-color: var(--accent-blue);
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.25);
 }
-
 /* ── Kapitulli 2: Butona rrethorë (play/pause/reset/step) ── */
 .btn-circle {
     display: flex;
@@ -241,10 +247,14 @@ input[type="range"]::-moz-range-thumb {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
-    gap: 8px;
+    gap: 0.75rem;
     width: 100%;
-    padding: 8px 0;
-    border-top: 1px solid var(--border);
+    padding: 1rem;
+    background: rgba(33, 36, 56, 0.7);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
 }
 
 .ds-ops {
@@ -259,20 +269,21 @@ input[type="range"]::-moz-range-thumb {
 }
 
 .ds-input {
-    padding: 7px 10px;
-    background-color: var(--bg-card);
+    padding: 0.5rem 0.75rem;
+    background-color: rgba(15, 23, 42, 0.6);
     border: 1px solid var(--border);
-    border-radius: 6px;
+    border-radius: 8px;
     color: var(--text-primary);
     font-family: var(--font-mono);
-    font-size: 0.88rem;
+    font-size: 0.875rem;
     outline: none;
-    transition: border-color var(--transition);
+    transition: all 0.2s ease;
     width: 110px;
 }
 
 .ds-input:focus {
     border-color: var(--accent-blue);
+    box-shadow: 0 0 0 3px rgba(79, 142, 247, 0.25);
 }
 
 .ds-input--small {

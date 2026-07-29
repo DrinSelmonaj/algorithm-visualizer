@@ -3,6 +3,7 @@
 import { updateStats } from '../ui/controls.js';
 import { syncArrayState, getUsableHeight } from './sortRenderer.js';
 import { renderDistancePanel } from '../ui/distancePanel.js';
+import { appendLogEntry, initExecutionLog } from '../ui/executionLog.js';
 
 const stats = {
     comparisons: 0,
@@ -17,6 +18,7 @@ function resetStats() {
     stats.writes      = 0;
     stats.step        = 0;
     updateStats(stats);
+    initExecutionLog();
 
     const statusEl = document.getElementById('algo-status');
     if (statusEl) statusEl.textContent = '';
@@ -37,6 +39,8 @@ function applyStep(step, bars, category) {
     } else if (category === 'datastructures') {
         applyDataStructureStep(step);
     }
+
+    if (step.message) appendLogEntry(step.message, step.type);
 
     updateStats(stats);
 }
