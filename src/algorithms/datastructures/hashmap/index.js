@@ -78,7 +78,7 @@ function* put(key, value) {
 
     yield {
         type: 'hash', dsType: 'hashmap',
-        bucketIndex: idx,
+        bucketIndex: idx, key, hashSum: sum, bucketCount: BUCKET_COUNT,
         message: `hash("${key}") = ${sum} % ${BUCKET_COUNT} = ${idx}.`,
         javaLine: 12,
     };
@@ -117,7 +117,11 @@ function* get(key) {
     for (let i = 0; i < key.length; i++) sum += key.charCodeAt(i);
     const idx = sum % BUCKET_COUNT;
 
-    yield { type: 'hash', dsType: 'hashmap', bucketIndex: idx, message: `hash("${key}") = ${idx}. Kërkojmë në chain.`, javaLine: 29 };
+    yield {
+        type: 'hash', dsType: 'hashmap',
+        bucketIndex: idx, key, hashSum: sum, bucketCount: BUCKET_COUNT,
+        message: `hash("${key}") = ${idx}. Kërkojmë në chain.`, javaLine: 29
+    };
 
     const chain = buckets[idx];
     for (const entry of chain) {
@@ -137,7 +141,11 @@ function* remove(key) {
     for (let i = 0; i < key.length; i++) sum += key.charCodeAt(i);
     const idx = sum % BUCKET_COUNT;
 
-    yield { type: 'hash', dsType: 'hashmap', bucketIndex: idx, message: `hash("${key}") = ${idx}. Kërkojmë për fshirje.`, javaLine: 38 };
+    yield {
+        type: 'hash', dsType: 'hashmap',
+        bucketIndex: idx, key, hashSum: sum, bucketCount: BUCKET_COUNT,
+        message: `hash("${key}") = ${idx}. Kërkojmë për fshirje.`, javaLine: 38
+    };
 
     const chain = buckets[idx];
     for (let i = 0; i < chain.length; i++) {

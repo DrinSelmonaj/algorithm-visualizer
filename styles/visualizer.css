@@ -104,16 +104,6 @@
     border-left: 1px solid var(--border);
 }
 
-.algo-info-bar-right .custom-input-feedback {
-    position: absolute;
-    top: 100%;
-    right: 0;
-    margin-top: 4px;
-    white-space: nowrap;
-    font-size: 0.75rem;
-    font-family: var(--font-mono);
-}
-
 /* ── SVG Container ── */
 .svg-container {
     flex: 1;
@@ -384,6 +374,57 @@ svg rect {
 @keyframes pulseHighlight {
     0% { transform: scale(1.02); box-shadow: 0 0 15px rgba(16, 185, 129, 0.5); }
     100% { transform: scale(1); box-shadow: none; }
+}
+
+/* ── HashMap: Kontekst Ekzekutimi (Key/Hash/Bucket) ────────────── */
+.hash-context-panel {
+    position: absolute;
+    z-index: 2;
+    top: 16px;
+    right: 16px;
+    width: min(220px, calc(100% - 32px));
+    padding: 13px 12px;
+    border-radius: 12px;
+    pointer-events: none;
+}
+
+.hash-context-panel h3 {
+    margin: 0 0 9px;
+    color: var(--text-muted);
+    font: 700 0.68rem/1 var(--font-mono);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.hash-context-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    min-height: 26px;
+    padding: 3px 0;
+    color: var(--text-secondary);
+    font: 0.75rem/1.2 var(--font-mono);
+    border-bottom: 1px solid var(--border);
+}
+
+.hash-context-row:last-child {
+    border-bottom: none;
+}
+
+.hash-context-label {
+    color: var(--text-muted);
+    font-size: 0.7rem;
+}
+
+.hash-context-value {
+    color: var(--text-primary);
+    font-weight: 700;
+}
+
+.hash-context-row--result .hash-context-value--index {
+    color: var(--accent-blue);
+    font-size: 0.95rem;
 }
 
 /* ── Kapitulli: Status live (Graf + Struktura të dhënash) ── */

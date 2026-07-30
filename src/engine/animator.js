@@ -4,6 +4,7 @@ import { updateStats } from '../ui/controls.js';
 import { syncArrayState, getUsableHeight } from './sortRenderer.js';
 import { renderDistancePanel } from '../ui/distancePanel.js';
 import { appendLogEntry, initExecutionLog } from '../ui/executionLog.js';
+import { renderHashContext } from '../ui/hashContextPanel.js';
 
 const stats = {
     comparisons: 0,
@@ -324,6 +325,7 @@ function applyDataStructureStep(step) {
                 const b = document.getElementById(`hm-bucket-${step.bucketIndex}`);
                 if (b) b.classList.add('hashing');
             }
+            if (step.key != null) renderHashContext(step);
             break;
     }
 

@@ -192,14 +192,9 @@
                         <span class="badge" id="badge-time">Time: —</span>
                         <span class="badge" id="badge-space">Space: —</span>
                     </div>
-                    <!-- Custom Input — shfaqet vetëm për Sorting/Searching -->
+                    <!-- Custom Input — butoni hap modalin (shfaqet vetëm për Sorting/Searching) -->
                     <div class="custom-input-group">
-                        <input type="text" id="custom-array-input"
-                               aria-label="Vlerat e tua"
-                               placeholder="p.sh. 15, 42, 8" class="ds-input" style="width:150px;">
-                        <button id="btn-custom-apply" class="btn btn-primary">Përdor</button>
-                        <button id="btn-custom-clear" class="btn btn-secondary">✕ Random</button>
-                        <span id="custom-input-feedback" class="custom-input-feedback"></span>
+                        <button id="btn-custom-open" type="button" class="btn btn-secondary">Vlera Custom</button>
                     </div>
                 </div>
             </div>
@@ -216,6 +211,8 @@
                     <h3>Distancat aktuale</h3>
                     <div id="dijkstra-distance-rows"></div>
                 </aside>
+                <aside id="hashmap-context-panel" class="hash-context-panel glass-panel" hidden
+                       aria-label="Konteksti i hash-it" aria-live="polite"></aside>
             </div>
 
             <!-- Statusi/mesazhi live i hapit aktual — i përbashkët për Graf + Struktura
@@ -313,6 +310,23 @@
         </aside>
 
     </main>
+
+    <!-- Custom Input — modal (jashtë app-layout, s'preket nga overflow:hidden) -->
+    <div id="custom-input-modal" class="modal-overlay" hidden>
+        <div class="modal-card" role="dialog" aria-modal="true" aria-label="Vlera custom">
+            <div class="modal-header">
+                <h3>Vlerat e tua</h3>
+                <button id="btn-custom-modal-close" type="button" class="modal-close" aria-label="Mbyll">✕</button>
+            </div>
+            <input type="text" id="custom-array-input" aria-label="Vlerat e tua"
+                   placeholder="p.sh. 15, 42, 8" class="ds-input modal-input">
+            <div class="modal-actions">
+                <button id="btn-custom-apply" class="btn btn-primary">Përdor</button>
+                <button id="btn-custom-clear" class="btn btn-secondary">✕ Random</button>
+            </div>
+            <span id="custom-input-feedback" class="custom-input-feedback"></span>
+        </div>
+    </div>
 
     <script>
 fetch('assets/icons-sprite.svg')

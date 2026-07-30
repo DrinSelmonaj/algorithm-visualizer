@@ -565,3 +565,86 @@ button:focus-visible {
         display: none;
     }
 }
+
+/* ── Custom Input — modal (Faza 4) ──────────────────────────────── */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(6, 8, 18, 0.6);
+    backdrop-filter: blur(4px);
+}
+
+/* .modal-overlay { display:flex } dhe [hidden] { display:none } (default i
+   browser-it) kanë të njëjtin specificitet — pa këtë rregull eksplicit,
+   display:flex fiton gjithmonë (ngarkohet pas), dhe atributi hidden bëhet
+   pa efekt. [hidden] si selector këtu ka specificitet më të lartë, ndaj fiton. */
+.modal-overlay[hidden] {
+    display: none;
+}
+
+.modal-card {
+    width: min(360px, calc(100% - 48px));
+    padding: 20px;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+}
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+}
+
+.modal-header h3 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.modal-close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    padding: 0;
+    background: transparent;
+    border: none;
+    border-radius: 6px;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.modal-close:hover {
+    background-color: var(--bg-hover);
+    color: var(--text-primary);
+}
+
+.modal-input {
+    width: 100%;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.modal-actions .btn {
+    flex: 1;
+    justify-content: center;
+}
+
+.modal-card .custom-input-feedback {
+    display: block;
+    margin-top: 10px;
+}

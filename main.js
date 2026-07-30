@@ -13,6 +13,7 @@ import { initAlgoSearch } from './src/ui/algoSearch.js';
 import { showCode, highlightLine } from './src/ui/codePanel.js';
 import { showComplexity } from './src/ui/complexity.js';
 import { hideDistancePanel } from './src/ui/distancePanel.js';
+import { hideHashContext } from './src/ui/hashContextPanel.js';
 
 // ── Sorting algorithms ────────────────────────────────────────────
 import { bubbleSort,    JAVA_SOURCE as JAVA_BUBBLE    } from './src/algorithms/sorting/bubble.js';
@@ -167,6 +168,7 @@ function setGroupEnabled(selector, enabled) {
 function selectAlgorithm(algoKey) {
     stop();
     hideDistancePanel();
+    hideHashContext();
     currentAlgo = algoKey;
     const algo = ALGORITHMS[algoKey];
 
@@ -276,6 +278,7 @@ function selectAlgorithm(algoKey) {
 
 // ─── Inicializo Data Structure ────────────────────────────────────
 function initDataStructure(key) {
+    hideHashContext();
     if (key === 'stack')      initStack();
     if (key === 'queue')      initQueue();
     if (key === 'linkedlist') initLL();
@@ -723,7 +726,34 @@ if (btnCopyCode) {
     });
 }
 
-// ── KAPITULLI 2: Custom Input — vlera manuale për sorting/searching ──
+// ── KAPITULLI 2: Custom Input — modal (vlera manuale për sorting/searching) ──
+function openCustomModal() {
+    const modal = document.getElementById('custom-input-modal');
+    if (!modal) return;
+    modal.hidden = false;
+    document.getElementById('custom-array-input')?.focus();
+}
+
+function closeCustomModal() {
+    const modal = document.getElementById('custom-input-modal');
+    if (modal) modal.hidden = true;
+}
+
+document.getElementById('btn-custom-open')?.addEventListener('click', openCustomModal);
+document.getElementById('btn-custom-modal-close')?.addEventListener('click', closeCustomModal);
+
+// Klikim mbi overlay (jashtë kartelës) mbyll modalin
+document.getElementById('custom-input-modal')?.addEventListener('click', (e) => {
+    if (e.target.id === 'custom-input-modal') closeCustomModal();
+});
+
+// Escape mbyll modalin kudo qoftë fokusi brenda tij
+document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    const modal = document.getElementById('custom-input-modal');
+    if (modal && !modal.hidden) closeCustomModal();
+});
+
 document.getElementById('btn-custom-apply').addEventListener('click', () => {
     const raw = document.getElementById('custom-array-input').value;
     const parsed = parseCustomArray(raw);
