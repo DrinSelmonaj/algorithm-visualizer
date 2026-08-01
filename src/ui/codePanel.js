@@ -12,6 +12,14 @@ function showCode(javaSource) {
     if (!el) return;
     el.replaceChildren();
 
+    // Rifillo gjithmonë nga fillimi — një pozicion i vjetër scroll
+    // horizontal s'duhet të mbetet "i mbërthyer" kur ngarkohet kod i ri.
+    const container = el.closest('pre');
+    if (container) {
+        container.scrollLeft = 0;
+        container.scrollTop = 0;
+    }
+
     javaSource.split('\n').forEach((line, index) => {
         const row = document.createElement('span');
         row.className = 'code-line';
@@ -44,8 +52,24 @@ function highlightLine(lineNumber) {
     if (!line) return;
     line.classList.add('active');
 
-    // Scroll automatik te rreshti aktiv
-    line.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    // Scroll automatik VERTIKAL te rreshti aktiv — jo horizontal.
+    // scrollIntoView() do të lëvizte edhe majtas/djathtas pa dashje, tani që
+    // .code-line ka width:100% (i gjerë sa gjithë <code>, jo vetëm teksti).
+    const container = el.closest('pre');
+    if (container) {
+        const lineTop    = line.offsetTop;
+        const lineBottom = lineTop + line.offsetHeight;
+        const viewTop    = container.scrollTop;
+        const viewBottom = viewTop + container.clientHeight;
+
+        if (lineTop < viewTop) {
+            container.scrollTo({ top: lineTop, behavior: 'smooth' });
+        } else if (lineBottom > viewBottom) {
+            container.scrollTo({ top: lineBottom - container.clientHeight, behavior: 'smooth' });
+        }
+
+        container.scrollLeft = 0;
+    }
 }
 
 function clearLineHighlight() {

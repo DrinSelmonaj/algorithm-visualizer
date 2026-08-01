@@ -36,6 +36,7 @@
 .code-panel pre {
     flex: 1;
     overflow-y: auto;
+    overflow-x: auto;
     margin: 12px;
     padding: 0;
     background: rgba(26, 29, 46, 0.7);
@@ -60,6 +61,8 @@
 .code-line {
     display: flex;
     align-items: center;
+    width: max-content;
+    min-width: 100%;
     padding: 4px 16px 4px 13px;
     border-left: 3px solid transparent;
     position: relative;
