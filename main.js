@@ -8,7 +8,7 @@ import { cloneGraph } from './src/graph/model.js';
 import { run, stepOnce, pause, resume, stop, getState } from './src/engine/scheduler.js';
 import { applyStep, resetStats } from './src/engine/animator.js';
 
-import { bindControls, showDSPanel, showGraphPanel, hideDSPanel } from './src/ui/controls.js'
+import { showDSPanel, showGraphPanel, hideDSPanel } from './src/ui/controls.js'
 import { initAlgoSearch } from './src/ui/algoSearch.js';
 import { initSidebarToggle } from './src/ui/sidebarToggle.js';
 import { showCode, highlightLine } from './src/ui/codePanel.js';

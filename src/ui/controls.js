@@ -135,15 +135,6 @@ function hideDSPanel() {
     }
 }
 
-/**
- * Lidhja me main.js — thirret një herë pas DOMContentLoaded.
- * main.js e importon dhe e thërret me callback-un e vet.
- */
-function bindControls(onDSOp) {
-    // window.__dsOp vendoset dinamikisht nga showDSPanel()
-    // bindControls ruhet për lidhje shtesë nëse nevojitet
-    window.__dsOpMain = onDSOp;
-}
 // Paneli për shtim dinamik nyjesh/skajesh te grafet (Dijkstra/Kruskal) —
 // pjesa bazë e përbashkët për të dy algoritmet.
 const GRAPH_PANEL_BASE = `
@@ -182,4 +173,4 @@ function showGraphPanel(graphOpCallback, showSourceNode = false) {
     container.innerHTML = GRAPH_PANEL_BASE + (showSourceNode ? GRAPH_SOURCE_ROW : '');
     container.style.display = 'flex';
 }
-export { updateStats, resetStats, showDSPanel, hideDSPanel, showGraphPanel, bindControls };
+export { updateStats, resetStats, showDSPanel, hideDSPanel, showGraphPanel };
