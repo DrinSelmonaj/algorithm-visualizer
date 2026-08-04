@@ -51,15 +51,23 @@
   
     <!-- HEADER -->
     <header class="app-header">
+        <button id="btn-sidebar-toggle" type="button" class="sidebar-toggle" aria-label="Hap listën e algoritmeve" aria-expanded="false">
+            <span class="sidebar-toggle-bar"></span>
+            <span class="sidebar-toggle-bar"></span>
+            <span class="sidebar-toggle-bar"></span>
+        </button>
         <h1 class="app-title">AlgoPro IDE</h1>
         <p class="app-subtitle">Shiko algoritmet duke u ekzekutuar — hap pas hapi</p>
     </header>
+
+    <!-- Sfondi errët pas sidebar-it kur hapet si drawer (vetëm ekranë të ngushtë) -->
+    <div id="sidebar-backdrop" class="sidebar-backdrop" hidden></div>
 
     <!-- LAYOUT: [sidebar] [visualizer] [code-panel] -->
     <main class="app-layout">
 
         <!-- ZONA 1 — Lista e algoritmeve -->
-        <aside class="sidebar">
+        <aside id="app-sidebar" class="sidebar">
 
             <div class="algo-search">
                 <svg class="icon algo-search-icon"><use href="#icon-search"></use></svg>
