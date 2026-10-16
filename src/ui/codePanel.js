@@ -62,13 +62,21 @@ function highlightLine(lineNumber) {
         const viewTop    = container.scrollTop;
         const viewBottom = viewTop + container.clientHeight;
 
+        // left: 0 brenda të njëjtës scrollTo() — një `scrollLeft = 0` i veçantë
+        // menjëherë pas scroll-it smooth e anulonte animacionin vertikal, dhe
+        // paneli s'lëvizte kurrë te rreshtat poshtë pjesës së dukshme.
+        let top = viewTop;
         if (lineTop < viewTop) {
-            container.scrollTo({ top: lineTop, behavior: 'smooth' });
+            top = lineTop;
         } else if (lineBottom > viewBottom) {
-            container.scrollTo({ top: lineBottom - container.clientHeight, behavior: 'smooth' });
+            top = lineBottom - container.clientHeight;
         }
 
-        container.scrollLeft = 0;
+        if (top !== viewTop) {
+            container.scrollTo({ top, left: 0, behavior: 'smooth' });
+        } else {
+            container.scrollLeft = 0;
+        }
     }
 }
 
