@@ -103,7 +103,7 @@ function* pop() {
 // ── PEEK ──────────────────────────────────────────────────────────
 function* peek() {
     if (items.length === 0) {
-        yield { type: 'compare', dsType: 'stack', message: 'Stack është bosh.', javaLine: 21 };
+        yield { type: 'compare', dsType: 'stack', message: 'Stack është bosh.', javaLine: 22 };
         return;
     }
 
@@ -113,7 +113,7 @@ function* peek() {
         type: 'found', dsType: 'stack',
         nodeId: `stack-cell-${topIndex}`,
         message: `peek(): elementi i majës është ${items[topIndex]}. Stack pa ndryshim.`,
-        javaLine: 21,
+        javaLine: 22,
     };
 }
 
@@ -123,7 +123,7 @@ function* isEmpty() {
     yield {
         type: 'compare', dsType: 'stack',
         message: `isEmpty(): ${result}. Stack ka ${items.length} element(e).`,
-        javaLine: 25,
+        javaLine: 26,
     };
 }
 

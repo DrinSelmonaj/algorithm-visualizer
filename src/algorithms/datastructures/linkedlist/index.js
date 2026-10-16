@@ -202,7 +202,7 @@ function* insertAfterValue(value, target) {
     }
 
     yield { type: 'compare', dsType: 'linkedlist',
-            javaLine: 33,
+            javaLine: 25, // while (cur != null) mbaroi pa gjetur target-in
             message: `${target} nuk u gjet — nuk u fut asgjë.` };
 }
 

@@ -102,7 +102,7 @@ function* dequeue() {
 // ── PEEK ──────────────────────────────────────────────────────────
 function* peek() {
     if (items.length === 0) {
-        yield { type: 'compare', dsType: 'queue', message: 'Queue është bosh.', javaLine: 23 };
+        yield { type: 'compare', dsType: 'queue', message: 'Queue është bosh.', javaLine: 24 };
         return;
     }
 
@@ -110,7 +110,7 @@ function* peek() {
         type: 'found', dsType: 'queue',
         nodeId: 'queue-cell-0',
         message: `peek(): front-i është ${items[0]}. Queue pa ndryshim.`,
-        javaLine: 23,
+        javaLine: 24,
     };
 }
 
@@ -120,7 +120,7 @@ function* isEmpty() {
     yield {
         type: 'compare', dsType: 'queue',
         message: `isEmpty(): ${result}. Queue ka ${items.length} element(e).`,
-        javaLine: 27,
+        javaLine: 28,
     };
 }
 
