@@ -17,6 +17,7 @@ import { hideDistancePanel } from './src/ui/distancePanel.js';
 import { hideHashContext } from './src/ui/hashContextPanel.js';
 import { t, initI18n, onLangChange } from './src/i18n/index.js';
 import { initTheme } from './src/ui/theme.js';
+import { initStatsInfo } from './src/ui/statsInfo.js';
 import { initLearningCenter, showLearning, activateTab } from './src/ui/learningCenter.js';
 import { initCompareMode } from './src/ui/compareMode.js';
 import { initTimeline, resetTimeline, recordTimelineStep } from './src/ui/timeline.js';
@@ -906,6 +907,7 @@ function refreshLanguage() {
 onLangChange(refreshLanguage);
 initI18n();
 initTheme();
+initStatsInfo();
 refreshLanguage();
 
 initAlgoSearch();
