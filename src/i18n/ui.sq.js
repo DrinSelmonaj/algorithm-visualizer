@@ -2,6 +2,11 @@
 const UI_SQ = {
     "ui.title": "Vizualizues Algoritmesh",
     "ui.sidebarOpen": "Hap listën e algoritmeve",
+    "ui.themeToggle": "Ndrysho temën (e errët / e çelët)",
+    "ui.themeToast": "Kliko ikonën lart majtas për të ndryshuar temën (e errët / e çelët).",
+    "ui.langToast": "Përdor SQ / EN lart djathtas për të ndryshuar gjuhën e faqes.",
+    "ui.themeNowDark": "Tema e errët u aktivizua.",
+    "ui.themeNowLight": "Tema e çelët u aktivizua.",
     "ui.subtitle": "Laborator interaktiv algoritmesh",
     "ui.headerMetaAria": "Veçoritë e aplikacionit",
     "ui.ready": "Gati për ekzekutim",
