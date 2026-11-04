@@ -1,6 +1,6 @@
 # AlgoPro IDE
 
-Vizualizues interaktiv për algoritme dhe struktura të dhënash, ndërtuar me Vanilla JavaScript ES Modules, SVG dhe D3.js v7. UI-ja është në shqip dhe shfaq hapat e ekzekutimit, kodin Java të sinkronizuar rresht-për-rresht, kompleksitetin (Time/Space), dhe një log tekstual të plotë të ekzekutimit. Funksionon plotësisht offline — zero varësi nga CDN, çdo librari (D3, Highlight.js, fontet) është e vendosur lokalisht te `vendor/`.
+Vizualizues interaktiv për algoritme dhe struktura të dhënash, ndërtuar me Vanilla JavaScript ES Modules, SVG dhe D3.js v7. UI-ja është në shqip dhe anglisht, ka temë të errët dhe të çelët, dhe shfaq hapat e ekzekutimit, kodin Java të sinkronizuar rresht-për-rresht, kompleksitetin (Time/Space), dhe një log tekstual të plotë të ekzekutimit. Funksionon plotësisht offline — zero varësi nga CDN, çdo librari (D3, Highlight.js, fontet) është e vendosur lokalisht te `vendor/`.
 
 ## Nisja
 
@@ -50,6 +50,30 @@ Për algoritmet e renditjes/kërkimit, butoni "Vlera Custom" hap një modal (jo 
 ## Arkitektura
 
 Algoritmet janë ES module generator functions (`function*`) që bëjnë `yield` step-objekte tipizuara (`{ type, message, javaLine, ... }`). `scheduler.js` i konsumon me mbrojtje kundër run-eve të njëkohshme dhe trajtim gabimesh (try/catch/finally), `animator.js` i shpërndan sipas kategorisë te renderer-at përkatës dhe njëkohësisht i regjistron te Log Ekzekutimi. Paneli i kodit Java (`codePanel.js`) e ndërton kodin rresht-për-rresht si `<div>`-e (jo regex mbi HTML), me sinkronizim të saktë highlight-scroll.
+## Tema e errët / e çelët
+
+Ikona e logos lart majtas është butoni i temës. Zgjedhja ruhet në `localStorage` (`algopro-theme`) dhe vendoset para pikturimit,
+ndaj nuk ka vezullim. Kur hapet faqja (para se të zgjidhet një algoritëm) shfaqen për 8 sekonda dy njoftime informuese: një për
+temën dhe një për gjuhën; zhduken sapo zgjidhet një algoritëm. Ngjyrat e temës së çelët janë te `styles/light-theme.css`.
+
+## Statistikat (Krahasime, Ndërrime, Hapi, Hapa logjikë)
+
+- **Krahasime** dhe **Ndërrime / Mbishkrime** numërojnë veprimet e algoritmit.
+- **Hapi** është totali i të gjitha veprimeve të animuara (përputhet me pozicionin në timeline); krahasimet dhe ndërrimet janë pjesë e tij.
+- **Hapa logjikë** numërojnë njësitë e punës të algoritmit (një kalim, një ndarje, një bashkim etj.) dhe shfaqen vetëm për renditje
+  dhe kërkim. Gjeneratorët i shënojnë me `unit: true` te `yield`.
+- Butoni **i** në anën e djathtë të rreshtit hap një panel me shpjegimin e secilit numër.
+
+## Publikimi dhe CI
+
+- `.github/workflows/ci.yml` ekzekuton `npm run check` dhe `npm test` për çdo PR dhe çdo push në `main`.
+- `.github/workflows/pages.yml` publikon faqen në GitHub Pages pas çdo push në `main` (kopjon vetëm `index.html`, `main.js`, `src/`,
+  `styles/`, `vendor/` dhe `assets/`).
+
+## Licenca
+
+MIT, shih `LICENSE`.
+
 ## Gjuha: shqip dhe anglisht / Language: Albanian and English
 
 Butoni **SQ | EN** te header ndërron gjithë faqen: ndërfaqen, mesazhet e hapave të animimit, materialin mësimor
@@ -70,3 +94,6 @@ error messages. The choice is stored in `localStorage` and can be forced with `?
 `npm test` ekzekuton testet e njësisë. Për testet në shfletues (input-et, butonat, rastet kufi, gjuha), shërbe projektin
 (`npx serve .`), hap faqen dhe ngarko `e2e/browser-harness.js` (shih komentin në krye të skedarit): `T.A()` … `T.G()` dhe
 `T.L()` për gjuhën. Çdo seksion kthen `{ failed, notes, errs, alerts }`.
+
+Shënime: hape faqen me `?lang=sq` (disa kontrolle presin tekst shqip); seksioni `T.B` zgjat rreth 2 minuta, ndaj nise në sfond; mos e
+prek dritaren e shfletuesit gjatë ekzekutimit.
