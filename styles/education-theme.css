@@ -339,7 +339,7 @@ body {
    Statistikat, legjenda dhe toolbar-i kompaktohen; SVG-ja ka lartësi minimale
    dhe, kur dritarja është shumë e ulët, zona rrëshqet në vend që ta shtypë SVG-në. */
 .visualizer-zone { overflow-x: hidden; overflow-y: auto; }
-.visualizer-zone:not(.visualizer-zone--idle) .svg-container { padding: 10px; min-height: 320px; }
+.visualizer-zone:not(.visualizer-zone--idle) .svg-container { padding: 8px 10px; min-height: 312px; }
 .visual-legend { margin: 0 auto 6px; gap: 14px; }
 .stats-bar { margin: 0 auto 8px; }
 .stat { width: 104px; min-width: 0; padding: 6px 4px; }
