@@ -1,3 +1,4 @@
+import { t } from '../../i18n/index.js';
 // src/algorithms/sorting/bubble.js
 
 const JAVA_SOURCE =
@@ -25,7 +26,7 @@ function* bubbleSort(array) {
             // Krahasim — animator e ngjyros çiftin
             yield {
                 type: 'compare', indices: [j, j + 1], javaLine: 6,
-                message: `Krahasojmë arr[${j}]=${arr[j]} me arr[${j + 1}]=${arr[j + 1]}.`
+                message: t('m.bubble.1', { p0: j, p1: arr[j], p2: j + 1, p3: arr[j + 1] })
             };
 
             if (arr[j] > arr[j + 1]) {
@@ -33,18 +34,18 @@ function* bubbleSort(array) {
                 // Ndërrrim — animator e bën swap-in vizual
                 yield {
                     type: 'swap', indices: [j, j + 1], state: [...arr], javaLine: 9,
-                    message: `${arr[j + 1]} > ${arr[j]} — ndërrojmë arr[${j}] me arr[${j + 1}].`
+                    message: t('m.bubble.2', { p0: arr[j + 1], p1: arr[j], p2: j, p3: j + 1 })
                 };
             }
         }
         // Elementi i fundit i pasit është në pozicionin e tij final
         yield {
             type: 'sorted', index: n - i - 1, javaLine: 4,
-            message: `arr[${n - i - 1}]=${arr[n - i - 1]} është në vendin përfundimtar.`
+            message: t('m.bubble.3', { p0: n - i - 1, p1: arr[n - i - 1] })
         };
     }
 
-    yield { type: 'sorted', index: 0, message: `arr[0]=${arr[0]} është në vendin përfundimtar. Renditja përfundoi.` };
+    yield { type: 'sorted', index: 0, message: t('m.bubble.4', { p0: arr[0] }) };
 }
 
 export { bubbleSort, JAVA_SOURCE };

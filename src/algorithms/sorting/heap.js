@@ -1,3 +1,4 @@
+import { t } from '../../i18n/index.js';
 // src/algorithms/sorting/heap.js
 
 const JAVA_SOURCE =
@@ -37,13 +38,13 @@ function* heapSort(array) {
         [arr[0], arr[i]] = [arr[i], arr[0]];
         yield {
             type: 'swap', indices: [0, i], state: [...arr], javaLine: 7,
-            message: `Rrënja ${arr[i]} (maksimumi) shkon te arr[${i}], jashtë heap-ut.`
+            message: t('m.heap.1', { p0: arr[i], p1: i })
         };
-        yield { type: 'sorted', index: i, message: `arr[${i}]=${arr[i]} është në vendin përfundimtar.` };
+        yield { type: 'sorted', index: i, message: t('m.heap.2', { p0: i, p1: arr[i] }) };
         yield* heapify(arr, i, 0);
     }
 
-    yield { type: 'sorted', index: 0, message: `arr[0]=${arr[0]} është në vendin përfundimtar. Renditja përfundoi.` };
+    yield { type: 'sorted', index: 0, message: t('m.heap.3', { p0: arr[0] }) };
 }
 
 function* heapify(arr, n, i) {
@@ -53,13 +54,13 @@ function* heapify(arr, n, i) {
 
     if (l < n) yield {
         type: 'compare', indices: [l, largest], javaLine: 13,
-        message: `Krahasojmë fëmijën majtas arr[${l}]=${arr[l]} me arr[${largest}]=${arr[largest]}.`
+        message: t('m.heap.4', { p0: l, p1: arr[l], p2: largest, p3: arr[largest] })
     };
     if (l < n && arr[l] > arr[largest]) largest = l;
 
     if (r < n) yield {
         type: 'compare', indices: [r, largest], javaLine: 14,
-        message: `Krahasojmë fëmijën djathtas arr[${r}]=${arr[r]} me arr[${largest}]=${arr[largest]}.`
+        message: t('m.heap.5', { p0: r, p1: arr[r], p2: largest, p3: arr[largest] })
     };
     if (r < n && arr[r] > arr[largest]) largest = r;
 
@@ -67,7 +68,7 @@ function* heapify(arr, n, i) {
         [arr[i], arr[largest]] = [arr[largest], arr[i]];
         yield {
             type: 'swap', indices: [i, largest], state: [...arr], javaLine: 16,
-            message: `Fëmija (indeksi ${largest}) ishte më i madh se prindi (indeksi ${i}) — ndërrojmë; heap-ify vazhdon poshtë.`
+            message: t('m.heap.6', { p0: largest, p1: i })
         };
         yield* heapify(arr, n, largest);
     }

@@ -1,3 +1,4 @@
+import { t } from '../../../i18n/index.js';
 // src/algorithms/datastructures/hashmap/index.js
 
 import { render, BUCKET_COUNT } from '../../../engine/hashMapRenderer.js';
@@ -79,7 +80,7 @@ function* put(key, value) {
     yield {
         type: 'hash', dsType: 'hashmap',
         bucketIndex: idx, key, hashSum: sum, bucketCount: BUCKET_COUNT,
-        message: `hash("${key}") = ${sum} % ${BUCKET_COUNT} = ${idx}.`,
+        message: t('m.hashmap.1', { p0: key, p1: sum, p2: BUCKET_COUNT, p3: idx }),
         javaLine: 18,
     };
 
@@ -87,14 +88,14 @@ function* put(key, value) {
     const existing = chain.find(e => e.key === key);
 
     if (existing) {
-        yield { type: 'compare', dsType: 'hashmap', nodeId: `hm-entry-${existing.id}`, message: `Çelësi "${key}" ekziston — përditësojmë vlerën.`, javaLine: 21 };
+        yield { type: 'compare', dsType: 'hashmap', nodeId: `hm-entry-${existing.id}`, message: t('m.hashmap.2', { p0: key }), javaLine: 21 };
         existing.value = value;
-        yield { type: 'rerender', dsType: 'hashmap', render: () => render(buckets), nodeId: `hm-entry-${existing.id}`, message: `Vlera u përditësua: ${value}.`, javaLine: 21 };
+        yield { type: 'rerender', dsType: 'hashmap', render: () => render(buckets), nodeId: `hm-entry-${existing.id}`, message: t('m.hashmap.3', { p0: value }), javaLine: 21 };
         return;
     }
 
     if (chain.length > 0) {
-        yield { type: 'compare', dsType: 'hashmap', message: `Collision: bucket [${idx}] ka ${chain.length} hyrje. Shtojmë me chaining.`, javaLine: 20 };
+        yield { type: 'compare', dsType: 'hashmap', message: t('m.hashmap.4', { p0: idx, p1: chain.length }), javaLine: 20 };
     }
 
     // unshift (në fillim të chain-it), njësoj si Java: node.next = table[index];
@@ -107,10 +108,10 @@ function* put(key, value) {
         render: () => render(buckets),
         nodeId: `hm-entry-${entry.id}`,
         javaLine: 26,
-        message: `("${key}", ${value}) u shtua në fillim të bucket [${idx}].`,
+        message: t('m.hashmap.5', { p0: key, p1: value, p2: idx }),
     };
 
-    yield { type: 'insert', dsType: 'hashmap', nodeId: `hm-entry-${entry.id}`, javaLine: 26, message: `put() përfundoi.` };
+    yield { type: 'insert', dsType: 'hashmap', nodeId: `hm-entry-${entry.id}`, javaLine: 26, message: t('m.hashmap.6') };
 }
 
 // ── GET ──────────────────────────────────────────────────────────
@@ -122,19 +123,19 @@ function* get(key) {
     yield {
         type: 'hash', dsType: 'hashmap',
         bucketIndex: idx, key, hashSum: sum, bucketCount: BUCKET_COUNT,
-        message: `hash("${key}") = ${idx}. Kërkojmë në chain.`, javaLine: 30
+        message: t('m.hashmap.7', { p0: key, p1: idx }), javaLine: 30
     };
 
     const chain = buckets[idx];
     for (const entry of chain) {
-        yield { type: 'compare', dsType: 'hashmap', nodeId: `hm-entry-${entry.id}`, message: `Krahasojmë "${entry.key}" me "${key}".`, javaLine: 33 };
+        yield { type: 'compare', dsType: 'hashmap', nodeId: `hm-entry-${entry.id}`, message: t('m.hashmap.8', { p0: entry.key, p1: key }), javaLine: 33 };
         if (entry.key === key) {
-            yield { type: 'found', dsType: 'hashmap', nodeId: `hm-entry-${entry.id}`, message: `Gjendëm! "${key}" → ${entry.value}.`, javaLine: 33 };
+            yield { type: 'found', dsType: 'hashmap', nodeId: `hm-entry-${entry.id}`, message: t('m.hashmap.9', { p0: key, p1: entry.value }), javaLine: 33 };
             return;
         }
     }
 
-    yield { type: 'compare', dsType: 'hashmap', bucketIndex: idx, message: `"${key}" nuk u gjet.`, javaLine: 36 };
+    yield { type: 'compare', dsType: 'hashmap', bucketIndex: idx, message: t('m.hashmap.10', { p0: key }), javaLine: 36 };
 }
 
 // ── REMOVE ───────────────────────────────────────────────────────
@@ -146,24 +147,24 @@ function* remove(key) {
     yield {
         type: 'hash', dsType: 'hashmap',
         bucketIndex: idx, key, hashSum: sum, bucketCount: BUCKET_COUNT,
-        message: `hash("${key}") = ${idx}. Kërkojmë për fshirje.`, javaLine: 40
+        message: t('m.hashmap.11', { p0: key, p1: idx }), javaLine: 40
     };
 
     const chain = buckets[idx];
     for (let i = 0; i < chain.length; i++) {
-        yield { type: 'compare', dsType: 'hashmap', nodeId: `hm-entry-${chain[i].id}`, message: `Kontrollojmë "${chain[i].key}".`, javaLine: 43 };
+        yield { type: 'compare', dsType: 'hashmap', nodeId: `hm-entry-${chain[i].id}`, message: t('m.hashmap.12', { p0: chain[i].key }), javaLine: 43 };
         if (chain[i].key === key) {
             const entryId = chain[i].id;
             // i === 0 → prev == null (rreshti 44), përndryshe prev.next = cur.next (45)
             const unlinkLine = i === 0 ? 44 : 45;
-            yield { type: 'delete', dsType: 'hashmap', nodeId: `hm-entry-${entryId}`, message: `Gjendëm "${key}" — fshijmë.`, javaLine: unlinkLine };
+            yield { type: 'delete', dsType: 'hashmap', nodeId: `hm-entry-${entryId}`, message: t('m.hashmap.13', { p0: key }), javaLine: unlinkLine };
             chain.splice(i, 1);
-            yield { type: 'rerender', dsType: 'hashmap', render: () => render(buckets), message: `"${key}" u fshi. Chain u rilidhë.`, javaLine: unlinkLine };
+            yield { type: 'rerender', dsType: 'hashmap', render: () => render(buckets), message: t('m.hashmap.14', { p0: key }), javaLine: unlinkLine };
             return;
         }
     }
 
-    yield { type: 'compare', dsType: 'hashmap', message: `"${key}" nuk u gjet.`, javaLine: 42 };
+    yield { type: 'compare', dsType: 'hashmap', message: t('m.hashmap.15', { p0: key }), javaLine: 42 };
 }
 
 export { init, put, get, remove, JAVA_SOURCE };

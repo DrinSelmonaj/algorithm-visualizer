@@ -1,4 +1,6 @@
-import { MORE, REAL, TECH } from './learningMore.js';
+import { getMore, getReal, getTech } from './learningMore.js';
+import { BASE_EN, OPERATIONS_EN } from './learningData.en.js';
+import { getLang, t } from '../i18n/index.js';
 
 const BASE = {
     bubble: ['Bubble Sort', 'Krahason fqinjët dhe i ndërron derisa elementi më i madh të lëvizë në fund.', 'I mirë për mësim dhe lista shumë të vogla.', 'O(n)', 'O(n²)', 'O(n²)', 'O(1)', ['Stable', 'In-place']],
@@ -29,17 +31,18 @@ const OPERATIONS = {
 };
 
 function getLearningData(key) {
-    const row = BASE[key];
+    const en = getLang() === 'en';
+    const row = (en ? BASE_EN : BASE)[key];
     if (!row) return null;
     return {
         title: row[0], summary: row[1], use: row[2],
         best: row[3], average: row[4], worst: row[5], space: row[6],
-        traits: row[7], operations: OPERATIONS[key] || null,
-        more: MORE[key] || [],
-        real: REAL[key] || [],
-        technical: TECH[key] || '',
+        traits: row[7], operations: (en ? OPERATIONS_EN : OPERATIONS)[key] || null,
+        more: getMore(key),
+        real: getReal(key),
+        technical: getTech(key),
         quiz: {
-            question: `Cili është kompleksiteti mesatar i ${row[0]}?`,
+            question: t('learn.quizQuestion', { title: row[0] }),
             options: [row[4], row[3], row[6]].filter((v, i, a) => a.indexOf(v) === i),
             answer: row[4],
         },

@@ -1,3 +1,4 @@
+import { t } from '../i18n/index.js';
 // src/engine/scheduler.js
 
 const SPEEDS = {
@@ -50,7 +51,7 @@ async function run(generator, onStep, onFinish, speed = 2, onError = null) {
         completed = !stopRequest && myRunId === activeRunId;
     } catch (error) {
         if (myRunId === activeRunId) onError?.(error);
-        else console.error('Gabim në një ekzekutim të vjetër:', error);
+        else console.error(t('js.oldRunError'), error);
     } finally {
         // Çdo rrugë (edhe përjashtimi) e liron scheduler-in.
         if (myRunId === activeRunId) {

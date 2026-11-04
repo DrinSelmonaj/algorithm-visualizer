@@ -182,7 +182,7 @@
 }
 
 .execution-log:empty::before {
-    content: 'Log-u i ekzekutimit shfaqet këtu gjatë xhirimit.';
+    content: attr(data-empty);   /* teksti vendoset nga i18n (data-i18n-attr) */
     color: var(--text-muted);
     font-style: italic;
 }

@@ -1,3 +1,4 @@
+import { t } from '../../i18n/index.js';
 // src/algorithms/graph/dijkstra.js
 
 const JAVA_SOURCE =
@@ -59,7 +60,7 @@ function* dijkstra(graph = DEFAULT_GRAPH, sourceId = 'A') {
         return { distances, predecessors, sourceId, updatedNodeId };
     };
 
-    yield { type: 'current', nodeId: `graph-node-${sourceId}`, distanceState: snap(), javaLine: 8, message: `Nisim nga ${sourceId}. Të gjitha distancat = ∞.` };
+    yield { type: 'current', nodeId: `graph-node-${sourceId}`, distanceState: snap(), javaLine: 8, message: t('m.dijkstra.1', { p0: sourceId }) };
 
     while (visited.size < nodes.length) {
         let u = null;
@@ -70,7 +71,7 @@ function* dijkstra(graph = DEFAULT_GRAPH, sourceId = 'A') {
         if (u === null || dist[u] === Infinity) break;
         visited.add(u);
 
-        yield { type: 'visit', nodeId: `graph-node-${u}`, distanceState: snap(), javaLine: 11, message: `Procesojmë ${u} (dist = ${dist[u]}).` };
+        yield { type: 'visit', nodeId: `graph-node-${u}`, distanceState: snap(), javaLine: 11, message: t('m.dijkstra.2', { p0: u, p1: dist[u] }) };
 
         // RREGULLIM: grafi është I PANDREJTUAR (undirected) vizualisht — një skaj
         // { source: 'A', target: 'D' } lejon lëvizje edhe A→D edhe D→A.
@@ -94,15 +95,15 @@ function* dijkstra(graph = DEFAULT_GRAPH, sourceId = 'A') {
 
             if (visited.has(v)) continue;
 
-            yield { type: 'edge-consider', edgeId: eid, javaLine: 13, message: `Shqyrtojmë skajin ${u}→${v} (peshë ${e.weight}).` };
+            yield { type: 'edge-consider', edgeId: eid, javaLine: 13, message: t('m.dijkstra.3', { p0: u, p1: v, p2: e.weight }) };
 
             const candidate = dist[u] + e.weight;
             if (candidate < dist[v]) {
                 dist[v] = candidate;
                 prev[v] = u;        // ruaj paraardhësin për rindërtim rruge
-                yield { type: 'edge-accept', edgeId: eid, distanceState: snap(v), javaLine: 15, message: `Përditësojmë dist[${v}] = ${candidate}.` };
+                yield { type: 'edge-accept', edgeId: eid, distanceState: snap(v), javaLine: 15, message: t('m.dijkstra.4', { p0: v, p1: candidate }) };
             } else {
-                yield { type: 'edge-reject', edgeId: eid, javaLine: 15, message: `${candidate} ≥ dist[${v}] = ${dist[v]}. Pa ndryshim.` };
+                yield { type: 'edge-reject', edgeId: eid, javaLine: 15, message: t('m.dijkstra.5', { p0: candidate, p1: v, p2: dist[v] }) };
             }
         }
     }
@@ -134,7 +135,7 @@ function* dijkstra(graph = DEFAULT_GRAPH, sourceId = 'A') {
         edges: shortestEdges,
         distanceState: snap(),
         javaLine: 18,
-        message: `Dijkstra përfundoi. Pema e rrugëve më të shkurtra theksohet në jeshile.`
+        message: t('m.dijkstra.6')
     };
 }
 

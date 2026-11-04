@@ -1,3 +1,4 @@
+import { t } from '../../../i18n/index.js';
 // src/algorithms/datastructures/queue/index.js
 
 import { render } from '../../../engine/queueRenderer.js';
@@ -45,7 +46,7 @@ function init() {
 function* enqueue(value) {
     yield {
         type: 'compare', dsType: 'queue',
-        message: `enqueue(${value}): shtojmë ${value} në fund të queue-s.`,
+        message: t('m.queue.1', { p0: value, p1: value }),
         javaLine: 11,
     };
 
@@ -57,35 +58,35 @@ function* enqueue(value) {
         render: () => render(items),
         nodeId: `queue-cell-${rearIndex}`,
         javaLine: 12,
-        message: `${value} u shtua në rear. Madhësia: ${items.length}.`,
+        message: t('m.queue.2', { p0: value, p1: items.length }),
     };
 
     yield {
         type: 'enqueue', dsType: 'queue',
         nodeId: `queue-cell-${rearIndex}`,
         javaLine: 13,
-        message: `enqueue() përfundoi.`,
+        message: t('m.queue.3'),
     };
 }
 
 // ── DEQUEUE ───────────────────────────────────────────────────────
 function* dequeue() {
     if (items.length === 0) {
-        yield { type: 'compare', dsType: 'queue', message: 'Queue është bosh.', javaLine: 17 };
+        yield { type: 'compare', dsType: 'queue', message: t('m.queue.4'), javaLine: 17 };
         return;
     }
 
     yield {
         type: 'dequeue', dsType: 'queue',
         nodeId: 'queue-cell-0',
-        message: `dequeue(): heqim front-in ${items[0]}.`,
+        message: t('m.queue.5', { p0: items[0] }),
         javaLine: 17,
     };
 
     yield {
         type: 'delete', dsType: 'queue',
         nodeId: 'queue-cell-0',
-        message: `${items[0]} do të hiqet nga front-i.`,
+        message: t('m.queue.6', { p0: items[0] }),
         javaLine: 18,
     };
 
@@ -94,7 +95,7 @@ function* dequeue() {
     yield {
         type: 'rerender', dsType: 'queue',
         render: () => render(items),
-        message: `U hoq. Madhësia: ${items.length}.`,
+        message: t('m.queue.7', { p0: items.length }),
         javaLine: 19,
     };
 }
@@ -102,14 +103,14 @@ function* dequeue() {
 // ── PEEK ──────────────────────────────────────────────────────────
 function* peek() {
     if (items.length === 0) {
-        yield { type: 'compare', dsType: 'queue', message: 'Queue është bosh.', javaLine: 24 };
+        yield { type: 'compare', dsType: 'queue', message: t('m.queue.8'), javaLine: 24 };
         return;
     }
 
     yield {
         type: 'found', dsType: 'queue',
         nodeId: 'queue-cell-0',
-        message: `peek(): front-i është ${items[0]}. Queue pa ndryshim.`,
+        message: t('m.queue.9', { p0: items[0] }),
         javaLine: 24,
     };
 }
@@ -119,7 +120,7 @@ function* isEmpty() {
     const result = items.length === 0;
     yield {
         type: 'compare', dsType: 'queue',
-        message: `isEmpty(): ${result}. Queue ka ${items.length} element(e).`,
+        message: t('m.queue.10', { p0: result, p1: items.length }),
         javaLine: 28,
     };
 }

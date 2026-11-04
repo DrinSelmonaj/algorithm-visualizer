@@ -1,3 +1,4 @@
+import { t } from '../../i18n/index.js';
 // src/algorithms/sorting/quick.js
 
 const JAVA_SOURCE =
@@ -28,13 +29,13 @@ function* quickSort(array) {
     const arr = [...array];
     yield* quickSortHelper(arr, 0, arr.length - 1);
     for (let i = 0; i < arr.length; i++) {
-        yield { type: 'sorted', index: i, message: `arr[${i}]=${arr[i]} është pjesë e rezultatit të renditur.` };
+        yield { type: 'sorted', index: i, message: t('m.quick.1', { p0: i, p1: arr[i] }) };
     }
 }
 
 function* quickSortHelper(arr, low, high) {
     if (low >= high) {
-        if (low === high) yield { type: 'sorted', index: low, message: `arr[${low}]=${arr[low]} — element i vetëm, tashmë i renditur.` };
+        if (low === high) yield { type: 'sorted', index: low, message: t('m.quick.2', { p0: low, p1: arr[low] }) };
         return;
     }
     const pi = yield* partition(arr, low, high);
@@ -47,19 +48,19 @@ function* partition(arr, low, high) {
     let i = low - 1;
 
     // Thekso pivot-in
-    yield { type: 'pivot', index: high, javaLine: 11, message: `Pivot = arr[${high}] = ${pivot}.` };
+    yield { type: 'pivot', index: high, javaLine: 11, message: t('m.quick.3', { p0: high, p1: pivot }) };
 
     for (let j = low; j < high; j++) {
         yield {
             type: 'compare', indices: [j, high], javaLine: 13,
-            message: `Krahasojmë arr[${j}]=${arr[j]} me pivot=${pivot}.`
+            message: t('m.quick.4', { p0: j, p1: arr[j], p2: pivot })
         };
         if (arr[j] <= pivot) {
             i++;
             [arr[i], arr[j]] = [arr[j], arr[i]];
             yield {
                 type: 'swap', indices: [i, j], state: [...arr], javaLine: 15,
-                message: `${arr[j]} ≤ pivot — ndërrojmë arr[${i}] me arr[${j}].`
+                message: t('m.quick.5', { p0: arr[j], p1: i, p2: j })
             };
         }
     }
@@ -67,9 +68,9 @@ function* partition(arr, low, high) {
     [arr[i + 1], arr[high]] = [arr[high], arr[i + 1]];
     yield {
         type: 'swap', indices: [i + 1, high], state: [...arr], javaLine: 18,
-        message: `Vendosim pivot-in ${arr[i + 1]} në pozicionin e tij final ${i + 1}.`
+        message: t('m.quick.6', { p0: arr[i + 1], p1: i + 1 })
     };
-    yield { type: 'sorted', index: i + 1, message: `arr[${i + 1}]=${arr[i + 1]} (pivot) është në vendin përfundimtar.` };
+    yield { type: 'sorted', index: i + 1, message: t('m.quick.7', { p0: i + 1, p1: arr[i + 1] }) };
 
     return i + 1;
 }

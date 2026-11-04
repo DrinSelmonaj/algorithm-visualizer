@@ -1,3 +1,4 @@
+import { t } from '../../i18n/index.js';
 // src/algorithms/sorting/merge.js
 
 const JAVA_SOURCE =
@@ -29,7 +30,7 @@ function* mergeSort(array) {
     yield* mergeSortHelper(arr, 0, arr.length - 1);
     // Shënoji të gjithë si të renditur në fund
     for (let i = 0; i < arr.length; i++) {
-        yield { type: 'sorted', index: i, message: `arr[${i}]=${arr[i]} është pjesë e rezultatit të renditur.` };
+        yield { type: 'sorted', index: i, message: t('m.merge.1', { p0: i, p1: arr[i] }) };
     }
 }
 
@@ -49,7 +50,7 @@ function* merge(arr, l, m, r) {
     while (i < left.length && j < right.length) {
         yield {
             type: 'compare', indices: [l + i, m + 1 + j], javaLine: 16,
-            message: `Krahasojmë ${left[i]} (majtas) me ${right[j]} (djathtas).`
+            message: t('m.merge.2', { p0: left[i], p1: right[j] })
         };
         if (left[i] <= right[j]) {
             arr[k++] = left[i++];
@@ -58,7 +59,7 @@ function* merge(arr, l, m, r) {
         }
         yield {
             type: 'overwrite', index: k - 1, value: arr[k - 1], state: [...arr], javaLine: 16,
-            message: `Vendosim ${arr[k - 1]} te arr[${k - 1}] (vlera më e vogël).`
+            message: t('m.merge.3', { p0: arr[k - 1], p1: k - 1 })
         };
     }
 
@@ -66,7 +67,7 @@ function* merge(arr, l, m, r) {
         arr[k++] = left[i++];
         yield {
             type: 'overwrite', index: k - 1, value: arr[k - 1], state: [...arr], javaLine: 18,
-            message: `Kopjojmë mbetjen e majtë ${arr[k - 1]} te arr[${k - 1}].`
+            message: t('m.merge.4', { p0: arr[k - 1], p1: k - 1 })
         };
     }
 
@@ -74,7 +75,7 @@ function* merge(arr, l, m, r) {
         arr[k++] = right[j++];
         yield {
             type: 'overwrite', index: k - 1, value: arr[k - 1], state: [...arr], javaLine: 19,
-            message: `Kopjojmë mbetjen e djathtë ${arr[k - 1]} te arr[${k - 1}].`
+            message: t('m.merge.5', { p0: arr[k - 1], p1: k - 1 })
         };
     }
 }

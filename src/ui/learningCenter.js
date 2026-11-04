@@ -1,3 +1,4 @@
+import { t } from '../i18n/index.js';
 import { getLearningData } from './learningData.js';
 import { getTraitInfo } from './learningTraits.js';
 import { getPseudocode } from './pseudocode.js';
@@ -41,30 +42,30 @@ function showLearning(key, javaSource) {
     if (info) {
         info.innerHTML = `
             <div class="learning-hero learning-more">
-                <span class="section-kicker">Koncepti</span>
+                <span class="section-kicker">${t('learn.concept')}</span>
                 <h4>${data.title}</h4>
                 <p>${data.summary}</p>
                 <div class="learning-more-body" id="learning-more-body" hidden></div>
-                <button type="button" class="learning-more-toggle" aria-expanded="false" aria-controls="learning-more-body">Shiko më shumë…</button>
+                <button type="button" class="learning-more-toggle" aria-expanded="false" aria-controls="learning-more-body">${t('learn.seeMore')}</button>
             </div>
             <section class="learning-section learning-use">
-                <h5>Përdorimet</h5>
+                <h5>${t('learn.uses')}</h5>
                 <p class="use-summary">${escapeHtml(data.use)}</p>
                 <div class="use-body" id="use-body" hidden>
-                    <h6 class="use-subhead">Përdorimi teknik</h6>
+                    <h6 class="use-subhead">${t('learn.technical')}</h6>
                     <p>${escapeHtml(data.technical)}</p>
-                    <h6 class="use-subhead">Në jetën reale</h6>
+                    <h6 class="use-subhead">${t('learn.real')}</h6>
                     <ul class="real-list">${data.real.map(item => `<li>${escapeHtml(item)}</li>`).join('')}</ul>
                 </div>
-                <button type="button" class="learning-more-toggle use-toggle" aria-expanded="false" aria-controls="use-body">Shiko më shumë…</button>
+                <button type="button" class="learning-more-toggle use-toggle" aria-expanded="false" aria-controls="use-body">${t('learn.seeMore')}</button>
             </section>
             <section class="learning-section">
-                <h5>Karakteristikat <span class="trait-hint">(kliko për shpjegim)</span></h5>
+                <h5>${t('learn.traits')} <span class="trait-hint">${t('learn.traitsHint')}</span></h5>
                 <div class="trait-list">${data.traits.map(trait => `<button type="button" class="trait-chip" data-trait="${escapeHtml(trait)}" aria-expanded="false">${escapeHtml(trait)}</button>`).join('')}</div>
                 <div class="trait-detail" aria-live="polite" hidden></div>
             </section>
             <section class="quiz-card">
-                <span class="section-kicker">Kontrollo njohuritë</span>
+                <span class="section-kicker">${t('learn.quiz')}</span>
                 <p>${data.quiz.question}</p>
                 <div class="quiz-options">${data.quiz.options.map(option => `<button type="button" data-quiz-option="${option}">${option}</button>`).join('')}</div>
                 <div class="quiz-feedback" aria-live="polite"></div>
@@ -78,8 +79,8 @@ function showLearning(key, javaSource) {
                 info.querySelectorAll('[data-quiz-option]').forEach(item => item.classList.remove('correct', 'wrong'));
                 button.classList.add(correct ? 'correct' : 'wrong');
                 info.querySelector('.quiz-feedback').textContent = correct
-                    ? 'Saktë. Ky është kompleksiteti mesatar.'
-                    : `Jo ende. Përgjigjja është ${data.quiz.answer}.`;
+                    ? t('learn.quizRight')
+                    : t('learn.quizWrong', { answer: data.quiz.answer });
             });
         });
     }
@@ -87,13 +88,13 @@ function showLearning(key, javaSource) {
     const complexity = document.getElementById('learning-complexity-view');
     if (complexity) {
         const operationRows = data.operations
-            ? `<h5>Operacionet</h5><div class="operation-table"><div><b>Operacioni</b><b>Mesatar</b><b>Worst</b></div>${data.operations.map(row => `<div><span>${row[0]}</span><code>${row[1]}</code><code>${row[2]}</code></div>`).join('')}</div>`
+            ? `<h5>${t('learn.operations')}</h5><div class="operation-table"><div><b>${t('learn.opName')}</b><b>${t('learn.opAverage')}</b><b>Worst</b></div>${data.operations.map(row => `<div><span>${row[0]}</span><code>${row[1]}</code><code>${row[2]}</code></div>`).join('')}</div>`
             : '';
         complexity.innerHTML = `
             <div class="learning-hero">
-                <span class="section-kicker">Analiza</span>
-                <h4>Kompleksiteti</h4>
-                <p>Si ndryshon kostoja kur input-i rritet.</p>
+                <span class="section-kicker">${t('learn.analysis')}</span>
+                <h4>${t('ui.tabComplexity')}</h4>
+                <p>${t('learn.costGrows')}</p>
             </div>
             <div class="complexity-grid">
                 <article><span>Best</span><strong>${data.best}</strong></article>
@@ -103,8 +104,8 @@ function showLearning(key, javaSource) {
             </div>
             ${operationRows}
             <section class="learning-section complexity-note">
-                <h5>Si lexohet Big O?</h5>
-                <p>Big O përshkruan ritmin e rritjes, jo kohën në sekonda. O(log n) rritet ngadalë, O(n) proporcionalisht, ndërsa O(n²) bëhet shpejt i kushtueshëm.</p>
+                <h5>${t('learn.bigOTitle')}</h5>
+                <p>${t('learn.bigOText')}</p>
             </section>`;
     }
     renderSelectedCode();
@@ -129,7 +130,7 @@ function setupTraits(root) {
             const title = document.createElement('strong');
             title.textContent = chip.dataset.trait;
             const text = document.createElement('p');
-            text.textContent = getTraitInfo(chip.dataset.trait) || 'Shpjegim i pashtuar për këtë karakteristikë.';
+            text.textContent = getTraitInfo(chip.dataset.trait) || t('learn.traitMissing');
             detail.append(title, text);
             detail.hidden = false;
         });
@@ -161,7 +162,7 @@ function bindToggle(toggle, body) {
         const open = body.hidden;
         body.hidden = !open;
         toggle.setAttribute('aria-expanded', String(open));
-        toggle.textContent = open ? 'Shiko më pak' : 'Shiko më shumë…';
+        toggle.textContent = open ? t('learn.seeLess') : t('learn.seeMore');
     });
 }
 
@@ -170,7 +171,7 @@ function renderSelectedCode() {
     const badge = document.querySelector('.code-lang-badge');
     if (badge) badge.textContent = language === 'java' ? 'Java' : 'Pseudo';
     const heading = document.querySelector('.code-panel-header h3');
-    if (heading) heading.textContent = language === 'java' ? 'Kodi Java' : 'Pseudokod';
+    if (heading) heading.textContent = language === 'java' ? t('ui.codeTitle') : t('ui.pseudoTitle');
     if (language === 'java') {
         showCode(currentJava, 'java');
         return;
@@ -178,7 +179,7 @@ function renderSelectedCode() {
     const data = getLearningData(currentKey);
     const pseudo = getPseudocode(currentKey) || [
         `ALGORITHM ${data?.title || currentKey}`,
-        `// Pseudokodi i detajuar nuk është i disponueshëm për këtë element.`,
+        t('learn.pseudoNA'),
         `// Average: ${data?.average || '—'} | Space: ${data?.space || '—'}`,
     ].join('\n');
     showCode(pseudo, 'plaintext');

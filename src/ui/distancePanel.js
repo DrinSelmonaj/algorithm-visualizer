@@ -1,3 +1,4 @@
+import { t } from '../i18n/index.js';
 // Paneli i pavarur i distancave për Dijkstra. Nuk njeh D3 apo algoritmin;
 // merr vetëm një snapshot të serializueshëm nga hapat e animimit.
 
@@ -27,7 +28,7 @@ function renderDistancePanel({ distances, predecessors, sourceId, updatedNodeId 
 
         const node = document.createElement('span');
         node.className = 'distance-node';
-        node.textContent = `Nyja ${nodeId}`;
+        node.textContent = t('dist.node', { id: nodeId });
 
         const value = document.createElement('span');
         value.className = 'distance-value';
@@ -35,8 +36,8 @@ function renderDistancePanel({ distances, predecessors, sourceId, updatedNodeId 
 
         const origin = document.createElement('span');
         origin.className = 'distance-origin';
-        if (nodeId === sourceId) origin.textContent = '(Src)';
-        else if (predecessors[nodeId] != null) origin.textContent = `(nga ${predecessors[nodeId]})`;
+        if (nodeId === sourceId) origin.textContent = t('dist.src');
+        else if (predecessors[nodeId] != null) origin.textContent = t('dist.from', { id: predecessors[nodeId] });
 
         row.append(node, value, origin);
         rows.appendChild(row);

@@ -1,3 +1,4 @@
+import { t } from '../i18n/index.js';
 // src/ui/complexity.js
 // Shfaq complexity badges (Time/Space) për algoritmin aktiv.
 
@@ -6,8 +7,8 @@ const COMPLEXITY = {
     insertion:  { time: 'O(n²)',      space: 'O(1)'    },
     selection:  { time: 'O(n²)',      space: 'O(1)'    },
     merge:      { time: 'O(n log n)', space: 'O(n)'    },
-    quick:      { time: 'O(n log n)', space: 'O(log n)', worst: 'O(n²)', worstNote: 'Rasti më i keq kur pivot-i është gjithmonë më i vogli/madhi (p.sh. array tashmë i renditur).' },
-    shell:      { time: 'O(n log n)', space: 'O(1)',     worst: 'O(n²)', worstNote: 'Varet nga sekuenca e gap-eve — me gap-e klasike (n/2, n/4...) rasti më i keq është O(n²).' },
+    quick:      { time: 'O(n log n)', space: 'O(log n)', worst: 'O(n²)', worstNote: 'cx.quickNote' },
+    shell:      { time: 'O(n log n)', space: 'O(1)',     worst: 'O(n²)', worstNote: 'cx.shellNote' },
     heap:       { time: 'O(n log n)', space: 'O(1)'    },
     radix:      { time: 'O(nk)',      space: 'O(n+k)'  },
     linear:     { time: 'O(n)',       space: 'O(1)'    },
@@ -36,9 +37,9 @@ function showComplexity(algoKey) {
     // ka flex-wrap, pilula wrap-on vetë nëse s'ka vend, s'thyen layout-in.
     if (timeEl) {
         timeEl.textContent = data.worst
-            ? `Time: ${data.time} · rasti më keq ${data.worst}`
+            ? `Time: ${data.time} · ${t('cx.worst')} ${data.worst}`
             : `Time: ${data.time}`;
-        if (data.worstNote) timeEl.title = data.worstNote;
+        if (data.worstNote) timeEl.title = t(data.worstNote);
         else timeEl.removeAttribute('title');
     }
     if (spaceEl) spaceEl.textContent = `Space: ${data.space}`;

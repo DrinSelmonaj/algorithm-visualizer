@@ -1,3 +1,4 @@
+import { t } from '../../i18n/index.js';
 // src/algorithms/searching/linear.js
 
 const JAVA_SOURCE =
@@ -13,17 +14,17 @@ const JAVA_SOURCE =
 function* linearSearch(array, target) {
     const arr = [...array];
 
-    yield { type: 'info', message: `Kërkojmë: ${target}` };
+    yield { type: 'info', message: t('m.linear.1', { p0: target }) };
 
     for (let i = 0; i < arr.length; i++) {
-        yield { type: 'compare', indices: [i], javaLine: 3, message: `Krahasojmë arr[${i}]=${arr[i]} me ${target}.` };
+        yield { type: 'compare', indices: [i], javaLine: 3, message: t('m.linear.2', { p0: i, p1: arr[i], p2: target }) };
         if (arr[i] === target) {
-            yield { type: 'found', indices: [i], javaLine: 4, message: `${target} u gjet në indeksin ${i}.` };
+            yield { type: 'found', indices: [i], javaLine: 4, message: t('m.linear.3', { p0: target, p1: i }) };
             return;
         }
     }
 
-    yield { type: 'compare', indices: [], javaLine: 6, message: `${target} nuk u gjet.` };
+    yield { type: 'compare', indices: [], javaLine: 6, message: t('m.linear.4', { p0: target }) };
 }
 
 export { linearSearch, JAVA_SOURCE };

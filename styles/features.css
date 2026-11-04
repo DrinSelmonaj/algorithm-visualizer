@@ -106,3 +106,10 @@
 .use-body { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); }
 .use-body[hidden] { display: none; }
 .use-body p { color: var(--text-secondary); font-size: .76rem; line-height: 1.65; }
+
+/* Ndërruesi i gjuhës SQ / EN në header */
+.lang-switch { display: inline-flex; margin-left: auto; padding: 3px; gap: 2px; border: 1px solid var(--border); border-radius: 9px; background: rgba(255,255,255,.03); }
+.lang-switch + .header-meta { margin-left: 16px; }
+.lang-btn { min-width: 34px; min-height: 26px; padding: 0 8px; border-radius: 6px; background: transparent; color: var(--text-muted); font: 700 .68rem var(--font-mono); letter-spacing: .04em; cursor: pointer; transition: background var(--transition), color var(--transition); }
+.lang-btn:hover { color: var(--text-primary); }
+.lang-btn.active { background: rgba(105,225,255,.14); color: var(--accent-blue); }

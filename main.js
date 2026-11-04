@@ -15,6 +15,7 @@ import { highlightLine } from './src/ui/codePanel.js';
 import { showComplexity } from './src/ui/complexity.js';
 import { hideDistancePanel } from './src/ui/distancePanel.js';
 import { hideHashContext } from './src/ui/hashContextPanel.js';
+import { t, initI18n, onLangChange } from './src/i18n/index.js';
 import { initLearningCenter, showLearning, activateTab } from './src/ui/learningCenter.js';
 import { initCompareMode } from './src/ui/compareMode.js';
 import { initTimeline, resetTimeline, recordTimelineStep } from './src/ui/timeline.js';
@@ -213,7 +214,7 @@ function selectAlgorithm(algoKey) {
     // Etiketa e statit "Ndërrime"/"Shkrime" ndryshon sipas mënyrës si punon algoritmi
     const swapsLabel = document.getElementById('stat-swaps-label');
    if (swapsLabel) {
-        swapsLabel.textContent = algo.statType === 'write' ? 'Mbishkrime' : 'Ndërrime';
+        swapsLabel.textContent = algo.statType === 'write' ? t('ui.statWrites') : t('ui.statSwaps');
     }
 
     resetStats();
@@ -356,7 +357,7 @@ function runAlgorithm() {
             const exists = graph.nodes.some(n => n.id === sourceId);
             if (!exists) {
                 const validIds = graph.nodes.map(n => n.id).join(', ');
-                alert(`Nyja "${sourceId}" s'ekziston në graf. Nyjet e vlefshme: ${validIds}`);
+                alert(t('js.nodeMissing', { id: sourceId, valid: validIds }));
                 return;
             }
         }
@@ -494,18 +495,18 @@ function requestSearchTarget() {
     const target = parseValidInt(input?.value);
     const status = document.getElementById('algo-status');
     if (target === null) {
-        if (status) status.textContent = 'Shkruaj një numër të plotë për ta kërkuar.';
+        if (status) status.textContent = t('js.searchNeedInt');
         input?.focus();
         return null;
     }
-    if (status) status.textContent = `Po kërkojmë vlerën ${target}.`;
+    if (status) status.textContent = t('js.searching', { target });
     return target;
 }
 
 function handleExecutionError(category) {
-    console.error('Ekzekutimi dështoi.');
+    console.error(t('js.execFailed'));
     const status = document.getElementById('algo-status');
-    if (status) status.textContent = 'Ndodhi një gabim. Riprovo ose përdor Rikthe.';
+    if (status) status.textContent = t('js.errorStatus');
     if (category === 'graph') setGroupEnabled('#graph-panel', true);
     setButtonState('run', false);
     setButtonState('pause', true);
@@ -523,7 +524,7 @@ function runDSOperation(operation, ...args) {
     if (currentAlgo === 'stack') {
         if (operation === 'push') {
             const val = parseValidInt(args[0]);
-            if (val === null) { alert('Shkruaj një numër të plotë të vlefshëm për Push.'); return; }
+            if (val === null) { alert(t('js.pushInt')); return; }
             gen = push(val);
         }
         if (operation === 'pop')     gen = pop();
@@ -533,7 +534,7 @@ function runDSOperation(operation, ...args) {
     } else if (currentAlgo === 'queue') {
         if (operation === 'enqueue') {
             const val = parseValidInt(args[0]);
-            if (val === null) { alert('Shkruaj një numër të plotë të vlefshëm për Enqueue.'); return; }
+            if (val === null) { alert(t('js.enqueueInt')); return; }
             gen = enqueue(val);
         }
         if (operation === 'dequeue') gen = dequeue();
@@ -542,19 +543,19 @@ function runDSOperation(operation, ...args) {
     } else if (currentAlgo === 'linkedlist') {
         if (['insertHead', 'insertTail', 'delete', 'search'].includes(operation)) {
             const val = parseValidInt(args[0]);
-            if (val === null) { alert('Shkruaj një numër të plotë të vlefshëm.'); return; }
+            if (val === null) { alert(t('js.validInt')); return; }
             if (operation === 'insertHead') gen = insertAtHead(val);
             if (operation === 'insertTail') gen = insertAtTail(val);
             if (operation === 'delete') {
                 const rawNext = String(args[1] ?? '').trim();
                 const nextIsNull = args[2] === true;
                 if (nextIsNull && rawNext !== '') {
-                    alert('Përdor ose "Pas saj" ose "Next = null", jo të dyja.');
+                    alert(t('js.llEither'));
                     return;
                 }
                 const nextValue = rawNext === '' ? null : parseValidInt(rawNext);
                 if (rawNext !== '' && nextValue === null) {
-                    alert('"Pas saj" duhet të jetë një numër i plotë i vlefshëm.');
+                    alert(t('js.llAfterInt'));
                     return;
                 }
                 gen = deleteLL(val, nextValue, nextIsNull);
@@ -563,7 +564,7 @@ function runDSOperation(operation, ...args) {
         } else if (operation === 'insertAfter') {
             const val   = parseValidInt(args[0]);
             const after = parseValidInt(args[1]);
-            if (val === null || after === null) { alert('Të dyja fushat duhen numra të plotë të vlefshëm.'); return; }
+            if (val === null || after === null) { alert(t('js.llBothInts')); return; }
             gen = insertAfterValue(val, after);
         }
 
@@ -571,15 +572,15 @@ function runDSOperation(operation, ...args) {
         const key = String(args[0] ?? '').trim();
         if (operation === 'put') {
             const value = parseValidInt(args[1]);
-            if (!key || value === null) { alert('Kërkohen Key dhe një vlerë e plotë e vlefshme.'); return; }
+            if (!key || value === null) { alert(t('js.hmKeyValue')); return; }
             gen = put(key, value);
         }
         if (operation === 'get') {
-            if (!key) { alert('Shkruaj një Key.'); return; }
+            if (!key) { alert(t('js.hmKey')); return; }
             gen = get(key);
         }
         if (operation === 'remove') {
-            if (!key) { alert('Shkruaj një Key.'); return; }
+            if (!key) { alert(t('js.hmKey')); return; }
             gen = remove(key);
         }
     }
@@ -681,7 +682,7 @@ function runBSTOperation(generator) {
 function getBSTOperationValue() {
     const value = parseValidInt(document.getElementById('bst-operation-input').value);
     if (value === null) {
-        alert('Shkruaj një numër të plotë të vlefshëm.');
+        alert(t('js.validInt'));
         return null;
     }
     return value;
@@ -692,7 +693,7 @@ document.getElementById('btn-bst-run').addEventListener('click', () => {
     const vals = input.split(',').map(s => parseValidInt(s.trim()));
 
     if (vals.some(n => n === null || n <= 0)) {
-        alert('Vlerat e BST duhet të jenë numra të plotë pozitivë, të ndarë me presje.');
+        alert(t('js.bstPositive'));
         return;
     }
     runBSTOperation(bstAlgorithm(vals));
@@ -764,7 +765,7 @@ if (btnCopyCode) {
             btnCopyCode.classList.add('copied');
             setTimeout(() => btnCopyCode.classList.remove('copied'), 1200);
         } catch (err) {
-            console.error('Kopjimi dështoi:', err);
+            console.error(t('js.copyFailed'), err);
         }
     });
 }
@@ -802,15 +803,15 @@ document.getElementById('btn-custom-apply').addEventListener('click', () => {
     const parsed = parseCustomArray(raw);
 
     if (!parsed) {
-        showCustomFeedback('Duhen 5–45 numra (0–999), të ndarë me presje.', 'error');
+        showCustomFeedback(t('js.customInvalid'), 'error');
         return;
     }
 
     customArray = parsed.values;
     showCustomFeedback(
         parsed.filteredCount > 0
-            ? `${parsed.values.length} elemente u ngarkuan (${parsed.filteredCount} u injoruan — NaN ose jashtë 0–999).`
-            : `${parsed.values.length} elemente u ngarkuan.`,
+            ? t('js.customLoadedIgnored', { n: parsed.values.length, ignored: parsed.filteredCount })
+            : t('js.customLoaded', { n: parsed.values.length }),
         'success'
     );
 
@@ -876,6 +877,35 @@ document.addEventListener('keydown', (e) => {
 setGroupEnabled('.custom-input-group', false);
 setGroupEnabled('.size-control', false);
 setGroupEnabled('#bst-input-group', false);
+// ─── Ndërrimi i gjuhës (SQ/EN) ────────────────────────────────────
+// HTML-ja statike përkthehet nga i18n (data-i18n*). Këtu rifreskohen pjesët dinamike:
+// emri i algoritmit, badge-t, paneli mësimor, etiketa e statistikës dhe panelet DS/graf.
+function refreshLanguage() {
+    if (!currentAlgo) {
+        document.getElementById('active-algo-name').textContent = t('ui.pickAlgo');
+        const code = document.getElementById('java-code-display');
+        if (code && !code.querySelector('.code-line')) code.textContent = t('ui.codePlaceholder');
+        return;
+    }
+    const algo = ALGORITHMS[currentAlgo];
+    showComplexity(currentAlgo);
+    showLearning(currentAlgo, algo.java);
+    const swapsLabel = document.getElementById('stat-swaps-label');
+    if (swapsLabel) swapsLabel.textContent = algo.statType === 'write' ? t('ui.statWrites') : t('ui.statSwaps');
+    // Panelet rindërtohen vetëm kur s'ka ekzekutim aktiv (do ta fshinin gjendjen e fushave)
+    if (!getState().isRunning) {
+        if (algo.category === 'datastructures') {
+            showDSPanel(currentAlgo, (op, ...args) => runDSOperation(op, ...args));
+        } else if (algo.category === 'graph') {
+            showGraphPanel((op, ...args) => runGraphOperation(op, ...args), !!algo.needsSourceNode);
+            setGroupEnabled('#graph-panel', true);
+        }
+    }
+}
+onLangChange(refreshLanguage);
+initI18n();
+refreshLanguage();
+
 initAlgoSearch();
 initSidebarToggle();
 initLearningCenter();
@@ -954,15 +984,15 @@ document.getElementById('btn-share-state')?.addEventListener('click', async () =
     const target = document.getElementById('search-target-input')?.value;
     if (target) url.searchParams.set('target', target);
     const button = document.getElementById('btn-share-state');
-    let label = 'Linku u kopjua';
+    let label = t('js.linkCopied');
     try {
         await navigator.clipboard.writeText(url.toString());
     } catch (err) {
-        console.error('Kopjimi dështoi:', err);
-        label = 'Kopjimi dështoi';
+        console.error(t('js.copyFailed'), err);
+        label = t('js.copyFailedShort');
     }
     button.textContent = label;
-    setTimeout(() => { button.textContent = 'Ndaj'; }, 1600);
+    setTimeout(() => { button.textContent = t('ui.share'); }, 1600);
 });
 
 const sharedParams = new URLSearchParams(window.location.search);

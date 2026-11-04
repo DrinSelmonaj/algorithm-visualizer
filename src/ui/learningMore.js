@@ -1,3 +1,6 @@
+import { getLang } from '../i18n/index.js';
+import { MORE_EN, REAL_EN, TECH_EN } from './learningMore.en.js';
+
 // src/ui/learningMore.js
 // Shpjegim i zgjeruar (rreth 90–150 fjalë) për çdo algoritëm/strukturë — shfaqet
 // te butoni "Shiko më shumë…" në skedën Përmbledhje. Çdo hyrje është një listë
@@ -203,4 +206,10 @@ function countMoreWords(key) {
     return (MORE[key] || []).join(' ').split(/\s+/).filter(Boolean).length;
 }
 
-export { MORE, REAL, TECH, countMoreWords, countRealWords, countUsesWords };
+// ── Zgjedhja sipas gjuhës aktuale ─────────────────────────────────
+const bySlot = (sq, en) => (getLang() === 'en' ? en : sq);
+function getMore(key) { return bySlot(MORE, MORE_EN)[key] || []; }
+function getReal(key) { return bySlot(REAL, REAL_EN)[key] || []; }
+function getTech(key) { return bySlot(TECH, TECH_EN)[key] || ''; }
+
+export { MORE, REAL, TECH, countMoreWords, countRealWords, countUsesWords, getMore, getReal, getTech };
