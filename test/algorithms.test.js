@@ -115,3 +115,30 @@ test('hapat logjikë: Quick = një për çdo ndarje (partition), jo më shumë s
     const n = logical(quickSort([...sample8]));
     assert.ok(n >= 1 && n <= sample8.length - 1, `partitions=${n}`);
 });
+
+// ── Slider-i i shpejtësisë vlen edhe gjatë një run-i që po ecën ──────
+test('scheduler: ndryshimi i shpejtësisë gjatë run-it zbatohet menjëherë', async () => {
+  let speed = 1;                                  // 1200 ms për hap
+  function* five() { for (let i = 0; i < 5; i++) yield { type: 'compare', indices: [0, 1] }; }
+  const started = Date.now();
+  let finished = false;
+  await run(five(), () => { speed = 3; }, () => { finished = true; }, () => speed);   // pas hapit të parë → 80 ms
+  const elapsed = Date.now() - started;
+  assert.ok(finished);
+  assert.ok(elapsed < 1500, `u prit shumë: ${elapsed} ms (para rregullimit ≈ 6000 ms)`);
+});
+
+test('scheduler: speed si numër punon ende (përputhshmëri)', async () => {
+  function* two() { yield { type: 'compare', indices: [0, 1] }; yield { type: 'compare', indices: [0, 1] }; }
+  const started = Date.now();
+  await run(two(), () => {}, () => {}, 3);
+  assert.ok(Date.now() - started < 600);
+});
+
+test('scheduler: speed si funksion respekton vonesën e zgjedhur (nuk është i menjëhershëm)', async () => {
+  function* three() { for (let i = 0; i < 3; i++) yield { type: 'compare', indices: [0, 1] }; }
+  const started = Date.now();
+  await run(three(), () => {}, () => {}, () => 2);          // 3 × 500 ms
+  const elapsed = Date.now() - started;
+  assert.ok(elapsed >= 1300 && elapsed < 2500, `elapsed=${elapsed}`);
+});

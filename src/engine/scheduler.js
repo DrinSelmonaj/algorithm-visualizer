@@ -19,6 +19,24 @@ function wait(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+// Vonesa për hap sipas shpejtësisë. `speed` mund të jetë numër (1|2|3) ose funksion që e
+// kthen shpejtësinë aktuale — kështu slider-i ndikon menjëherë edhe te një run që po ecën.
+function delayFor(speed) {
+    const value = typeof speed === 'function' ? speed() : speed;
+    return SPEEDS[value] ?? SPEEDS[2];
+}
+
+// Pret `delayFor(speed)` ms, por e rishikon shpejtësinë çdo ~40 ms: nëse përdoruesi e kalon
+// në "Shpejt" gjatë një prite të gjatë, vonesa e mbetur shkurtohet menjëherë.
+async function waitStep(speed) {
+    const start = Date.now();
+    for (;;) {
+        const remaining = delayFor(speed) - (Date.now() - start);
+        if (remaining <= 0) return;
+        await wait(Math.min(40, remaining));
+    }
+}
+
 async function run(generator, onStep, onFinish, speed = 2, onError = null) {
     // Nëse ka run aktiv, ndalo atë së pari
     if (isRunning) {
@@ -46,7 +64,7 @@ async function run(generator, onStep, onFinish, speed = 2, onError = null) {
             if (stopRequest || myRunId !== activeRunId) break;
 
             onStep(step);
-            await wait(SPEEDS[speed]);
+            await waitStep(speed);
         }
         completed = !stopRequest && myRunId === activeRunId;
     } catch (error) {

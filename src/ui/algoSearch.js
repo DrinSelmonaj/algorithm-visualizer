@@ -11,13 +11,15 @@ function initAlgoSearch() {
     if (!input) return;
 
     const groups = [...document.querySelectorAll('.algo-group')];
-    // Ruajmë gjendjen origjinale open/closed e çdo grupi (Kërkim mbyllur,
-    // Renditje hapur, etj.) — rikthehet kur kërkimi pastrohet.
-    const originalOpenState = new Map(groups.map(g => [g, g.open]));
+    // Gjendja open/closed e grupeve ruhet në çastin kur fillon kërkimi (jo vetëm kur
+    // ngarkohet faqja), që rubrikat që përdoruesi i ka hapur vetë të rikthehen ashtu.
+    let savedOpenState = null;
 
     input.addEventListener('input', () => {
         const query = normalize(input.value.trim());
         let anyVisible = false;
+
+        if (query && !savedOpenState) savedOpenState = new Map(groups.map(g => [g, g.open]));
 
         groups.forEach(group => {
             const buttons = [...group.querySelectorAll('.algo-btn')];
@@ -42,9 +44,10 @@ function initAlgoSearch() {
             if (query) {
                 if (groupHasMatch) group.open = true;
             } else {
-                group.open = originalOpenState.get(group);
+                group.open = savedOpenState?.get(group) ?? group.open;
             }
         });
+        if (!query) savedOpenState = null;
 
         if (emptyMsg) {
             emptyMsg.classList.toggle('algo-search-empty--visible', query !== '' && !anyVisible);
