@@ -395,7 +395,7 @@ function runAlgorithm() {
             setButtonState('pause', true);
             setButtonState('step', false);
         },
-        speedValue,
+        () => speedValue,   // funksion: slider-i vlen edhe gjatë run-it
         () => handleExecutionError(cat)
     );
 }
@@ -604,7 +604,7 @@ function runDSOperation(operation, ...args) {
             if (step.javaLine) highlightLine(step.javaLine);
         },
         () => { setGroupEnabled('.ds-ops', true); },   // rihap kur mbaron natyrshëm
-        speedValue,
+        () => speedValue,
         () => handleExecutionError('datastructures')
     );
 }
@@ -677,7 +677,7 @@ function runBSTOperation(generator) {
             setButtonState('pause', true);
             setButtonState('step', true);
         },
-        speedValue,
+        () => speedValue,
         () => {
             currentGen = null;
             setGroupEnabled('#bst-input-group', true);
