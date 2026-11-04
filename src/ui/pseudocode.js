@@ -1,3 +1,6 @@
+import { getLang } from '../i18n/index.js';
+import { PSEUDO_EN } from './pseudocode.en.js';
+
 // src/ui/pseudocode.js
 // Pseudokod i thelluar për çdo algoritëm/strukturë: ideja, invarianti (çfarë
 // mbetet gjithmonë e vërtetë), hapat me kushte reale dhe analiza e kompleksitetit.
@@ -421,7 +424,7 @@ PROCEDURE Remove(key)
 
 /** Kthen pseudokodin e thelluar për një çelës, ose null nëse nuk ekziston. */
 function getPseudocode(key) {
-    return PSEUDO[key] || null;
+    return (getLang() === 'en' ? PSEUDO_EN : PSEUDO)[key] || null;
 }
 
 export { PSEUDO, getPseudocode };

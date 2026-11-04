@@ -1,3 +1,4 @@
+import { t } from '../i18n/index.js';
 // src/ui/hashContextPanel.js
 // HashMap Kontekst Ekzekutimi — panel i vogël që shfaq Key/Shumën e hash-it/
 // Bucket-in gjatë ekzekutimit të put/get/remove. Njësoj në frymë si
@@ -9,13 +10,13 @@ function renderHashContext({ key, hashSum, bucketIndex, bucketCount }) {
 
     panel.hidden = false;
     panel.innerHTML = `
-        <h3>Konteksti i Hash-it</h3>
+        <h3>${escapeHtml(t('hash.title'))}</h3>
         <div class="hash-context-row">
             <span class="hash-context-label">Key</span>
             <span class="hash-context-value">"${escapeHtml(key)}"</span>
         </div>
         <div class="hash-context-row">
-            <span class="hash-context-label">Shuma e karaktereve</span>
+            <span class="hash-context-label">${escapeHtml(t('hash.sum'))}</span>
             <span class="hash-context-value">${hashSum}</span>
         </div>
         <div class="hash-context-row hash-context-row--result">

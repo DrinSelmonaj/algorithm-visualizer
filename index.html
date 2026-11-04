@@ -9,9 +9,9 @@
     <link rel="stylesheet" href="styles/main.css?v=2">
     <link rel="stylesheet" href="styles/visualizer.css?v=2">
     <link rel="stylesheet" href="styles/controls.css?v=2">
-    <link rel="stylesheet" href="styles/code-panel.css?v=2">
+    <link rel="stylesheet" href="styles/code-panel.css?v=3">
     <link rel="stylesheet" href="styles/redesign.css?v=1">
-    <link rel="stylesheet" href="styles/features.css?v=2">
+    <link rel="stylesheet" href="styles/features.css?v=3">
     <link rel="stylesheet" href="styles/education-theme.css?v=3">
 
 </head>
@@ -54,7 +54,7 @@
   
     <!-- HEADER -->
     <header class="app-header">
-        <button id="btn-sidebar-toggle" type="button" class="sidebar-toggle" aria-label="Hap listën e algoritmeve" aria-expanded="false">
+        <button id="btn-sidebar-toggle" type="button" class="sidebar-toggle" aria-label="Hap listën e algoritmeve" aria-expanded="false" data-i18n-attr="aria-label:ui.sidebarOpen">
             <span class="sidebar-toggle-bar"></span>
             <span class="sidebar-toggle-bar"></span>
             <span class="sidebar-toggle-bar"></span>
@@ -64,11 +64,15 @@
         </div>
         <div class="brand-copy">
             <h1 class="app-title">AlgoPro</h1>
-            <p class="app-subtitle">Laborator interaktiv algoritmesh</p>
+            <p class="app-subtitle" data-i18n="ui.subtitle">Laborator interaktiv algoritmesh</p>
         </div>
-        <div class="header-meta" aria-label="Veçoritë e aplikacionit">
-            <span><i class="status-dot"></i> Gati për ekzekutim</span>
-            <span class="header-shortcut"><kbd>17</kbd> vizualizime</span>
+        <div class="lang-switch" role="group" aria-label="Gjuha" data-i18n-attr="aria-label:ui.langGroup">
+            <button type="button" class="lang-btn active" data-lang-option="sq" aria-pressed="true" title="Shqip" data-i18n-attr="title:ui.langSq">SQ</button>
+            <button type="button" class="lang-btn" data-lang-option="en" aria-pressed="false" title="Anglisht" data-i18n-attr="title:ui.langEn">EN</button>
+        </div>
+        <div class="header-meta" aria-label="Veçoritë e aplikacionit" data-i18n-attr="aria-label:ui.headerMetaAria">
+            <span><i class="status-dot"></i> <span data-i18n="ui.ready">Gati për ekzekutim</span></span>
+            <span class="header-shortcut"><kbd>17</kbd> <span data-i18n="ui.visualizations">vizualizime</span></span>
         </div>
     </header>
 
@@ -83,23 +87,23 @@
 
             <div class="sidebar-heading">
                 <div>
-                    <span class="section-kicker">Biblioteka</span>
-                    <h2>Eksploro</h2>
+                    <span class="section-kicker" data-i18n="ui.library">Biblioteka</span>
+                    <h2 data-i18n="ui.explore">Eksploro</h2>
                 </div>
                 <span class="sidebar-count">17</span>
             </div>
             <div class="algo-search">
                 <svg class="icon algo-search-icon"><use href="#icon-search"></use></svg>
                 <input type="search" id="algo-search-input" class="algo-search-input"
-                       placeholder="Kërko algoritëm..." aria-label="Kërko algoritëm">
+                       placeholder="Kërko algoritëm..." aria-label="Kërko algoritëm" data-i18n-attr="placeholder:ui.searchPlaceholder; aria-label:ui.searchAria">
                 <button id="algo-search-clear" class="algo-search-clear" type="button"
-                        aria-label="Pastro kërkimin" title="Pastro kërkimin" hidden>×</button>
+                        aria-label="Pastro kërkimin" title="Pastro kërkimin" hidden data-i18n-attr="aria-label:ui.clearSearch; title:ui.clearSearch">×</button>
             </div>
-            <p id="algo-search-empty" class="algo-search-empty">Asnjë algoritëm nuk u gjet.</p>
+            <p id="algo-search-empty" class="algo-search-empty" data-i18n="ui.noResults">Asnjë algoritëm nuk u gjet.</p>
 
             <details class="algo-group">
                 <summary class="algo-group-title">
-                    <span>Kërkim</span>
+                    <span data-i18n="ui.grpSearch">Kërkim</span>
                     <span class="chevron">▾</span>
                 </summary>
                 <div class="algo-group-items">
@@ -116,7 +120,7 @@
 
             <details class="algo-group" open>
                 <summary class="algo-group-title">
-                    <span>Renditje</span>
+                    <span data-i18n="ui.grpSort">Renditje</span>
                     <span class="chevron">▾</span>
                 </summary>
                 <div class="algo-group-items">
@@ -170,7 +174,7 @@
 
             <details class="algo-group">
                 <summary class="algo-group-title">
-                    <span>Grafe</span>
+                    <span data-i18n="ui.grpGraphs">Grafe</span>
                     <span class="chevron">▾</span>
                 </summary>
                 <div class="algo-group-items">
@@ -187,7 +191,7 @@
 
             <details class="algo-group">
                 <summary class="algo-group-title">
-                    <span>Struktura të Dhënash</span>
+                    <span data-i18n="ui.grpDS">Struktura të Dhënash</span>
                     <span class="chevron">▾</span>
                 </summary>
                 <div class="algo-group-items">
@@ -225,12 +229,12 @@
                         <span class="badge badge--link" id="badge-space" role="button" tabindex="0">Space: —</span>
                     </div>
                     <div class="workspace-actions">
-                        <button id="btn-compare-open" type="button" class="btn btn-secondary">Krahaso</button>
-                        <button id="btn-share-state" type="button" class="btn btn-secondary">Ndaj</button>
+                        <button id="btn-compare-open" type="button" class="btn btn-secondary" data-i18n="ui.compare">Krahaso</button>
+                        <button id="btn-share-state" type="button" class="btn btn-secondary" data-i18n="ui.share">Ndaj</button>
                     </div>
                     <!-- Custom Input — butoni hap modalin (shfaqet vetëm për Sorting/Searching) -->
                     <div class="custom-input-group">
-                        <button id="btn-custom-open" type="button" class="btn btn-secondary">Vlera Custom</button>
+                        <button id="btn-custom-open" type="button" class="btn btn-secondary" data-i18n="ui.custom">Vlera Custom</button>
                     </div>
                 </div>
             </div>
@@ -244,34 +248,34 @@
                         <rect x="46%" y="35%" width="14" height="64" rx="7" class="welcome-bar welcome-bar--one"/>
                         <rect x="49%" y="39%" width="14" height="48" rx="7" class="welcome-bar welcome-bar--two"/>
                         <rect x="52%" y="32%" width="14" height="76" rx="7" class="welcome-bar welcome-bar--three"/>
-                        <text x="50%" y="70%" text-anchor="middle" class="welcome-title">Mëso duke parë</text>
-                        <text x="50%" y="77%" text-anchor="middle" class="svg-placeholder">Zgjidh një algoritëm nga biblioteka për të filluar.</text>
+                        <text x="50%" y="70%" text-anchor="middle" class="welcome-title" data-i18n="ui.welcomeTitle">Mëso duke parë</text>
+                        <text x="50%" y="77%" text-anchor="middle" class="svg-placeholder" data-i18n="ui.welcomePrompt">Zgjidh një algoritëm nga biblioteka për të filluar.</text>
                     </g>
                 </svg>
                 <aside id="dijkstra-distance-panel" class="distance-panel glass-panel" hidden
-                       aria-label="Distancat aktuale të Dijkstra-s" aria-live="polite">
-                    <h3>Distancat aktuale</h3>
+                       aria-label="Distancat aktuale të Dijkstra-s" aria-live="polite" data-i18n-attr="aria-label:ui.distancesAria">
+                    <h3 data-i18n="ui.distances">Distancat aktuale</h3>
                     <div id="dijkstra-distance-rows"></div>
                 </aside>
                 <aside id="hashmap-context-panel" class="hash-context-panel glass-panel" hidden
-                       aria-label="Konteksti i hash-it" aria-live="polite"></aside>
+                       aria-label="Konteksti i hash-it" aria-live="polite" data-i18n-attr="aria-label:ui.hashAria"></aside>
             </div>
 
             <!-- Statusi/mesazhi live i hapit aktual — i përbashkët për Graf + Struktura
                  të dhënash (animator.js e mbush me step.message nga gjeneratori) -->
             <div id="algo-status" class="algo-status glass-panel"></div>
 
-            <div class="visual-legend visual-legend--hidden" aria-label="Legjenda e ngjyrave">
-                <span><i class="legend-dot legend-dot--compare"></i>Krahasim</span>
-                <span><i class="legend-dot legend-dot--write"></i>Ndryshim</span>
-                <span><i class="legend-dot legend-dot--success"></i>Përfunduar</span>
-                <span><i class="legend-dot legend-dot--pivot"></i>Pivot / aktiv</span>
+            <div class="visual-legend visual-legend--hidden" aria-label="Legjenda e ngjyrave" data-i18n-attr="aria-label:ui.legendAria">
+                <span><i class="legend-dot legend-dot--compare"></i><span data-i18n="ui.legCompare">Krahasim</span></span>
+                <span><i class="legend-dot legend-dot--write"></i><span data-i18n="ui.legWrite">Ndryshim</span></span>
+                <span><i class="legend-dot legend-dot--success"></i><span data-i18n="ui.legDone">Përfunduar</span></span>
+                <span><i class="legend-dot legend-dot--pivot"></i><span data-i18n="ui.legPivot">Pivot / aktiv</span></span>
             </div>
 
             <!-- Statistikat live — kartelë glassmorphism, poshtë SVG-së -->
             <div class="stats-bar glass-panel stats-bar--hidden">
                 <div class="stat">
-                    <span class="stat-label">Krahasime</span>
+                    <span class="stat-label" data-i18n="ui.statCompare">Krahasime</span>
                     <span class="stat-value" id="stat-comparisons">0</span>
                 </div>
                 <div class="stat">
@@ -279,7 +283,7 @@
                     <span class="stat-value" id="stat-swaps">0</span>
                 </div>
                 <div class="stat">
-                    <span class="stat-label">Hapi</span>
+                    <span class="stat-label" data-i18n="ui.statStep">Hapi</span>
                     <span class="stat-value" id="stat-step">0</span>
                 </div>
             </div>
@@ -288,45 +292,45 @@
             <div class="controls-bar controls-bar--idle">
 
                <div class="control-buttons">
-                    <button id="btn-run" class="btn-circle btn-circle-primary glow-primary" disabled title="Ekzekuto" aria-label="Ekzekuto">
+                    <button id="btn-run" class="btn-circle btn-circle-primary glow-primary" disabled title="Ekzekuto" aria-label="Ekzekuto" data-i18n-attr="title:ui.run; aria-label:ui.run">
                         <svg class="icon"><use href="#icon-play_arrow"></use></svg>
                     </button>
-                    <button id="btn-pause" class="btn-circle" disabled title="Pauzë" aria-label="Pauzë">
+                    <button id="btn-pause" class="btn-circle" disabled title="Pauzë" aria-label="Pauzë" data-i18n-attr="title:ui.pause; aria-label:ui.pause">
                         <svg class="icon"><use href="#icon-pause"></use></svg>
                     </button>
-                    <button id="btn-reset" class="btn-circle" disabled title="Rikthe" aria-label="Rikthe">
+                    <button id="btn-reset" class="btn-circle" disabled title="Rikthe" aria-label="Rikthe" data-i18n-attr="title:ui.reset; aria-label:ui.reset">
                         <svg class="icon"><use href="#icon-replay"></use></svg>
                     </button>
-                    <button id="btn-step" class="btn-circle" disabled title="Hap" aria-label="Hap pas hapi">
+                    <button id="btn-step" class="btn-circle" disabled title="Hap" aria-label="Hap pas hapi" data-i18n-attr="title:ui.stepTitle; aria-label:ui.stepAria">
                         <svg class="icon"><use href="#icon-skip_next"></use></svg>
                     </button>
                 </div>
 
                 <div class="speed-control">
-                    <label for="speed-slider">Shpejtësia</label>
+                    <label for="speed-slider" data-i18n="ui.speed">Shpejtësia</label>
                     <div class="speed-labels">
-                        <span>Ngadalë</span>
+                        <span data-i18n="ui.slow">Ngadalë</span>
                         <input type="range" id="speed-slider" min="1" max="3" value="2" step="1">
-                        <span>Shpejt</span>
+                        <span data-i18n="ui.fast">Shpejt</span>
                     </div>
                 </div>
 
                 <div class="size-control">
-                    <label for="size-slider">Elementet: <span id="size-value">20</span></label>
+                    <label for="size-slider"><span data-i18n="ui.elements">Elementet</span>: <span id="size-value">20</span></label>
                     <input type="range" id="size-slider" min="5" max="45" value="20">
                 </div>
 
                 <div id="preset-control" class="preset-control">
-                    <label for="preset-select">Shembull</label>
+                    <label for="preset-select" data-i18n="ui.preset">Shembull</label>
                     <div>
                         <select id="preset-select">
                             <option value="random">Random</option>
-                            <option value="sorted">I renditur</option>
-                            <option value="reversed">I kundërt</option>
-                            <option value="nearly">Pothuajse i renditur</option>
-                            <option value="duplicates">Me dublikata</option>
+                            <option value="sorted" data-i18n="ui.presetSorted">I renditur</option>
+                            <option value="reversed" data-i18n="ui.presetReversed">I kundërt</option>
+                            <option value="nearly" data-i18n="ui.presetNearly">Pothuajse i renditur</option>
+                            <option value="duplicates" data-i18n="ui.presetDuplicates">Me dublikata</option>
                         </select>
-                        <button id="btn-apply-preset" type="button" class="btn btn-secondary">Apliko</button>
+                        <button id="btn-apply-preset" type="button" class="btn btn-secondary" data-i18n="ui.apply">Apliko</button>
                     </div>
                 </div>
 
@@ -337,38 +341,38 @@
 
                 <!-- Targeti për Linear/Binary Search — shmang dialogët prompt që bllokohen në preview -->
                 <div id="search-target-group" class="search-input-group" style="display:none;">
-                    <label for="search-target-input">Vlera për kërkim</label>
+                    <label for="search-target-input" data-i18n="ui.searchValue">Vlera për kërkim</label>
                     <div class="search-target-row">
                         <input type="number" step="1" id="search-target-input"
-                               placeholder="p.sh. 42" inputmode="numeric">
-                        <button id="btn-search-start" type="button" class="btn btn-primary">Kërko</button>
+                               placeholder="p.sh. 42" inputmode="numeric" data-i18n-attr="placeholder:ui.egNumber">
+                        <button id="btn-search-start" type="button" class="btn btn-primary" data-i18n="ui.searchBtn">Kërko</button>
                     </div>
                 </div>
 
                 <!-- BST Input — shfaqet vetëm kur BST është aktiv -->
                 <div id="bst-input-group" class="bst-input-group" style="display:none;">
                     <div class="bst-action-group">
-                        <span class="control-section-label">Krijo pemën</span>
+                        <span class="control-section-label" data-i18n="ui.bstCreate">Krijo pemën</span>
                         <div class="bst-control-row">
                             <input type="text" id="bst-values-input"
                                    aria-label="Vlerat fillestare të pemës"
-                                   placeholder="p.sh. 5, 3, 7, 1, 4" class="ds-input bst-values-input">
-                            <button id="btn-bst-run" class="btn btn-primary">Krijo</button>
+                                   placeholder="p.sh. 5, 3, 7, 1, 4" class="ds-input bst-values-input" data-i18n-attr="aria-label:ui.bstValuesAria; placeholder:ui.egBst">
+                            <button id="btn-bst-run" class="btn btn-primary" data-i18n="ui.bstCreateBtn">Krijo</button>
                         </div>
                     </div>
                     <div class="bst-action-group">
-                        <span class="control-section-label">Operacionet</span>
+                        <span class="control-section-label" data-i18n="ui.bstOps">Operacionet</span>
                         <div class="bst-control-row">
                             <input type="number" step="1" id="bst-operation-input"
-                                   placeholder="Vlera" title="Vlera për futje, fshirje ose kërkim" class="ds-input ds-input--small">
-                            <button id="btn-bst-insert" class="btn btn-primary">Fut</button>
-                            <button id="btn-bst-delete" class="btn btn-secondary">Fshi</button>
-                            <button id="btn-bst-search" class="btn btn-secondary">Kërko</button>
+                                   placeholder="Vlera" title="Vlera për futje, fshirje ose kërkim" class="ds-input ds-input--small" data-i18n-attr="placeholder:ui.valuePh; title:ui.bstValueTitle">
+                            <button id="btn-bst-insert" class="btn btn-primary" data-i18n="ui.bstInsert">Fut</button>
+                            <button id="btn-bst-delete" class="btn btn-secondary" data-i18n="ui.bstDelete">Fshi</button>
+                            <button id="btn-bst-search" class="btn btn-secondary" data-i18n="ui.searchBtn">Kërko</button>
                         </div>
                     </div>
                     <div class="bst-action-group">
-                        <span class="control-section-label">Traversimi</span>
-                        <div class="bst-control-row bst-traversal-row" aria-label="Mënyrat e traversal-it">
+                        <span class="control-section-label" data-i18n="ui.bstTraversal">Traversimi</span>
+                        <div class="bst-control-row bst-traversal-row" aria-label="Mënyrat e traversal-it" data-i18n-attr="aria-label:ui.bstTravAria">
                             <button id="btn-bst-inorder" class="btn btn-secondary">In-order</button>
                             <button id="btn-bst-preorder" class="btn btn-secondary">Pre-order</button>
                             <button id="btn-bst-postorder" class="btn btn-secondary">Post-order</button>
@@ -386,33 +390,33 @@
         <aside class="code-panel">
             <div class="code-panel-header">
                 <div>
-                    <span class="section-kicker">Implementimi</span>
+                    <span class="section-kicker" data-i18n="ui.implementation">Implementimi</span>
                     <h3>Kodi Java</h3>
                 </div>
                 <div class="code-panel-header-right">
-                    <button id="btn-copy-code" class="icon-btn" title="Kopjo kodin" aria-label="Kopjo kodin">
+                    <button id="btn-copy-code" class="icon-btn" title="Kopjo kodin" aria-label="Kopjo kodin" data-i18n-attr="title:ui.copyCode; aria-label:ui.copyCode">
                         <svg class="icon"><use href="#icon-content_copy"></use></svg>
                     </button>
                     <span class="code-lang-badge">Java</span>
                 </div>
             </div>
-            <div class="panel-tabs" role="tablist" aria-label="Materiali mësimor">
-                <button class="panel-tab active" data-panel-tab="info" role="tab" aria-selected="true">Përmbledhje</button>
-                <button class="panel-tab" data-panel-tab="complexity" role="tab" aria-selected="false">Kompleksiteti</button>
-                <button class="panel-tab" data-panel-tab="code" role="tab" aria-selected="false">Kodi</button>
+            <div class="panel-tabs" role="tablist" aria-label="Materiali mësimor" data-i18n-attr="aria-label:ui.tabsAria">
+                <button class="panel-tab active" data-panel-tab="info" role="tab" aria-selected="true" data-i18n="ui.tabInfo">Përmbledhje</button>
+                <button class="panel-tab" data-panel-tab="complexity" role="tab" aria-selected="false" data-i18n="ui.tabComplexity">Kompleksiteti</button>
+                <button class="panel-tab" data-panel-tab="code" role="tab" aria-selected="false" data-i18n="ui.tabCode">Kodi</button>
             </div>
             <div id="learning-info-view" class="panel-view learning-view" data-panel-view="info"></div>
             <div id="learning-complexity-view" class="panel-view learning-view" data-panel-view="complexity" hidden></div>
             <div class="panel-view code-view" data-panel-view="code" hidden>
                 <div class="code-toolbar">
-                    <label for="code-language-select">Pamja</label>
+                    <label for="code-language-select" data-i18n="ui.view">Pamja</label>
                     <select id="code-language-select">
                         <option value="java">Java</option>
-                        <option value="pseudocode">Pseudokod</option>
+                        <option value="pseudocode" data-i18n="ui.optPseudo">Pseudokod</option>
                     </select>
                 </div>
                 <pre><code id="java-code-display" class="language-java">// Zgjidh një algoritëm për të parë kodin</code></pre>
-                <div id="execution-log" class="execution-log" aria-live="polite" aria-label="Log ekzekutimi"></div>
+                <div id="execution-log" class="execution-log" aria-live="polite" aria-label="Log ekzekutimi" data-empty="Log-u i ekzekutimit shfaqet këtu gjatë xhirimit." data-i18n-attr="aria-label:ui.logAria; data-empty:ui.logEmpty"></div>
             </div>
         </aside>
 
@@ -420,15 +424,15 @@
 
     <!-- Custom Input — modal (jashtë app-layout, s'preket nga overflow:hidden) -->
     <div id="custom-input-modal" class="modal-overlay" hidden>
-        <div class="modal-card" role="dialog" aria-modal="true" aria-label="Vlera custom">
+        <div class="modal-card" role="dialog" aria-modal="true" aria-label="Vlera custom" data-i18n-attr="aria-label:ui.customAria">
             <div class="modal-header">
-                <h3>Vlerat e tua</h3>
-                <button id="btn-custom-modal-close" type="button" class="modal-close" aria-label="Mbyll">✕</button>
+                <h3 data-i18n="ui.yourValues">Vlerat e tua</h3>
+                <button id="btn-custom-modal-close" type="button" class="modal-close" aria-label="Mbyll" data-i18n-attr="aria-label:ui.close">✕</button>
             </div>
             <input type="text" id="custom-array-input" aria-label="Vlerat e tua"
-                   placeholder="p.sh. 15, 42, 8" class="ds-input modal-input">
+                   placeholder="p.sh. 15, 42, 8" class="ds-input modal-input" data-i18n-attr="aria-label:ui.yourValues; placeholder:ui.egCustom">
             <div class="modal-actions">
-                <button id="btn-custom-apply" class="btn btn-primary">Përdor</button>
+                <button id="btn-custom-apply" class="btn btn-primary" data-i18n="ui.use">Përdor</button>
                 <button id="btn-custom-clear" class="btn btn-secondary">✕ Random</button>
             </div>
             <span id="custom-input-feedback" class="custom-input-feedback"></span>
@@ -436,20 +440,20 @@
     </div>
 
     <div id="compare-modal" class="modal-overlay" hidden>
-        <div class="modal-card compare-modal-card" role="dialog" aria-modal="true" aria-label="Krahaso algoritmet">
+        <div class="modal-card compare-modal-card" role="dialog" aria-modal="true" aria-label="Krahaso algoritmet" data-i18n-attr="aria-label:ui.compareAria">
             <div class="modal-header">
-                <div><span class="section-kicker">Compare mode</span><h3>Krahaso mbi të njëjtat të dhëna</h3></div>
-                <button id="btn-compare-close" type="button" class="modal-close" aria-label="Mbyll">×</button>
+                <div><span class="section-kicker">Compare mode</span><h3 data-i18n="ui.compareTitle">Krahaso mbi të njëjtat të dhëna</h3></div>
+                <button id="btn-compare-close" type="button" class="modal-close" aria-label="Mbyll" data-i18n-attr="aria-label:ui.close">×</button>
             </div>
             <div class="compare-selectors">
-                <select id="compare-a" aria-label="Algoritmi i parë"></select>
+                <select id="compare-a" aria-label="Algoritmi i parë" data-i18n-attr="aria-label:ui.compareFirst"></select>
                 <span>vs</span>
-                <select id="compare-b" aria-label="Algoritmi i dytë"></select>
-                <button id="btn-compare-run" type="button" class="btn btn-primary">Krahaso</button>
+                <select id="compare-b" aria-label="Algoritmi i dytë" data-i18n-attr="aria-label:ui.compareSecond"></select>
+                <button id="btn-compare-run" type="button" class="btn btn-primary" data-i18n="ui.compare">Krahaso</button>
             </div>
             <div class="compare-results">
-                <article class="compare-result">Zgjidh algoritmet dhe kliko Krahaso.</article>
-                <article class="compare-result">Rezultati i dytë shfaqet këtu.</article>
+                <article class="compare-result" data-i18n="ui.compareHint1">Zgjidh algoritmet dhe kliko Krahaso.</article>
+                <article class="compare-result" data-i18n="ui.compareHint2">Rezultati i dytë shfaqet këtu.</article>
             </div>
         </div>
     </div>

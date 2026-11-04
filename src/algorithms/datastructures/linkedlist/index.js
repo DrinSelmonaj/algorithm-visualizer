@@ -1,3 +1,4 @@
+import { t } from '../../../i18n/index.js';
 // src/algorithms/datastructures/linkedlist/index.js
 
 import { render } from '../../../engine/linkedListRenderer.js';
@@ -77,7 +78,7 @@ function* insertAtHead(value) {
     yield {
         type: 'compare', dsType: 'linkedlist',
         javaLine: 9,
-        message: `Krijojmë nyje të re me vlerën ${value} (Node node = new Node(${value})).`,
+        message: t('m.linkedlist.1', { p0: value, p1: value }),
     };
 
     node.next = head;
@@ -86,8 +87,8 @@ function* insertAtHead(value) {
         type: 'compare', dsType: 'linkedlist',
         javaLine: 10,
         message: head
-            ? `node.next = head → nyja e re tregon te ${head.value}.`
-            : `node.next = head → lista ishte bosh, node.next = null.`,
+            ? t('m.ll.newNodeHead', { h: head.value })
+            : t('m.ll.newNodeEmpty'),
     };
 
     head = node;
@@ -97,10 +98,10 @@ function* insertAtHead(value) {
         render: () => render(head),
         nodeId: `ll-node-${node.id}`,
         javaLine: 11,
-        message: `head = node → ${value} është tani head i ri.`,
+        message: t('m.linkedlist.2', { p0: value }),
     };
 
-    yield { type: 'insert', dsType: 'linkedlist', nodeId: `ll-node-${node.id}`, javaLine: 11, message: `insertAtHead() përfundoi.` };
+    yield { type: 'insert', dsType: 'linkedlist', nodeId: `ll-node-${node.id}`, javaLine: 11, message: t('m.linkedlist.3') };
 }
 
 // ── INSERT AT TAIL ─────────────────────────────────────────────────
@@ -110,7 +111,7 @@ function* insertAtTail(value) {
     yield {
         type: 'compare', dsType: 'linkedlist',
         javaLine: 15,
-        message: `Krijojmë nyje të re me vlerën ${value} (Node node = new Node(${value})).`,
+        message: t('m.linkedlist.4', { p0: value, p1: value }),
     };
 
     if (!head) {
@@ -120,21 +121,21 @@ function* insertAtTail(value) {
             render: () => render(head),
             nodeId: `ll-node-${node.id}`,
             javaLine: 16,
-            message: `Lista ishte bosh — ${value} u bë head.`,
+            message: t('m.linkedlist.5', { p0: value }),
         };
-        yield { type: 'insert', dsType: 'linkedlist', nodeId: `ll-node-${node.id}`, javaLine: 16, message: `insertAtTail() përfundoi.` };
+        yield { type: 'insert', dsType: 'linkedlist', nodeId: `ll-node-${node.id}`, javaLine: 16, message: t('m.linkedlist.6') };
         return;
     }
 
     let cur = head;
-    yield { type: 'compare', dsType: 'linkedlist', nodeId: `ll-node-${cur.id}`, message: `Nisim nga head: cur = ${cur.value}.`, javaLine: 17 };
+    yield { type: 'compare', dsType: 'linkedlist', nodeId: `ll-node-${cur.id}`, message: t('m.linkedlist.7', { p0: cur.value }), javaLine: 17 };
 
     while (cur.next) {
-        yield { type: 'compare', dsType: 'linkedlist', nodeId: `ll-node-${cur.id}`, message: `Kalojmë te nyja ${cur.value}, next nuk është null.`, javaLine: 18 };
+        yield { type: 'compare', dsType: 'linkedlist', nodeId: `ll-node-${cur.id}`, message: t('m.linkedlist.8', { p0: cur.value }), javaLine: 18 };
         cur = cur.next;
     }
 
-    yield { type: 'found', dsType: 'linkedlist', nodeId: `ll-node-${cur.id}`, message: `Mbërritëm tek tail ${cur.value} (next = null).`, javaLine: 18 };
+    yield { type: 'found', dsType: 'linkedlist', nodeId: `ll-node-${cur.id}`, message: t('m.linkedlist.9', { p0: cur.value }), javaLine: 18 };
 
     cur.next = node;
 
@@ -143,10 +144,10 @@ function* insertAtTail(value) {
         render: () => render(head),
         nodeId: `ll-node-${node.id}`,
         javaLine: 19,
-        message: `cur.next = node → ${value} u shtua pas ${cur.value}.`,
+        message: t('m.linkedlist.10', { p0: value, p1: cur.value }),
     };
 
-    yield { type: 'insert', dsType: 'linkedlist', nodeId: `ll-node-${node.id}`, javaLine: 19, message: `insertAtTail() përfundoi.` };
+    yield { type: 'insert', dsType: 'linkedlist', nodeId: `ll-node-${node.id}`, javaLine: 19, message: t('m.linkedlist.11') };
 }
 
 // ── INSERT AFTER VALUE ─────────────────────────────────────────────
@@ -158,13 +159,13 @@ function* insertAfterValue(value, target) {
     yield {
         type: 'compare', dsType: 'linkedlist',
         javaLine: 23,
-        message: `Krijojmë nyje të re me vlerën ${value} (Node node = new Node(${value})).`,
+        message: t('m.linkedlist.12', { p0: value, p1: value }),
     };
 
     if (!head) {
         yield { type: 'compare', dsType: 'linkedlist',
                 javaLine: 24,
-                message: 'Lista është bosh — nuk ka asgjë për të kërkuar.' };
+                message: t('m.linkedlist.13') };
         return;
     }
 
@@ -172,19 +173,19 @@ function* insertAfterValue(value, target) {
     while (cur) {
         yield { type: 'compare', dsType: 'linkedlist',
                 nodeId: `ll-node-${cur.id}`,
-                message: `Kërkojmë ${target}: kontrollojmë nyjen ${cur.value}.`,
+                message: t('m.linkedlist.14', { p0: target, p1: cur.value }),
                 javaLine: 26 };
 
         if (cur.value === parseInt(target)) {
             yield { type: 'found', dsType: 'linkedlist',
                     nodeId: `ll-node-${cur.id}`,
-                    message: `Gjendëm ${target} — futim ${value} pas saj.`,
+                    message: t('m.linkedlist.15', { p0: target, p1: value }),
                     javaLine: 26 };
 
             node.next = cur.next;
             yield { type: 'compare', dsType: 'linkedlist',
                     javaLine: 27,
-                    message: `node.next = cur.next → nyja e re tregon te ${node.next ? node.next.value : 'null'}.` };
+                    message: t('m.linkedlist.16', { p0: node.next ? node.next.value : 'null' }) };
 
             cur.next = node;
             yield {
@@ -192,10 +193,10 @@ function* insertAfterValue(value, target) {
                 render: () => render(head),
                 nodeId: `ll-node-${node.id}`,
                 javaLine: 28,
-                message: `cur.next = node → ${target} → ${value} → ${node.next ? node.next.value : 'null'}.`,
+                message: t('m.linkedlist.17', { p0: target, p1: value, p2: node.next ? node.next.value : 'null' }),
             };
 
-            yield { type: 'insert', dsType: 'linkedlist', nodeId: `ll-node-${node.id}`, javaLine: 28, message: `insertAfterValue() përfundoi.` };
+            yield { type: 'insert', dsType: 'linkedlist', nodeId: `ll-node-${node.id}`, javaLine: 28, message: t('m.linkedlist.18') };
             return;
         }
         cur = cur.next;
@@ -203,7 +204,7 @@ function* insertAfterValue(value, target) {
 
     yield { type: 'compare', dsType: 'linkedlist',
             javaLine: 25, // while (cur != null) mbaroi pa gjetur target-in
-            message: `${target} nuk u gjet — nuk u fut asgjë.` };
+            message: t('m.linkedlist.19', { p0: target }) };
 }
 
 // ── DELETE ─────────────────────────────────────────────────────────
@@ -214,25 +215,25 @@ function* deleteLL(value, nextValue = null, nextIsNull = false) {
     const targetDescription = usesNextValue ? `${value} → ${nextIsNull ? 'null' : nextValue}` : String(value);
 
     if (!head) {
-        yield { type: 'compare', dsType: 'linkedlist', message: 'Lista është bosh.', javaLine: 36 };
+        yield { type: 'compare', dsType: 'linkedlist', message: t('m.linkedlist.20'), javaLine: 36 };
         return;
     }
 
     if (matchesTarget(head)) {
-        yield { type: 'delete', dsType: 'linkedlist', nodeId: `ll-node-${head.id}`, message: `head (${targetDescription}) do të hiqet.`, javaLine: 37 };
+        yield { type: 'delete', dsType: 'linkedlist', nodeId: `ll-node-${head.id}`, message: t('m.linkedlist.21', { p0: targetDescription }), javaLine: 37 };
         head = head.next;
-        yield { type: 'rerender', dsType: 'linkedlist', render: () => render(head), message: `${targetDescription} u hoq. head u ndryshua.`, javaLine: 37 };
+        yield { type: 'rerender', dsType: 'linkedlist', render: () => render(head), message: t('m.linkedlist.22', { p0: targetDescription }), javaLine: 37 };
         return;
     }
 
     let prev = head, cur = head.next;
     while (cur) {
-        yield { type: 'compare', dsType: 'linkedlist', nodeId: `ll-node-${cur.id}`, message: usesNextValue ? `Kontrollojmë çiftin ${cur.value} → ${cur.next ? cur.next.value : 'null'}.` : `Kontrollojmë nyjen ${cur.value}.`, javaLine: 40 };
+        yield { type: 'compare', dsType: 'linkedlist', nodeId: `ll-node-${cur.id}`, message: usesNextValue ? t('m.ll.checkPair', { a: cur.value, b: cur.next ? cur.next.value : 'null' }) : t('m.ll.checkNode', { a: cur.value }), javaLine: 40 };
 
         if (matchesTarget(cur)) {
-            yield { type: 'delete', dsType: 'linkedlist', nodeId: `ll-node-${cur.id}`, message: `Gjendëm ${targetDescription} — rilidhet: ${prev.value}.next → ${cur.next ? cur.next.value : 'null'}.`, javaLine: 40 };
+            yield { type: 'delete', dsType: 'linkedlist', nodeId: `ll-node-${cur.id}`, message: t('m.linkedlist.23', { p0: targetDescription, p1: prev.value, p2: cur.next ? cur.next.value : 'null' }), javaLine: 40 };
             prev.next = cur.next;
-            yield { type: 'rerender', dsType: 'linkedlist', render: () => render(head), message: `${targetDescription} u hoq. Lista u rilidhë.`, javaLine: 40 };
+            yield { type: 'rerender', dsType: 'linkedlist', render: () => render(head), message: t('m.linkedlist.24', { p0: targetDescription }), javaLine: 40 };
             return;
         }
 
@@ -240,20 +241,20 @@ function* deleteLL(value, nextValue = null, nextIsNull = false) {
         cur  = cur.next;
     }
 
-    yield { type: 'compare', dsType: 'linkedlist', message: `${targetDescription} nuk u gjet.`, javaLine: 39 };
+    yield { type: 'compare', dsType: 'linkedlist', message: t('m.linkedlist.25', { p0: targetDescription }), javaLine: 39 };
 }
 
 // ── SEARCH ─────────────────────────────────────────────────────────
 function* searchLL(value) {
     let cur = head;
     while (cur) {
-        yield { type: 'compare', dsType: 'linkedlist', nodeId: `ll-node-${cur.id}`, message: `Kontrollojmë nyjen ${cur.value}.`, javaLine: 48 };
+        yield { type: 'compare', dsType: 'linkedlist', nodeId: `ll-node-${cur.id}`, message: t('m.linkedlist.26', { p0: cur.value }), javaLine: 48 };
         if (cur.value === value) {
-            yield { type: 'found', dsType: 'linkedlist', nodeId: `ll-node-${cur.id}`, message: `Gjendëm ${value}!`, javaLine: 48 };
+            yield { type: 'found', dsType: 'linkedlist', nodeId: `ll-node-${cur.id}`, message: t('m.linkedlist.27', { p0: value }), javaLine: 48 };
             return;
         }
         cur = cur.next;
     }
-    yield { type: 'compare', dsType: 'linkedlist', message: `${value} nuk u gjet.`, javaLine: 51 };
+    yield { type: 'compare', dsType: 'linkedlist', message: t('m.linkedlist.28', { p0: value }), javaLine: 51 };
 }
 export { init, insertAtHead, insertAtTail, insertAfterValue, deleteLL, searchLL, JAVA_SOURCE };

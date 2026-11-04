@@ -1,3 +1,4 @@
+import { t } from '../../i18n/index.js';
 // src/algorithms/graph/kruskal.js
 
 import { DEFAULT_GRAPH } from './dijkstra.js';
@@ -53,11 +54,11 @@ function* kruskal(graph = DEFAULT_GRAPH) {
         return true;
     }
 
-    yield { type: 'visit', javaLine: 21, message: `Skajet e renditura: ${sorted.map(e => {
+    yield { type: 'visit', javaLine: 21, message: t('m.kruskal.1', { p0: sorted.map(e => {
         const su = typeof e.source === 'object' ? e.source.id : e.source;
         const sv = typeof e.target === 'object' ? e.target.id : e.target;
         return `${su}-${sv}(${e.weight})`;
-    }).join(', ')}.` };
+    }).join(', ') }) };
 
     let totalWeight = 0;
 
@@ -66,17 +67,17 @@ function* kruskal(graph = DEFAULT_GRAPH) {
         const v   = typeof edge.target === 'object' ? edge.target.id : edge.target;
         const eid = `graph-edge-${u}-${v}`;
 
-        yield { type: 'edge-consider', edgeId: eid, javaLine: 23, message: `Shqyrtojmë ${u}-${v} (peshë ${edge.weight}). Cikël? ${find(u) === find(v) ? 'Po — kapërcejmë.' : 'Jo — shtojmë.'}` };
+        yield { type: 'edge-consider', edgeId: eid, javaLine: 23, message: t(find(u) === find(v) ? 'm.kruskal.considerCycle' : 'm.kruskal.considerNoCycle', { u, v, w: edge.weight }) };
 
         if (union(u, v)) {
             totalWeight += edge.weight;
-            yield { type: 'edge-accept', edgeId: eid, javaLine: 24, message: `${u}-${v} u pranua. Peshë totale: ${totalWeight}.` };
+            yield { type: 'edge-accept', edgeId: eid, javaLine: 24, message: t('m.kruskal.2', { p0: u, p1: v, p2: totalWeight }) };
         } else {
-            yield { type: 'edge-reject', edgeId: eid, javaLine: 23, message: `${u}-${v} do formonte cikël — kapërcejmë.` };
+            yield { type: 'edge-reject', edgeId: eid, javaLine: 23, message: t('m.kruskal.3', { p0: u, p1: v }) };
         }
     }
 
-    yield { type: 'visit', javaLine: 26, message: `MST i plotë. Peshë totale: ${totalWeight}.` };
+    yield { type: 'visit', javaLine: 26, message: t('m.kruskal.4', { p0: totalWeight }) };
 }
 
 export { kruskal, JAVA_SOURCE };

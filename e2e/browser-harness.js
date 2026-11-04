@@ -599,4 +599,111 @@
         R.notes.push(`viewport ${innerWidth}x${innerHeight}`);
         return R.done();
     };
+
+    // ───────────────────────── L: gjuha SQ/EN ─────────────────────────
+    // Në anglisht s'duhet të mbetet asnjë tekst shqip (shkronja ë/ç, fjalë shqipe), asnjë çelës
+    // i pazëvendësuar (ui.*, m.*) dhe asnjë parametër {p0}. Kontrollohet teksti i dukshëm + atributet.
+    const SQ_WORDS = /\b(për|është|nuk|dhe|një|janë|kur|nga|ose|që|mund|duhet|tashmë|shumë|vetëm|gjithë|rreth|këtë|këtu|nëse|ndërsa|sepse)\b/i;
+    let DICT_KEYS = [];   // çelësat realë të fjalorit (ngarkohen në T.L) — shmang pozitivët e rremë si "graph.length" (kod Java)
+    const RAW_KEY = { test: () => false };
+    function pageText() {
+        const parts = [document.body.innerText];
+        document.querySelectorAll('[placeholder],[aria-label],[title],[data-empty]').forEach(el => {
+            ['placeholder', 'aria-label', 'title', 'data-empty'].forEach(a => { const v = el.getAttribute(a); if (v) parts.push(v); });
+        });
+        ['learning-info-view', 'learning-complexity-view', 'java-code-display', 'execution-log'].forEach(id => { const e = byId(id); if (e) parts.push(e.textContent); });
+        return parts.join('\n');
+    }
+    function leaks(label, text, R) {
+        const letters = text.match(/[^\n]*[ëçËÇ][^\n]*/g);
+        if (letters) R.failed.push(`${label}: shkronja shqipe → "${letters[0].trim().slice(0, 90)}"`);
+        const w = text.match(SQ_WORDS);
+        if (w) R.failed.push(`${label}: fjalë shqipe "${w[0]}" në "${(text.match(new RegExp('[^\\n]*' + w[0] + '[^\\n]*', 'i')) || [''])[0].trim().slice(0, 90)}"`);
+        const rawKey = DICT_KEYS.find(k => text.includes(k));
+        if (rawKey) R.failed.push(`${label}: çelës i pazëvendësuar "${rawKey}"`);
+        const param = text.match(/\{p\d+\}/);
+        if (param) R.failed.push(`${label}: parametër i pazëvendësuar "${param[0]}"`);
+    }
+
+    T.L = async () => {
+        const R = newResult();
+        DICT_KEYS = Object.keys((await import('/src/i18n/sq.js')).SQ).filter(k => k.length > 5);
+        $('[data-lang-option=sq]').click(); await sleep(100);
+        R.check(document.documentElement.lang === 'sq' && byId('btn-run').title === 'Ekzekuto', 'gjendja fillestare duhet të jetë shqip');
+        await pick('bubble'); setSpeed(3); setSize(6);
+
+        $('[data-lang-option=en]').click(); await sleep(200);
+        R.check(document.documentElement.lang === 'en', '<html lang> nuk u bë en');
+        R.check(document.title === 'Algorithm Visualizer', `titulli: ${document.title}`);
+        R.check($('[data-lang-option=en]').getAttribute('aria-pressed') === 'true' && $('[data-lang-option=sq]').getAttribute('aria-pressed') === 'false', 'aria-pressed i butonave');
+        R.check(byId('btn-run').title === 'Run' && byId('btn-run').getAttribute('aria-label') === 'Run', 'butoni Run nuk u përkthye');
+        R.check(byId('algo-search-input').placeholder === 'Search algorithms...', 'placeholder i kërkimit');
+        R.check(byId('active-algo-name').textContent === 'Bubble Sort', 'emri i algoritmit');
+        R.check(localStorage.getItem('algopro-lang') === 'en', 'zgjedhja nuk u ruajt');
+
+        // çdo algoritëm: skedat dhe përmbajtja
+        for (const b of $$('.algo-btn')) {
+            b.click(); await sleep(150);
+            const k = b.dataset.algorithm;
+            $$('#learning-info-view .learning-more-toggle').forEach(t_ => t_.click());
+            $$('#learning-info-view .trait-chip').forEach(c => c.click());
+            $$('#learning-info-view [data-quiz-option]').forEach(o => o.click());
+            $('[data-panel-tab=code]').click(); setVal(byId('code-language-select'), 'pseudocode');
+            leaks(`EN/${k}/pseudokod`, pageText(), R);
+            setVal(byId('code-language-select'), 'java');
+            $('[data-panel-tab=complexity]').click(); leaks(`EN/${k}/kompleksiteti`, pageText(), R);
+            $('[data-panel-tab=info]').click(); leaks(`EN/${k}/info`, pageText(), R);
+        }
+
+        // ekzekutim në anglisht: mesazhet e hapave
+        for (const k of ['bubble', 'binary', 'merge']) {
+            await pick(k); setSize(6); setSpeed(3); clickId('btn-run');
+            await waitFor(() => !btn('run').disabled, 25000);
+            leaks(`EN/run/${k}`, byId('execution-log').textContent + '\n' + byId('algo-status').textContent, R);
+            R.check(byId('execution-log').textContent.length > 20, `EN/run/${k}: log bosh`);
+            clickId('btn-reset');
+        }
+        // grafi
+        await pick('dijkstra'); setSpeed(3); clickId('btn-run'); await waitFor(() => !btn('run').disabled && opsIdle(), 40000);
+        leaks('EN/run/dijkstra', pageText(), R);
+        R.check(/Node A/.test(byId('dijkstra-distance-rows').textContent) && /\(src\)/.test(byId('dijkstra-distance-rows').textContent), 'tabela e distancave nuk u përkthye');
+        clickId('btn-reset'); await sleep(150);
+        alerts.length = 0; setVal(byId('graph-node-input'), '1a'); clickText('#graph-panel', 'Add node');
+        R.check(alerts.length === 1 && /ID must start with a letter/.test(alerts[0]), `gabim grafi në anglisht: ${alerts[0]}`);
+        await pick('kruskal'); clickId('btn-run'); await waitFor(() => !btn('run').disabled && opsIdle(), 40000);
+        leaks('EN/run/kruskal', byId('execution-log').textContent, R);
+        // BST dhe strukturat
+        await pick('bst'); setVal(byId('bst-values-input'), '5,3,7'); clickId('btn-bst-run'); await waitFor(bstIdle, 30000);
+        leaks('EN/bst', byId('execution-log').textContent + pageText(), R);
+        alerts.length = 0; setVal(byId('bst-values-input'), 'a'); clickId('btn-bst-run');
+        R.check(alerts.length === 1 && /positive whole numbers/.test(alerts[0]), `alert BST: ${alerts[0]}`);
+        for (const k of ['stack', 'queue', 'linkedlist', 'hashmap']) {
+            await pick(k);
+            leaks(`EN/${k}/paneli`, pageText(), R);
+        }
+        await pick('stack'); setVal(byId('ds-input'), '4'); clickText('#ds-controls', 'Push'); await waitFor(opsIdle, 20000); clickText('#ds-controls', 'Pop'); await waitFor(opsIdle, 20000);
+        leaks('EN/stack/log', byId('execution-log').textContent, R);
+        await pick('hashmap'); setVal(byId('ds-key'), 'ab'); setVal(byId('ds-value'), '1'); clickText('#ds-controls', 'Put'); await waitFor(opsIdle, 20000);
+        leaks('EN/hashmap', byId('hashmap-context-panel').textContent + byId('execution-log').textContent, R);
+        await pick('linkedlist'); setVal(byId('ds-input'), '3'); clickText('#ds-controls', '↑ Head'); await waitFor(opsIdle, 20000);
+        setVal(byId('ds-input'), '3'); setVal(byId('ds-delete-next'), '9'); clickText('#ds-controls', 'Delete'); await waitFor(opsIdle, 20000);
+        leaks('EN/linkedlist', byId('execution-log').textContent, R);
+        // sorting/searching: kërkimi, custom dhe krahasimi në anglisht
+        await pick('linear'); setVal(byId('search-target-input'), ''); clickId('btn-search-start');
+        R.check(/Enter a whole number/.test(byId('algo-status').textContent), `status kërkimi: ${byId('algo-status').textContent}`);
+        clickId('btn-custom-open'); setVal(byId('custom-array-input'), '1,2'); clickId('btn-custom-apply');
+        R.check(/Enter 5–45 numbers/.test(byId('custom-input-feedback').textContent), 'feedback custom në anglisht');
+        clickId('btn-custom-modal-close');
+        clickId('btn-compare-open'); clickId('btn-compare-run');
+        leaks('EN/compare', byId('compare-modal').textContent, R);
+        R.check(/Steps/.test(byId('compare-modal').textContent), 'compare: etiketa "Steps"');
+        clickId('btn-compare-close');
+        // kthimi te shqipja
+        $('[data-lang-option=sq]').click(); await sleep(250);
+        R.check(byId('btn-run').title === 'Ekzekuto' && document.documentElement.lang === 'sq', 'kthimi te shqipja');
+        $('[data-panel-tab=info]').click();
+        R.check(/Koncepti/.test(byId('learning-info-view').textContent) && /Përdorimet/.test(byId('learning-info-view').textContent), 'paneli mësimor nuk u kthye në shqip');
+        R.check(localStorage.getItem('algopro-lang') === 'sq', 'zgjedhja shqip nuk u ruajt');
+        return R.done();
+    };
 })();

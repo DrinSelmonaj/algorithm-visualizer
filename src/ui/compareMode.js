@@ -1,3 +1,4 @@
+import { t } from '../i18n/index.js';
 const COMPARABLE = ['bubble', 'insertion', 'selection', 'merge', 'quick', 'shell', 'heap', 'radix', 'linear', 'binary'];
 
 function initCompareMode(registry, getArray) {
@@ -38,7 +39,8 @@ function inspect(algo, array, target) {
 function renderResult(index, result) {
     const card = document.querySelectorAll('.compare-result')[index];
     if (!card) return;
-    card.innerHTML = `<h4>${result.name}</h4><div class="compare-track"><i style="--score:${Math.min(result.steps, 100)}%"></i></div><dl><div><dt>Hapa</dt><dd>${result.steps}</dd></div><div><dt>Krahasime</dt><dd>${result.comparisons}</dd></div><div><dt>Shkrime</dt><dd>${result.writes}</dd></div></dl>`;
+    card.removeAttribute('data-i18n');   // s'është më tekst udhëzues — mos e mbishkruaj kur ndërron gjuha
+    card.innerHTML = `<h4>${result.name}</h4><div class="compare-track"><i style="--score:${Math.min(result.steps, 100)}%"></i></div><dl><div><dt>${t('cmp.steps')}</dt><dd>${result.steps}</dd></div><div><dt>${t('ui.statCompare')}</dt><dd>${result.comparisons}</dd></div><div><dt>${t('cmp.writes')}</dt><dd>${result.writes}</dd></div></dl>`;
 }
 
 export { initCompareMode };

@@ -50,3 +50,23 @@ Për algoritmet e renditjes/kërkimit, butoni "Vlera Custom" hap një modal (jo 
 ## Arkitektura
 
 Algoritmet janë ES module generator functions (`function*`) që bëjnë `yield` step-objekte tipizuara (`{ type, message, javaLine, ... }`). `scheduler.js` i konsumon me mbrojtje kundër run-eve të njëkohshme dhe trajtim gabimesh (try/catch/finally), `animator.js` i shpërndan sipas kategorisë te renderer-at përkatës dhe njëkohësisht i regjistron te Log Ekzekutimi. Paneli i kodit Java (`codePanel.js`) e ndërton kodin rresht-për-rresht si `<div>`-e (jo regex mbi HTML), me sinkronizim të saktë highlight-scroll.
+## Gjuha: shqip dhe anglisht / Language: Albanian and English
+
+Butoni **SQ | EN** te header ndërron gjithë faqen: ndërfaqen, mesazhet e hapave të animimit, materialin mësimor
+(koncepti, përdorimet, karakteristikat, kuizi), pseudokodin dhe mesazhet e gabimit. Zgjedhja ruhet në `localStorage`
+(`algopro-lang`) dhe mund të detyrohet me `?lang=en` ose `?lang=sq`. Gjuha e parazgjedhur është shqipja.
+
+The **SQ | EN** switch in the header changes the whole page — UI, step messages, learning material, pseudocode and
+error messages. The choice is stored in `localStorage` and can be forced with `?lang=en` / `?lang=sq`.
+
+- `src/i18n/index.js` — `t(çelës, {parametra})`, `setLang`, `onLangChange`, përkthimi i `data-i18n*` te HTML-ja.
+- `src/i18n/ui.sq.js` / `ui.en.js` — tekstet e ndërfaqes; `messages.sq.js` / `messages.en.js` — mesazhet e algoritmeve.
+- `src/ui/learningData.en.js`, `learningMore.en.js`, `learningTraits.en.js`, `pseudocode.en.js` — materiali mësimor në anglisht.
+- **Shtimi i një teksti:** vendos çelësin në **të dyja** gjuhët (`ui.sq.js` dhe `ui.en.js`). `npm test` dështon nëse një çelës
+  mungon, nëse parametrat `{…}` nuk përputhen, ose nëse teksti anglisht përmban shkronja shqipe (ë, ç).
+
+## Testimi në shfletues
+
+`npm test` ekzekuton testet e njësisë. Për testet në shfletues (input-et, butonat, rastet kufi, gjuha), shërbe projektin
+(`npx serve .`), hap faqen dhe ngarko `e2e/browser-harness.js` (shih komentin në krye të skedarit): `T.A()` … `T.G()` dhe
+`T.L()` për gjuhën. Çdo seksion kthen `{ failed, notes, errs, alerts }`.

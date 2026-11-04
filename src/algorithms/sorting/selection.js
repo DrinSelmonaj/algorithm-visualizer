@@ -1,3 +1,4 @@
+import { t } from '../../i18n/index.js';
 // src/algorithms/sorting/selection.js
 
 const JAVA_SOURCE =
@@ -28,7 +29,7 @@ function* selectionSort(array) {
         for (let j = i + 1; j < n; j++) {
             yield {
                 type: 'compare', indices: [j, minIdx], javaLine: 7,
-                message: `Krahasojmë arr[${j}]=${arr[j]} me minIdx aktual arr[${minIdx}]=${arr[minIdx]}.`
+                message: t('m.selection.1', { p0: j, p1: arr[j], p2: minIdx, p3: arr[minIdx] })
             };
             if (arr[j] < arr[minIdx]) minIdx = j;
         }
@@ -37,14 +38,14 @@ function* selectionSort(array) {
             [arr[i], arr[minIdx]] = [arr[minIdx], arr[i]];
             yield {
                 type: 'swap', indices: [i, minIdx], state: [...arr], javaLine: 12,
-                message: `Minimumi ${arr[i]} u gjet te indeksi ${minIdx} — ndërrojmë me arr[${i}].`
+                message: t('m.selection.2', { p0: arr[i], p1: minIdx, p2: i })
             };
         }
 
-        yield { type: 'sorted', index: i, javaLine: 4, message: `arr[${i}]=${arr[i]} është në vendin përfundimtar.` };
+        yield { type: 'sorted', index: i, javaLine: 4, message: t('m.selection.3', { p0: i, p1: arr[i] }) };
     }
 
-    yield { type: 'sorted', index: n - 1, message: `arr[${n - 1}]=${arr[n - 1]} është në vendin përfundimtar. Renditja përfundoi.` };
+    yield { type: 'sorted', index: n - 1, message: t('m.selection.4', { p0: n - 1, p1: arr[n - 1] }) };
 }
 
 export { selectionSort, JAVA_SOURCE };

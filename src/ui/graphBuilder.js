@@ -1,6 +1,7 @@
 // src/ui/graphBuilder.js
 // Ndërton UI-n për krijimin/editimin e grafeve.
 
+import { t }                 from '../i18n/index.js';
 import { render as renderGraph } from '../engine/graphRenderer.js';
 import { DEFAULT_GRAPH }         from '../algorithms/graph/dijkstra.js';
 import { isValidNodeId, idOf }   from '../graph/model.js';
@@ -22,23 +23,23 @@ function getGraph() {
 
 // Shton një nyje të re dhe rivizaton grafin
 function addNode(id) {
-    if (!currentGraph) return { ok: false, error: 'Grafi nuk është gati.' };
+    if (!currentGraph) return { ok: false, error: t('graph.err.notReady') };
     if (!isValidNodeId(id)) {
-        return { ok: false, error: 'ID-ja duhet të nisë me shkronjë dhe të ketë vetëm shkronja, numra, _ ose - (deri në 32 karaktere).' };
+        return { ok: false, error: t('graph.err.badId') };
     }
-    if (currentGraph.nodes.some(n => n.id === id)) return { ok: false, error: `Nyja "${id}" ekziston tashmë.` };
+    if (currentGraph.nodes.some(n => n.id === id)) return { ok: false, error: t('graph.err.nodeExists', { id }) };
     currentGraph.nodes.push({ id });
     renderGraph(currentGraph);
     return { ok: true };
 }
 
 function addEdge(source, target, weight) {
-    if (!currentGraph) return { ok: false, error: 'Grafi nuk është gati.' };
+    if (!currentGraph) return { ok: false, error: t('graph.err.notReady') };
     const w = Number(weight);
-    if (!Number.isFinite(w) || w <= 0) return { ok: false, error: 'Pesha duhet të jetë numër pozitiv.' };
+    if (!Number.isFinite(w) || w <= 0) return { ok: false, error: t('graph.err.weight') };
     const validNode = id => currentGraph.nodes.some(n => n.id === id);
-    if (!validNode(source) || !validNode(target)) return { ok: false, error: 'Të dy nyjet duhet të ekzistojnë.' };
-    if (source === target) return { ok: false, error: 'Lidhja nuk mund të lidhë nyjën me vetveten.' };
+    if (!validNode(source) || !validNode(target)) return { ok: false, error: t('graph.err.bothNodes') };
+    if (source === target) return { ok: false, error: t('graph.err.selfLoop') };
 
     // Grafi është I PANDREJTUAR (shih graphRenderer.js) — A-B dhe B-A janë
     // e njëjta lidhje. D3 forceLink() muton e.source/e.target në objekte
@@ -49,7 +50,7 @@ function addEdge(source, target, weight) {
         (idOf(e.source) === target && idOf(e.target) === source)
     );
     if (exists) {
-        return { ok: false, error: `Lidhja "${source}-${target}" ekziston tashmë.` };
+        return { ok: false, error: t('graph.err.edgeExists', { a: source, b: target }) };
     }
 
     currentGraph.edges.push({ source, target, weight: w });

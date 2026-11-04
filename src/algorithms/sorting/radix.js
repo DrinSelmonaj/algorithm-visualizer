@@ -1,3 +1,4 @@
+import { t } from '../../i18n/index.js';
 // src/algorithms/sorting/radix.js
 
 const JAVA_SOURCE =
@@ -32,7 +33,7 @@ function* radixSort(array) {
     }
 
     for (let i = 0; i < arr.length; i++) {
-        yield { type: 'sorted', index: i, message: `arr[${i}]=${arr[i]} është pjesë e rezultatit të renditur.` };
+        yield { type: 'sorted', index: i, message: t('m.radix.1', { p0: i, p1: arr[i] }) };
     }
 }
 
@@ -47,7 +48,7 @@ function* countingSort(arr, exp) {
         // real: false — Radix nuk krahason, shfaq vetëm elementin aktiv
         yield {
             type: 'compare', real: false, indices: [i], javaLine: 11,
-            message: `exp=${exp}. Shifra e arr[${i}]=${arr[i]} në këtë pozicion është ${digit}.`
+            message: t('m.radix.2', { p0: exp, p1: i, p2: arr[i], p3: digit })
         };
     }
 
@@ -58,7 +59,7 @@ function* countingSort(arr, exp) {
         output[--count[digit]] = arr[i];
         yield {
             type: 'compare', real: false, indices: [i], javaLine: 15,
-            message: `Vendosim arr[${i}]=${arr[i]} (shifër ${digit}) në pozicionin e vet të përkohshëm.`
+            message: t('m.radix.3', { p0: i, p1: arr[i], p2: digit })
         };
     }
 
@@ -68,7 +69,7 @@ function* countingSort(arr, exp) {
         yield {
             type: 'overwrite', index: i, value: arr[i],
             state: [...arr], maxValue: maxVal, javaLine: 17,
-            message: `Kopjojmë ${arr[i]} nga output te arr[${i}] (exp=${exp}).`
+            message: t('m.radix.4', { p0: arr[i], p1: i, p2: exp })
         };
     }
 }

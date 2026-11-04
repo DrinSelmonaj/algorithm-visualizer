@@ -1,3 +1,4 @@
+import { t } from '../../../i18n/index.js';
 // src/algorithms/datastructures/stack/index.js
 
 import { render } from '../../../engine/stackRenderer.js';
@@ -44,7 +45,7 @@ function init() {
 function* push(value) {
     yield {
         type: 'compare', dsType: 'stack',
-        message: `push(${value}): shtojmë ${value} në majë të stack-ut.`,
+        message: t('m.stack.1', { p0: value, p1: value }),
         javaLine: 11,
     };
 
@@ -56,13 +57,13 @@ function* push(value) {
         render: () => render(items),
         nodeId: `stack-cell-${topIndex}`,
         javaLine: 12,
-        message: `${value} u shtua. top = ${topIndex}.`,
+        message: t('m.stack.2', { p0: value, p1: topIndex }),
     };
 
     yield {
         type: 'push', dsType: 'stack',
         nodeId: `stack-cell-${topIndex}`,
-        message: `push() përfundoi. Madhësia: ${items.length}.`,
+        message: t('m.stack.3', { p0: items.length }),
         javaLine: 12,
     };
 }
@@ -70,7 +71,7 @@ function* push(value) {
 // ── POP ───────────────────────────────────────────────────────────
 function* pop() {
     if (items.length === 0) {
-        yield { type: 'compare', dsType: 'stack', message: 'Stack është bosh — nuk ka çfarë të heqim.', javaLine: 16 };
+        yield { type: 'compare', dsType: 'stack', message: t('m.stack.4'), javaLine: 16 };
         return;
     }
 
@@ -79,14 +80,14 @@ function* pop() {
     yield {
         type: 'pop', dsType: 'stack',
         nodeId: `stack-cell-${topIndex}`,
-        message: `pop(): heqim elementin e majës ${items[topIndex]}.`,
+        message: t('m.stack.5', { p0: items[topIndex] }),
         javaLine: 16,
     };
 
     yield {
         type: 'delete', dsType: 'stack',
         nodeId: `stack-cell-${topIndex}`,
-        message: `${items[topIndex]} do të hiqet.`,
+        message: t('m.stack.6', { p0: items[topIndex] }),
         javaLine: 17,
     };
 
@@ -95,7 +96,7 @@ function* pop() {
     yield {
         type: 'rerender', dsType: 'stack',
         render: () => render(items),
-        message: `U hoq. Madhësia: ${items.length}.`,
+        message: t('m.stack.7', { p0: items.length }),
         javaLine: 17,
     };
 }
@@ -103,7 +104,7 @@ function* pop() {
 // ── PEEK ──────────────────────────────────────────────────────────
 function* peek() {
     if (items.length === 0) {
-        yield { type: 'compare', dsType: 'stack', message: 'Stack është bosh.', javaLine: 22 };
+        yield { type: 'compare', dsType: 'stack', message: t('m.stack.8'), javaLine: 22 };
         return;
     }
 
@@ -112,7 +113,7 @@ function* peek() {
     yield {
         type: 'found', dsType: 'stack',
         nodeId: `stack-cell-${topIndex}`,
-        message: `peek(): elementi i majës është ${items[topIndex]}. Stack pa ndryshim.`,
+        message: t('m.stack.9', { p0: items[topIndex] }),
         javaLine: 22,
     };
 }
@@ -122,7 +123,7 @@ function* isEmpty() {
     const result = items.length === 0;
     yield {
         type: 'compare', dsType: 'stack',
-        message: `isEmpty(): ${result}. Stack ka ${items.length} element(e).`,
+        message: t('m.stack.10', { p0: result, p1: items.length }),
         javaLine: 26,
     };
 }

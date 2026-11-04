@@ -1,3 +1,8 @@
+import { t } from '../i18n/index.js';
+
+// Teksti i përkthyer, i sigurt për HTML (atribute dhe përmbajtje)
+const h = (key, params) => t(key, params).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
 // src/ui/controls.js
 // Menaxhon të gjitha ndërveprimet e UI:
 // — butonin e operacioneve për Data Structures (push/pop/enqueue etj.)
@@ -38,10 +43,10 @@ function resetStats() {
 // Çdo strukturë ka butonat e vet — fshihen/shfaqen dinamikisht.
 
 const DS_PANELS = {
-    stack: `
+    stack: () => `
         <div class="ds-ops" id="ds-panel-stack">
             <div class="ds-input-row">
-                <input type="number" id="ds-input" placeholder="Vlera" class="ds-input">
+                <input type="number" id="ds-input" placeholder="${h('ui.valuePh')}" class="ds-input">
                 <button class="btn btn-primary" onclick="window.__dsOp('push', document.getElementById('ds-input').value)">Push</button>
                 <button class="btn btn-secondary" onclick="window.__dsOp('pop')">Pop</button>
                 <button class="btn btn-secondary" onclick="window.__dsOp('peek')">Peek</button>
@@ -49,23 +54,23 @@ const DS_PANELS = {
             </div>
         </div>`,
 
-    queue: `
+    queue: () => `
         <div class="ds-ops" id="ds-panel-queue">
             <div class="ds-input-row">
-                <input type="number" id="ds-input" placeholder="Vlera" class="ds-input">
+                <input type="number" id="ds-input" placeholder="${h('ui.valuePh')}" class="ds-input">
                 <button class="btn btn-primary" onclick="window.__dsOp('enqueue', document.getElementById('ds-input').value)">Enqueue</button>
                 <button class="btn btn-secondary" onclick="window.__dsOp('dequeue')">Dequeue</button>
                 <button class="btn btn-secondary" onclick="window.__dsOp('peek')">Peek</button>
             </div>
         </div>`,
 
-    linkedlist: `
+    linkedlist: () => `
     <div class="ds-ops" id="ds-panel-linkedlist">
         <div class="ds-input-row">
             <input type="number" id="ds-input"
-                   placeholder="Vlera" class="ds-input">
+                   placeholder="${h('ui.valuePh')}" class="ds-input">
             <input type="number" id="ds-after"
-                   placeholder="Pas vlerës..." class="ds-input ds-input--small">
+                   placeholder="${h('ds.afterValuePh')}" class="ds-input ds-input--small">
             <button class="btn btn-primary"
                 onclick="window.__dsOp('insertHead', document.getElementById('ds-input').value)">
                 ↑ Head
@@ -76,30 +81,30 @@ const DS_PANELS = {
             </button>
             <button class="btn btn-secondary"
                 onclick="window.__dsOp('insertAfter', document.getElementById('ds-input').value, document.getElementById('ds-after').value)">
-                → Pas vlerës
+                ${h('ds.afterBtn')}
             </button>
             <input type="number" id="ds-delete-next"
-                   placeholder="Pas saj (Fshi)" class="ds-input ds-input--small"
-                   title="Opsionale: fshi vlerën që ndiqet menjëherë nga kjo vlerë">
-            <label class="ds-null-next-option" title="Fshin vetëm nyjen e zgjedhur që është tail">
+                   placeholder="${h('ds.nextPh')}" class="ds-input ds-input--small"
+                   title="${h('ds.nextTitle')}">
+            <label class="ds-null-next-option" title="${h('ds.nullTitle')}">
                 <input type="checkbox" id="ds-delete-next-null"> Next = null
             </label>
             <button class="btn btn-secondary"
                 onclick="window.__dsOp('delete', document.getElementById('ds-input').value, document.getElementById('ds-delete-next').value, document.getElementById('ds-delete-next-null').checked)">
-                Fshi
+                ${h('ui.bstDelete')}
             </button>
             <button class="btn btn-secondary"
                 onclick="window.__dsOp('search', document.getElementById('ds-input').value)">
-                Kërko
+                ${h('ui.searchBtn')}
             </button>
         </div>
     </div>`,
 
-    hashmap: `
+    hashmap: () => `
         <div class="ds-ops" id="ds-panel-hashmap">
             <div class="ds-input-row">
-                <input type="text"   id="ds-key"   placeholder="Çelës (key)"  class="ds-input ds-input--small">
-                <input type="number" id="ds-value" placeholder="Vlera (value)" class="ds-input ds-input--small">
+                <input type="text"   id="ds-key"   placeholder="${h('ds.keyPh')}"  class="ds-input ds-input--small">
+                <input type="number" id="ds-value" placeholder="${h('ds.valuePh')}" class="ds-input ds-input--small">
                 <button class="btn btn-primary"   onclick="window.__dsOp('put',    document.getElementById('ds-key').value, document.getElementById('ds-value').value)">Put</button>
                 <button class="btn btn-secondary" onclick="window.__dsOp('get',    document.getElementById('ds-key').value)">Get</button>
                 <button class="btn btn-secondary" onclick="window.__dsOp('remove', document.getElementById('ds-key').value)">Remove</button>
@@ -120,7 +125,7 @@ function showDSPanel(key, dsOpCallback) {
     const container = document.getElementById('ds-controls');
     if (!container) return;
 
-    container.innerHTML = DS_PANELS[key] || '';
+    container.innerHTML = DS_PANELS[key]?.() || '';
     container.style.display = 'flex';
 }
 
@@ -137,34 +142,34 @@ function hideDSPanel() {
 
 // Paneli për shtim dinamik nyjesh/skajesh te grafet (Dijkstra/Kruskal) —
 // pjesa bazë e përbashkët për të dy algoritmet.
-const GRAPH_PANEL_BASE = `
+const GRAPH_PANEL_BASE = () => `
     <div class="ds-ops" id="graph-panel">
         <div class="graph-editor-group">
-            <span class="graph-editor-label">Nyje e re</span>
+            <span class="graph-editor-label">${h('graph.newNode')}</span>
             <div class="ds-input-row">
                 <label class="graph-field" for="graph-node-input">
-                    <span>ID e nyjes</span>
-                    <input type="text" id="graph-node-input" placeholder="p.sh. G" class="ds-input ds-input--small">
+                    <span>${h('graph.nodeId')}</span>
+                    <input type="text" id="graph-node-input" placeholder="${h('graph.egNodeG')}" class="ds-input ds-input--small">
                 </label>
-                <button class="btn btn-primary" onclick="window.__graphOp('addNode', document.getElementById('graph-node-input').value)">Shto nyje</button>
+                <button class="btn btn-primary" onclick="window.__graphOp('addNode', document.getElementById('graph-node-input').value)">${h('graph.addNode')}</button>
             </div>
         </div>
         <div class="graph-editor-group graph-editor-group--edge">
-            <span class="graph-editor-label">Lidhje e re</span>
+            <span class="graph-editor-label">${h('graph.newEdge')}</span>
             <div class="ds-input-row">
                 <label class="graph-field" for="graph-source-input">
-                    <span>Nga nyja</span>
-                    <input type="text" id="graph-source-input" placeholder="p.sh. A" class="ds-input ds-input--small">
+                    <span>${h('graph.from')}</span>
+                    <input type="text" id="graph-source-input" placeholder="${h('graph.egNodeA')}" class="ds-input ds-input--small">
                 </label>
                 <label class="graph-field" for="graph-target-input">
-                    <span>Te nyja</span>
-                    <input type="text" id="graph-target-input" placeholder="p.sh. B" class="ds-input ds-input--small">
+                    <span>${h('graph.to')}</span>
+                    <input type="text" id="graph-target-input" placeholder="${h('graph.egNodeB')}" class="ds-input ds-input--small">
                 </label>
                 <label class="graph-field graph-field--weight" for="graph-weight-input">
-                    <span>Pesha</span>
-                    <input type="number" id="graph-weight-input" placeholder="p.sh. 4" class="ds-input ds-input--small">
+                    <span>${h('graph.weight')}</span>
+                    <input type="number" id="graph-weight-input" placeholder="${h('graph.egWeight')}" class="ds-input ds-input--small">
                 </label>
-                <button class="btn btn-primary" onclick="window.__graphOp('addEdge', document.getElementById('graph-source-input').value, document.getElementById('graph-target-input').value, document.getElementById('graph-weight-input').value)">Shto lidhje</button>
+                <button class="btn btn-primary" onclick="window.__graphOp('addEdge', document.getElementById('graph-source-input').value, document.getElementById('graph-target-input').value, document.getElementById('graph-weight-input').value)">${h('graph.addEdge')}</button>
             </div>
         </div>
     </div>`;
@@ -173,9 +178,9 @@ const GRAPH_PANEL_BASE = `
 // rezultatin real). Kruskal punon mbi skaje globalisht të renditura + Union-
 // Find, s'ka nocion "nisje" fare — MST-ja del identike pavarësisht nyjes.
 // Mbaje jashtë GRAPH_PANEL_BASE, shtoje vetëm kur showGraphPanel() e kërkon.
-const GRAPH_SOURCE_ROW = `
+const GRAPH_SOURCE_ROW = () => `
     <label class="graph-source-control" for="graph-source-node">
-        <span class="graph-editor-label">Nyja fillestare</span>
+        <span class="graph-editor-label">${h('graph.source')}</span>
         <input type="text" id="graph-source-node" placeholder="Default: A" class="ds-input ds-input--small">
     </label>`;
 
@@ -189,7 +194,7 @@ function showGraphPanel(graphOpCallback, showSourceNode = false) {
     window.__graphOp = graphOpCallback;
     const container = document.getElementById('ds-controls');
     if (!container) return;
-    container.innerHTML = GRAPH_PANEL_BASE + (showSourceNode ? GRAPH_SOURCE_ROW : '');
+    container.innerHTML = GRAPH_PANEL_BASE() + (showSourceNode ? GRAPH_SOURCE_ROW() : '');
     container.style.display = 'flex';
 }
 export { updateStats, resetStats, showDSPanel, hideDSPanel, showGraphPanel };

@@ -1,3 +1,6 @@
+import { getLang } from '../i18n/index.js';
+import { TRAIT_INFO_EN } from './learningTraits.en.js';
+
 // src/ui/learningTraits.js
 // Shpjegim për çdo "karakteristikë" që shfaqet te skeda Përmbledhje (Stable,
 // In-place, Greedy, …). Shfaqet kur përdoruesi klikon mbi karakteristikën.
@@ -22,7 +25,7 @@ const TRAIT_INFO = {
 };
 
 function getTraitInfo(trait) {
-    return TRAIT_INFO[trait] || '';
+    return (getLang() === 'en' ? TRAIT_INFO_EN : TRAIT_INFO)[trait] || '';
 }
 
 export { TRAIT_INFO, getTraitInfo };
