@@ -7,6 +7,7 @@
 function initAlgoSearch() {
     const input = document.getElementById('algo-search-input');
     const emptyMsg = document.getElementById('algo-search-empty');
+    const clearButton = document.getElementById('algo-search-clear');
     if (!input) return;
 
     const groups = [...document.querySelectorAll('.algo-group')];
@@ -20,11 +21,17 @@ function initAlgoSearch() {
 
         groups.forEach(group => {
             const buttons = [...group.querySelectorAll('.algo-btn')];
+            const groupLabel = normalize(group.querySelector('.algo-group-title span')?.textContent || '');
             let groupHasMatch = false;
 
             buttons.forEach(btn => {
-                const label = normalize(btn.querySelector('span')?.textContent || '');
-                const matches = !query || label.includes(query);
+                const searchableText = normalize([
+                    btn.querySelector('span')?.textContent || '',
+                    btn.dataset.algorithm || '',
+                    btn.dataset.category || '',
+                    groupLabel,
+                ].join(' '));
+                const matches = !query || searchableText.includes(query);
                 btn.classList.toggle('algo-btn--hidden', !matches);
                 if (matches) groupHasMatch = true;
             });
@@ -42,13 +49,21 @@ function initAlgoSearch() {
         if (emptyMsg) {
             emptyMsg.classList.toggle('algo-search-empty--visible', query !== '' && !anyVisible);
         }
+        if (clearButton) clearButton.hidden = query === '';
     });
+
+    const clearSearch = () => {
+        input.value = '';
+        input.dispatchEvent(new Event('input'));
+        input.focus();
+    };
+
+    clearButton?.addEventListener('click', clearSearch);
 
     // Escape brenda fushës — pastron kërkimin shpejt
     input.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
-            input.value = '';
-            input.dispatchEvent(new Event('input'));
+            clearSearch();
             input.blur();
         }
     });

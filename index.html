@@ -10,7 +10,10 @@
     <link rel="stylesheet" href="styles/visualizer.css?v=2">
     <link rel="stylesheet" href="styles/controls.css?v=2">
     <link rel="stylesheet" href="styles/code-panel.css?v=2">
-    
+    <link rel="stylesheet" href="styles/redesign.css?v=1">
+    <link rel="stylesheet" href="styles/features.css?v=1">
+    <link rel="stylesheet" href="styles/education-theme.css?v=1">
+
 </head>
 <body>
     <!-- ── Skeleton Loading — mbulon gjithë faqen derisa fontet+layout të stabilizohen ── -->
@@ -56,8 +59,17 @@
             <span class="sidebar-toggle-bar"></span>
             <span class="sidebar-toggle-bar"></span>
         </button>
-        <h1 class="app-title">AlgoPro IDE</h1>
-        <p class="app-subtitle">Shiko algoritmet duke u ekzekutuar — hap pas hapi</p>
+        <div class="brand-mark" aria-hidden="true">
+            <span></span><span></span><span></span>
+        </div>
+        <div class="brand-copy">
+            <h1 class="app-title">AlgoPro</h1>
+            <p class="app-subtitle">Laborator interaktiv algoritmesh</p>
+        </div>
+        <div class="header-meta" aria-label="Veçoritë e aplikacionit">
+            <span><i class="status-dot"></i> Gati për ekzekutim</span>
+            <span class="header-shortcut"><kbd>17</kbd> vizualizime</span>
+        </div>
     </header>
 
     <!-- Sfondi errët pas sidebar-it kur hapet si drawer (vetëm ekranë të ngushtë) -->
@@ -69,10 +81,19 @@
         <!-- ZONA 1 — Lista e algoritmeve -->
         <aside id="app-sidebar" class="sidebar">
 
+            <div class="sidebar-heading">
+                <div>
+                    <span class="section-kicker">Biblioteka</span>
+                    <h2>Eksploro</h2>
+                </div>
+                <span class="sidebar-count">17</span>
+            </div>
             <div class="algo-search">
                 <svg class="icon algo-search-icon"><use href="#icon-search"></use></svg>
                 <input type="search" id="algo-search-input" class="algo-search-input"
                        placeholder="Kërko algoritëm..." aria-label="Kërko algoritëm">
+                <button id="algo-search-clear" class="algo-search-clear" type="button"
+                        aria-label="Pastro kërkimin" title="Pastro kërkimin" hidden>×</button>
             </div>
             <p id="algo-search-empty" class="algo-search-empty">Asnjë algoritëm nuk u gjet.</p>
 
@@ -194,11 +215,18 @@
         <!-- ZONA 2 — Vizualizuesi kryesor -->
         <section class="visualizer-zone visualizer-zone--idle">
             <div class="algo-info-bar">
-                <h2 id="active-algo-name">Zgjidh një algoritëm</h2>
+                <div class="active-algo-heading">
+                    <span class="section-kicker">Workspace</span>
+                    <h2 id="active-algo-name">Zgjidh një algoritëm</h2>
+                </div>
                <div class="algo-info-bar-right algo-info-bar-right--idle">
                     <div class="complexity-badges">
                         <span class="badge" id="badge-time">Time: —</span>
                         <span class="badge" id="badge-space">Space: —</span>
+                    </div>
+                    <div class="workspace-actions">
+                        <button id="btn-compare-open" type="button" class="btn btn-secondary">Krahaso</button>
+                        <button id="btn-share-state" type="button" class="btn btn-secondary">Ndaj</button>
                     </div>
                     <!-- Custom Input — butoni hap modalin (shfaqet vetëm për Sorting/Searching) -->
                     <div class="custom-input-group">
@@ -210,9 +238,15 @@
           <!-- SVG — mbushet dinamikisht nga renderer-at -->
             <div class="svg-container">
                 <svg id="main-svg" width="100%" height="400">
-                    <text x="50%" y="50%" text-anchor="middle" class="svg-placeholder">
-                        Zgjidh një algoritëm nga lista
-                    </text>
+                    <g class="welcome-visual">
+                        <circle cx="50%" cy="43%" r="72" class="welcome-orbit welcome-orbit--outer"/>
+                        <circle cx="50%" cy="43%" r="50" class="welcome-orbit"/>
+                        <rect x="46%" y="35%" width="14" height="64" rx="7" class="welcome-bar welcome-bar--one"/>
+                        <rect x="49%" y="39%" width="14" height="48" rx="7" class="welcome-bar welcome-bar--two"/>
+                        <rect x="52%" y="32%" width="14" height="76" rx="7" class="welcome-bar welcome-bar--three"/>
+                        <text x="50%" y="70%" text-anchor="middle" class="welcome-title">Mëso duke parë</text>
+                        <text x="50%" y="77%" text-anchor="middle" class="svg-placeholder">Zgjidh një algoritëm nga biblioteka për të filluar.</text>
+                    </g>
                 </svg>
                 <aside id="dijkstra-distance-panel" class="distance-panel glass-panel" hidden
                        aria-label="Distancat aktuale të Dijkstra-s" aria-live="polite">
@@ -226,6 +260,13 @@
             <!-- Statusi/mesazhi live i hapit aktual — i përbashkët për Graf + Struktura
                  të dhënash (animator.js e mbush me step.message nga gjeneratori) -->
             <div id="algo-status" class="algo-status glass-panel"></div>
+
+            <div class="visual-legend" aria-label="Legjenda e ngjyrave">
+                <span><i class="legend-dot legend-dot--compare"></i>Krahasim</span>
+                <span><i class="legend-dot legend-dot--write"></i>Ndryshim</span>
+                <span><i class="legend-dot legend-dot--success"></i>Përfunduar</span>
+                <span><i class="legend-dot legend-dot--pivot"></i>Pivot / aktiv</span>
+            </div>
 
             <!-- Statistikat live — kartelë glassmorphism, poshtë SVG-së -->
             <div class="stats-bar glass-panel stats-bar--hidden">
@@ -275,24 +316,63 @@
                     <input type="range" id="size-slider" min="5" max="45" value="20">
                 </div>
 
+                <div id="preset-control" class="preset-control">
+                    <label for="preset-select">Shembull</label>
+                    <div>
+                        <select id="preset-select">
+                            <option value="random">Random</option>
+                            <option value="sorted">I renditur</option>
+                            <option value="reversed">I kundërt</option>
+                            <option value="nearly">Pothuajse i renditur</option>
+                            <option value="duplicates">Me dublikata</option>
+                        </select>
+                        <button id="btn-apply-preset" type="button" class="btn btn-secondary">Apliko</button>
+                    </div>
+                </div>
+
+                <div id="timeline-control" class="timeline-control" hidden>
+                    <label for="timeline-slider">Timeline <span id="timeline-value">0/0</span></label>
+                    <input type="range" id="timeline-slider" min="0" max="0" value="0" disabled>
+                </div>
+
+                <!-- Targeti për Linear/Binary Search — shmang dialogët prompt që bllokohen në preview -->
+                <div id="search-target-group" class="search-input-group" style="display:none;">
+                    <label for="search-target-input">Vlera për kërkim</label>
+                    <div class="search-target-row">
+                        <input type="number" step="1" id="search-target-input"
+                               placeholder="p.sh. 42" inputmode="numeric">
+                        <button id="btn-search-start" type="button" class="btn btn-primary">Kërko</button>
+                    </div>
+                </div>
+
                 <!-- BST Input — shfaqet vetëm kur BST është aktiv -->
                 <div id="bst-input-group" class="bst-input-group" style="display:none;">
-                    <div class="bst-control-row">
-                        <input type="text" id="bst-values-input"
-                               placeholder="p.sh. 5,3,7,1,4" class="ds-input bst-values-input">
-                        <button id="btn-bst-run" class="btn btn-primary">Krijo pemën</button>
+                    <div class="bst-action-group">
+                        <span class="control-section-label">Krijo pemën</span>
+                        <div class="bst-control-row">
+                            <input type="text" id="bst-values-input"
+                                   aria-label="Vlerat fillestare të pemës"
+                                   placeholder="p.sh. 5, 3, 7, 1, 4" class="ds-input bst-values-input">
+                            <button id="btn-bst-run" class="btn btn-primary">Krijo</button>
+                        </div>
                     </div>
-                    <div class="bst-control-row">
-                        <input type="number" step="1" id="bst-operation-input"
-                               placeholder="Vlera" title="Vlera për futje, fshirje ose kërkim" class="ds-input ds-input--small">
-                        <button id="btn-bst-insert" class="btn btn-primary">Fut</button>
-                        <button id="btn-bst-delete" class="btn btn-secondary">Fshi</button>
-                        <button id="btn-bst-search" class="btn btn-secondary">Kërko</button>
+                    <div class="bst-action-group">
+                        <span class="control-section-label">Operacionet</span>
+                        <div class="bst-control-row">
+                            <input type="number" step="1" id="bst-operation-input"
+                                   placeholder="Vlera" title="Vlera për futje, fshirje ose kërkim" class="ds-input ds-input--small">
+                            <button id="btn-bst-insert" class="btn btn-primary">Fut</button>
+                            <button id="btn-bst-delete" class="btn btn-secondary">Fshi</button>
+                            <button id="btn-bst-search" class="btn btn-secondary">Kërko</button>
+                        </div>
                     </div>
-                    <div class="bst-control-row bst-traversal-row" aria-label="Mënyrat e traversal-it">
-                        <button id="btn-bst-inorder" class="btn btn-secondary">In-order</button>
-                        <button id="btn-bst-preorder" class="btn btn-secondary">Pre-order</button>
-                        <button id="btn-bst-postorder" class="btn btn-secondary">Post-order</button>
+                    <div class="bst-action-group">
+                        <span class="control-section-label">Traversimi</span>
+                        <div class="bst-control-row bst-traversal-row" aria-label="Mënyrat e traversal-it">
+                            <button id="btn-bst-inorder" class="btn btn-secondary">In-order</button>
+                            <button id="btn-bst-preorder" class="btn btn-secondary">Pre-order</button>
+                            <button id="btn-bst-postorder" class="btn btn-secondary">Post-order</button>
+                        </div>
                     </div>
                 </div>
 
@@ -305,7 +385,10 @@
         <!-- ZONA 3 — Paneli i kodit Java -->
         <aside class="code-panel">
             <div class="code-panel-header">
-                <h3>Kodi Java</h3>
+                <div>
+                    <span class="section-kicker">Implementimi</span>
+                    <h3>Kodi Java</h3>
+                </div>
                 <div class="code-panel-header-right">
                     <button id="btn-copy-code" class="icon-btn" title="Kopjo kodin" aria-label="Kopjo kodin">
                         <svg class="icon"><use href="#icon-content_copy"></use></svg>
@@ -313,8 +396,24 @@
                     <span class="code-lang-badge">Java</span>
                 </div>
             </div>
-            <pre><code id="java-code-display" class="language-java">// Zgjidh një algoritëm për të parë kodin</code></pre>
-            <div id="execution-log" class="execution-log" aria-live="polite" aria-label="Log ekzekutimi"></div>
+            <div class="panel-tabs" role="tablist" aria-label="Materiali mësimor">
+                <button class="panel-tab active" data-panel-tab="info" role="tab" aria-selected="true">Përmbledhje</button>
+                <button class="panel-tab" data-panel-tab="complexity" role="tab" aria-selected="false">Kompleksiteti</button>
+                <button class="panel-tab" data-panel-tab="code" role="tab" aria-selected="false">Kodi</button>
+            </div>
+            <div id="learning-info-view" class="panel-view learning-view" data-panel-view="info"></div>
+            <div id="learning-complexity-view" class="panel-view learning-view" data-panel-view="complexity" hidden></div>
+            <div class="panel-view code-view" data-panel-view="code" hidden>
+                <div class="code-toolbar">
+                    <label for="code-language-select">Pamja</label>
+                    <select id="code-language-select">
+                        <option value="java">Java</option>
+                        <option value="pseudocode">Pseudokod</option>
+                    </select>
+                </div>
+                <pre><code id="java-code-display" class="language-java">// Zgjidh një algoritëm për të parë kodin</code></pre>
+                <div id="execution-log" class="execution-log" aria-live="polite" aria-label="Log ekzekutimi"></div>
+            </div>
         </aside>
 
     </main>
@@ -333,6 +432,25 @@
                 <button id="btn-custom-clear" class="btn btn-secondary">✕ Random</button>
             </div>
             <span id="custom-input-feedback" class="custom-input-feedback"></span>
+        </div>
+    </div>
+
+    <div id="compare-modal" class="modal-overlay" hidden>
+        <div class="modal-card compare-modal-card" role="dialog" aria-modal="true" aria-label="Krahaso algoritmet">
+            <div class="modal-header">
+                <div><span class="section-kicker">Compare mode</span><h3>Krahaso mbi të njëjtat të dhëna</h3></div>
+                <button id="btn-compare-close" type="button" class="modal-close" aria-label="Mbyll">×</button>
+            </div>
+            <div class="compare-selectors">
+                <select id="compare-a" aria-label="Algoritmi i parë"></select>
+                <span>vs</span>
+                <select id="compare-b" aria-label="Algoritmi i dytë"></select>
+                <button id="btn-compare-run" type="button" class="btn btn-primary">Krahaso</button>
+            </div>
+            <div class="compare-results">
+                <article class="compare-result">Zgjidh algoritmet dhe kliko Krahaso.</article>
+                <article class="compare-result">Rezultati i dytë shfaqet këtu.</article>
+            </div>
         </div>
     </div>
 

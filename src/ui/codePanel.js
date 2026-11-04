@@ -5,9 +5,10 @@
 /**
  * Shfaq kodin Java për algoritmin aktiv.
  * Thirret nga main.js kur zgjidhet algoritëm i ri.
- * @param {string} javaSource — stringu i plotë Java
+ * @param {string} javaSource — kodi që do të shfaqet
+ * @param {string} language — gjuha e Highlight.js ('java' | 'plaintext')
  */
-function showCode(javaSource) {
+function showCode(javaSource, language = 'java') {
     const el = document.getElementById('java-code-display');
     if (!el) return;
     el.replaceChildren();
@@ -32,10 +33,19 @@ function showCode(javaSource) {
         content.className = 'line-content';
         // Highlight.js prodhon markup të sigurt nga teksti i kodit; struktura
         // mbetet e izoluar për çdo rresht, ndaj s'kemi më regex mbi HTML.
-        content.innerHTML = hljs.highlight(line || ' ', { language: 'java', ignoreIllegals: true }).value;
+        content.innerHTML = language === 'plaintext'
+            ? escapeHtml(line || ' ')
+            : hljs.highlight(line || ' ', { language, ignoreIllegals: true }).value;
         row.append(lineNumber, content);
         el.appendChild(row);
     });
+}
+
+function escapeHtml(value) {
+    return value
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;');
 }
 
 /**
