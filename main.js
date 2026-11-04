@@ -15,7 +15,7 @@ import { highlightLine } from './src/ui/codePanel.js';
 import { showComplexity } from './src/ui/complexity.js';
 import { hideDistancePanel } from './src/ui/distancePanel.js';
 import { hideHashContext } from './src/ui/hashContextPanel.js';
-import { initLearningCenter, showLearning } from './src/ui/learningCenter.js';
+import { initLearningCenter, showLearning, activateTab } from './src/ui/learningCenter.js';
 import { initCompareMode } from './src/ui/compareMode.js';
 import { initTimeline, resetTimeline, recordTimelineStep } from './src/ui/timeline.js';
 
@@ -240,6 +240,12 @@ function selectAlgorithm(algoKey) {
         'stats-bar--hidden',
         cat === 'datastructures'
     );
+    // Legjenda e ngjyrave i përket shufrave (krahasim/ndërrim/pivot) — për pemë,
+    // graf dhe struktura ka ngjyra të tjera, ndaj fshihet që t'i lërë vend SVG-së.
+    document.querySelector('.visual-legend')?.classList.toggle(
+        'visual-legend--hidden',
+        cat !== 'sorting' && cat !== 'searching'
+    );
 
     if (cat === 'sorting' || cat === 'searching') {
         hideDSPanel();
@@ -281,8 +287,10 @@ function selectAlgorithm(algoKey) {
         setGroupEnabled('#bst-input-group', false);
         setGroupEnabled('.size-control', false);
         setGroupEnabled('.custom-input-group', false);
-        initGraph();
+        // Paneli i editimit shfaqet PARA vizatimit: ai ndryshon lartësinë e SVG-së,
+        // dhe grafi duhet matur mbi përmasat përfundimtare (përndryshe del i vogël).
         showGraphPanel((op, ...args) => runGraphOperation(op, ...args), !!algo.needsSourceNode);
+        initGraph();
         setGroupEnabled('#graph-panel', true);
         document.getElementById('btn-run').disabled = false;
         document.getElementById('btn-reset').disabled = false;
@@ -871,6 +879,21 @@ setGroupEnabled('#bst-input-group', false);
 initAlgoSearch();
 initSidebarToggle();
 initLearningCenter();
+
+// Klikimi mbi badge-t Time/Space çon te skeda Kompleksiteti e panelit të djathtë
+['badge-time', 'badge-space'].forEach(id => {
+    const badge = document.getElementById(id);
+    if (!badge) return;
+    const open = () => {
+        if (!currentAlgo) return;
+        activateTab('complexity');
+        document.querySelector('.code-panel')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    };
+    badge.addEventListener('click', open);
+    badge.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); }
+    });
+});
 initCompareMode(ALGORITHMS, () => {
     // Përdor array-in aktual vetëm kur është aktiv një sorting/searching;
     // përndryshe (asnjë algoritëm, BST, graf, DS) gjenero një array të ri.

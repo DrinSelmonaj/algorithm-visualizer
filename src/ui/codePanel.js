@@ -8,10 +8,16 @@
  * @param {string} javaSource — kodi që do të shfaqet
  * @param {string} language — gjuha e Highlight.js ('java' | 'plaintext')
  */
+// Numrat e rreshtave të animimit (javaLine) i përgjigjen kodit Java; te pseudokodi
+// nuk përputhen, ndaj theksimi çaktivizohet që të mos tregojë rresht të gabuar.
+let lineHighlightEnabled = true;
+
 function showCode(javaSource, language = 'java') {
+    lineHighlightEnabled = language !== 'plaintext';
     const el = document.getElementById('java-code-display');
     if (!el) return;
     el.replaceChildren();
+    el.closest('pre')?.classList.toggle('is-pseudo', language === 'plaintext');
 
     // Rifillo gjithmonë nga fillimi — një pozicion i vjetër scroll
     // horizontal s'duhet të mbetet "i mbërthyer" kur ngarkohet kod i ri.
@@ -56,7 +62,7 @@ function escapeHtml(value) {
 function highlightLine(lineNumber) {
     clearLineHighlight();
     const el = document.getElementById('java-code-display');
-    if (!el || !lineNumber) return;
+    if (!el || !lineNumber || !lineHighlightEnabled) return;
 
     const line = el.querySelector(`.code-line:nth-child(${lineNumber})`);
     if (!line) return;
