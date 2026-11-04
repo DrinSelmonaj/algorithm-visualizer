@@ -298,6 +298,9 @@
                     <span class="stat-label" data-i18n="ui.statLogical">Hapa logjikë</span>
                     <span class="stat-value" id="stat-logical">0</span>
                 </div>
+                <button id="btn-stats-info" type="button" class="stats-info-btn" aria-expanded="false" aria-controls="stats-info-popover"
+                        title="Shtyp për më shumë info" aria-label="Shtyp për më shumë info"
+                        data-i18n-attr="title:ui.statsInfoHint; aria-label:ui.statsInfoHint">i</button>
             </div>
 
             <!-- Kontrolluesit -->
@@ -468,6 +471,23 @@
                 <article class="compare-result" data-i18n="ui.compareHint2">Rezultati i dytë shfaqet këtu.</article>
             </div>
         </div>
+    </div>
+
+    <div id="stats-info-popover" class="stats-info-popover glass-panel" role="dialog" aria-labelledby="stats-info-title" hidden>
+        <div class="stats-info-head">
+            <h3 id="stats-info-title" data-i18n="ui.statsInfoTitle">Çfarë tregojnë numrat?</h3>
+            <button id="btn-stats-info-close" type="button" class="stats-info-close" aria-label="Mbyll" data-i18n-attr="aria-label:ui.close">×</button>
+        </div>
+        <dl>
+            <dt data-i18n="ui.statCompare">Krahasime</dt>
+            <dd data-i18n="ui.statsInfoCompare"></dd>
+            <dt><span data-i18n="ui.statSwaps">Ndërrime</span> / <span data-i18n="ui.statWrites">Shkrime</span></dt>
+            <dd data-i18n="ui.statsInfoSwaps"></dd>
+            <dt data-i18n="ui.statStep">Hapi</dt>
+            <dd data-i18n="ui.statsInfoStep"></dd>
+            <dt data-i18n="ui.statLogical">Hapa logjikë</dt>
+            <dd data-i18n="ui.statsInfoLogical"></dd>
+        </dl>
     </div>
 
     <div id="theme-toast" class="theme-toast" role="status" aria-live="polite" hidden></div>
