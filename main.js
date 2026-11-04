@@ -243,6 +243,11 @@ function selectAlgorithm(algoKey) {
         'stats-bar--hidden',
         cat === 'datastructures'
     );
+    // Hapat logjikë përcaktohen vetëm për renditje dhe kërkim; për BST/graf do të ishin gjithmonë 0
+    document.getElementById('stat-logical-box')?.classList.toggle(
+        'stat--hidden',
+        cat !== 'sorting' && cat !== 'searching'
+    );
     // Legjenda e ngjyrave i përket shufrave (krahasim/ndërrim/pivot) — për pemë,
     // graf dhe struktura ka ngjyra të tjera, ndaj fshihet që t'i lërë vend SVG-së.
     document.querySelector('.visual-legend')?.classList.toggle(

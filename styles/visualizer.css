@@ -718,3 +718,4 @@ svg rect {
     stroke: var(--accent-blue);
     stroke-width: 2px;
 }
+.stat--hidden { display: none; }
