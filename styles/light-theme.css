@@ -191,3 +191,10 @@
 .stats-info-popover dl { margin: 0; }
 .stats-info-popover dt { margin-top: 10px; font-weight: 700; color: var(--accent-blue); }
 .stats-info-popover dd { margin: 2px 0 0; color: var(--text-secondary); }
+
+/* Ekran i ngushtë: njoftimet rrinë njëri nën tjetrin, jo mbi njëri-tjetrin */
+@media (max-width: 768px) {
+    .theme-toast { left: 12px; right: 12px; max-width: none; top: 64px; }
+    .theme-toast--right { left: 12px; right: 12px; top: 116px; }
+    .stats-info-popover { max-height: calc(100vh - 24px); }
+}
