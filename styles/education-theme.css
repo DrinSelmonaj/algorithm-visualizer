@@ -334,3 +334,29 @@ body {
         flex: 1 1 145px;
     }
 }
+
+/* ── Proporcione: më shumë vend për SVG-në (grafet, shufrat, pemët) ──
+   Statistikat, legjenda dhe toolbar-i kompaktohen; SVG-ja ka lartësi minimale
+   dhe, kur dritarja është shumë e ulët, zona rrëshqet në vend që ta shtypë SVG-në. */
+.visualizer-zone { overflow-x: hidden; overflow-y: auto; }
+.visualizer-zone:not(.visualizer-zone--idle) .svg-container { padding: 10px; min-height: 320px; }
+.visual-legend { margin: 0 auto 6px; gap: 14px; }
+.stats-bar { margin: 0 auto 8px; }
+.stat { width: 104px; min-width: 0; padding: 6px 4px; }
+.stat-label { margin-bottom: 0; font-size: 0.62rem; }
+.stat-value { font-size: 1rem; }
+.algo-status { min-height: 30px; margin: 0 auto 8px; padding: 5px 16px; font-size: 0.78rem; }
+.controls-bar { padding: 10px 18px; row-gap: 8px; }
+.controls-bar--bst, .controls-bar--graph { gap: 10px 16px; }
+.controls-bar--graph #ds-controls, .controls-bar--bst .bst-input-group { padding: 10px 12px; }
+.btn-circle { width: 36px; height: 36px; }
+
+.visual-legend--hidden { display: none; }
+@media (min-width: 1281px) {
+    .controls-bar--graph #graph-panel { grid-template-columns: minmax(170px, 0.7fr) minmax(380px, 1.6fr) auto; align-items: end; }
+}
+
+/* Në dritare të ulëta zona rrëshqet (SVG-ja ka lartësi minimale); shiriti i kontrolleve
+   mbetet ngjitur në fund që Run/Pauzë/Rikthe të jenë gjithmonë të arritshme. */
+/* Vetëm shiriti kompakt (sorting/searching): paneli i gjatë i grafit/BST/DS do ta mbulonte SVG-në. */
+.visualizer-zone .controls-bar:not(.controls-bar--graph):not(.controls-bar--bst):not(.controls-bar--datastructures) { position: sticky; bottom: 0; z-index: 3; }
