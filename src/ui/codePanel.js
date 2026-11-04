@@ -65,8 +65,22 @@ function highlightLine(lineNumber) {
     // Scroll automatik VERTIKAL te rreshti aktiv — jo horizontal.
     // scrollIntoView() do të lëvizte edhe majtas/djathtas pa dashje, tani që
     // .code-line ka width:100% (i gjerë sa gjithë <code>, jo vetëm teksti).
-    const container = el.closest('pre');
-    if (container) {
+    scrollLineIntoView(line, el.closest('pre'));
+}
+
+/**
+ * Sjell rreshtin aktiv në pamje kur skeda "Kodi" bëhet e dukshme — nëse hapi
+ * u ekzekutua ndërsa paneli ishte i fshehur, scroll-i s'ishte i mundur.
+ */
+function revealActiveLine() {
+    const el = document.getElementById('java-code-display');
+    const line = el?.querySelector('.code-line.active');
+    if (line) scrollLineIntoView(line, el.closest('pre'), 'auto');
+}
+
+function scrollLineIntoView(line, container, behavior = 'smooth') {
+    // Kur paneli është display:none, offsetTop/clientHeight janë 0 — mos llogarit
+    if (container && container.clientHeight > 0) {
         const lineTop    = line.offsetTop;
         const lineBottom = lineTop + line.offsetHeight;
         const viewTop    = container.scrollTop;
@@ -83,7 +97,7 @@ function highlightLine(lineNumber) {
         }
 
         if (top !== viewTop) {
-            container.scrollTo({ top, left: 0, behavior: 'smooth' });
+            container.scrollTo({ top, left: 0, behavior });
         } else {
             container.scrollLeft = 0;
         }
@@ -96,4 +110,4 @@ function clearLineHighlight() {
     el.querySelectorAll('.code-line.active').forEach(line => line.classList.remove('active'));
 }
 
-export { showCode, highlightLine, clearLineHighlight };
+export { showCode, highlightLine, revealActiveLine, clearLineHighlight };

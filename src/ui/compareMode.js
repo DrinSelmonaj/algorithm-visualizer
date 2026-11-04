@@ -12,13 +12,19 @@ function initCompareMode(registry, getArray) {
     modal?.addEventListener('click', event => { if (event.target === modal) modal.hidden = true; });
     document.getElementById('btn-compare-run')?.addEventListener('click', () => {
         const array = getArray();
-        renderResult(0, inspect(registry[selects[0].value], array));
-        renderResult(1, inspect(registry[selects[1].value], array));
+        const sorted = [...array].sort((a, b) => a - b);
+        // I njëjti target për të dy algoritmet (elementi i mesit të array-it të renditur)
+        const target = sorted[Math.floor(sorted.length / 2)];
+        selects.forEach((select, index) => {
+            const key = select.value;
+            // Binary Search kërkon array të renditur
+            const input = key === 'binary' ? sorted : array;
+            renderResult(index, inspect(registry[key], input, target));
+        });
     });
 }
 
-function inspect(algo, array) {
-    const target = array[Math.floor(array.length / 2)];
+function inspect(algo, array, target) {
     const generator = algo.gen([...array], target);
     const metrics = { name: algo.name, steps: 0, comparisons: 0, writes: 0 };
     for (const step of generator) {
