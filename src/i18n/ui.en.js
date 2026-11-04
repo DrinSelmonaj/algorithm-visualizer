@@ -2,6 +2,11 @@
 const UI_EN = {
     "ui.title": "Algorithm Visualizer",
     "ui.sidebarOpen": "Open the algorithm list",
+    "ui.themeToggle": "Switch theme (dark / light)",
+    "ui.themeToast": "Click the icon at the top left to switch the theme (dark / light).",
+    "ui.langToast": "Use SQ / EN at the top right to change the language of the page.",
+    "ui.themeNowDark": "Dark theme enabled.",
+    "ui.themeNowLight": "Light theme enabled.",
     "ui.subtitle": "Interactive algorithm lab",
     "ui.headerMetaAria": "App status",
     "ui.ready": "Ready to run",

@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vizualizues Algoritmesh</title>
 
+    <script>
+        // Vendos temën para se faqja të pikturohet (pa vezullim): e ruajtur ose e errët.
+        try { document.documentElement.dataset.theme = localStorage.getItem('algopro-theme') === 'light' ? 'light' : 'dark'; }
+        catch (e) { document.documentElement.dataset.theme = 'dark'; }
+    </script>
     <link rel="stylesheet" href="vendor/highlight-dark.css">
     <link rel="stylesheet" href="styles/main.css?v=2">
     <link rel="stylesheet" href="styles/visualizer.css?v=2">
@@ -13,6 +18,7 @@
     <link rel="stylesheet" href="styles/redesign.css?v=1">
     <link rel="stylesheet" href="styles/features.css?v=3">
     <link rel="stylesheet" href="styles/education-theme.css?v=3">
+    <link rel="stylesheet" href="styles/light-theme.css?v=1">
 
 </head>
 <body>
@@ -59,9 +65,11 @@
             <span class="sidebar-toggle-bar"></span>
             <span class="sidebar-toggle-bar"></span>
         </button>
-        <div class="brand-mark" aria-hidden="true">
+        <button id="btn-theme-toggle" type="button" class="brand-mark theme-toggle" aria-pressed="false"
+                title="Ndrysho temën (e errët / e çelët)" aria-label="Ndrysho temën (e errët / e çelët)"
+                data-i18n-attr="title:ui.themeToggle; aria-label:ui.themeToggle">
             <span></span><span></span><span></span>
-        </div>
+        </button>
         <div class="brand-copy">
             <h1 class="app-title">AlgoPro</h1>
             <p class="app-subtitle" data-i18n="ui.subtitle">Laborator interaktiv algoritmesh</p>
@@ -118,7 +126,7 @@
                 </div>
             </details>
 
-            <details class="algo-group" open>
+            <details class="algo-group">
                 <summary class="algo-group-title">
                     <span data-i18n="ui.grpSort">Renditje</span>
                     <span class="chevron">▾</span>
@@ -457,6 +465,9 @@
             </div>
         </div>
     </div>
+
+    <div id="theme-toast" class="theme-toast" role="status" aria-live="polite" hidden></div>
+    <div id="lang-toast" class="theme-toast theme-toast--right" role="status" aria-live="polite" hidden></div>
 
     <script>
 fetch('assets/icons-sprite.svg')

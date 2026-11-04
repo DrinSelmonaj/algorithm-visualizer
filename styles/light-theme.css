@@ -1,0 +1,152 @@
+/* Tema e çelët — aktivizohet me <html data-theme="light">. Ngarkohet e fundit;
+   mbishkruan vetëm variablat dhe pak sipërfaqe me ngjyra të forta të errëta. */
+
+:root { color-scheme: dark; }
+
+:root[data-theme="light"] {
+    color-scheme: light;
+    --bg-primary: #f3f6fb;
+    --bg-secondary: #ffffff;
+    --bg-card: #ffffff;
+    --bg-hover: #e8eef7;
+    --bg-surface: #ffffff;
+    --bg-glass: rgba(255, 255, 255, 0.8);
+    --accent-blue: #0b7bb5;
+    --accent-primary: #0b7bb5;
+    --accent-green: #0f9d6b;
+    --accent-success: #0f9d6b;
+    --accent-orange: #c76a0a;
+    --accent-warning: #c76a0a;
+    --accent-red: #d6364f;
+    --accent-purple: #6b4fd8;
+    --text-primary: #131b2b;
+    --text-main: #131b2b;
+    --text-secondary: #465267;
+    --text-muted: #66738a;
+    --border: rgba(40, 60, 95, 0.16);
+    --border-color: rgba(40, 60, 95, 0.16);
+    --border-active: #0b7bb5;
+    --surface-glass: rgba(255, 255, 255, 0.82);
+}
+
+:root[data-theme="light"] html,
+:root[data-theme="light"] body {
+    background:
+        radial-gradient(circle at 18% -10%, rgba(11, 123, 181, 0.08), transparent 30%),
+        radial-gradient(circle at 88% 8%, rgba(107, 79, 216, 0.07), transparent 27%),
+        #f3f6fb;
+}
+
+:root[data-theme="light"] .app-header {
+    background: rgba(255, 255, 255, 0.9);
+    border-bottom-color: rgba(40, 60, 95, 0.14);
+    box-shadow: 0 6px 22px rgba(30, 45, 80, 0.07);
+}
+
+/* Logo / butoni i temës */
+.theme-toggle { cursor: pointer; transition: transform var(--transition), box-shadow var(--transition); }
+.theme-toggle:hover { transform: scale(1.06); }
+.theme-toggle:focus-visible { outline: 2px solid var(--accent-blue); outline-offset: 3px; }
+
+/* Njoftimi i temës */
+.theme-toast {
+    position: fixed;
+    top: 56px;
+    left: 16px;
+    z-index: 1000;
+    max-width: min(340px, calc(100vw - 32px));
+    padding: 10px 14px;
+    border: 1px solid var(--border-active);
+    border-radius: 10px;
+    background: var(--bg-card);
+    color: var(--text-primary);
+    box-shadow: 0 12px 34px rgba(0, 0, 0, 0.3);
+    font-size: 0.8rem;
+    line-height: 1.4;
+    pointer-events: none;
+}
+.theme-toast[hidden] { display: none; }
+.theme-toast--right { left: auto; right: 16px; }
+.theme-toast--show { animation: themeToast var(--toast-ms, 3s) ease both; }
+@keyframes themeToast {
+    0%   { opacity: 0; transform: translateY(-8px); }
+    4%   { opacity: 1; transform: translateY(0); }
+    94%  { opacity: 1; transform: translateY(0); }
+    100% { opacity: 0; transform: translateY(-8px); }
+}
+@media (prefers-reduced-motion: reduce) {
+    .theme-toast--show { animation: none; }
+}
+
+/* ── Sipërfaqet me ngjyra të errëta të shkruara direkt në CSS-të e tjera ── */
+:root[data-theme="light"] body { background: #f3f6fb; }
+:root[data-theme="light"] .sidebar { background: #ffffff; }
+:root[data-theme="light"] .code-panel { background: #ffffff; }
+:root[data-theme="light"] .visualizer-zone {
+    background:
+        linear-gradient(rgba(40, 60, 95, 0.045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(40, 60, 95, 0.045) 1px, transparent 1px),
+        #eef2f9;
+    background-size: 36px 36px, 36px 36px, auto;
+}
+:root[data-theme="light"] .visualizer-zone--idle .svg-container {
+    background: radial-gradient(circle at 50% 40%, rgba(11, 123, 181, 0.08), transparent 55%);
+}
+:root[data-theme="light"] .algo-info-bar,
+:root[data-theme="light"] .controls-bar { background: rgba(255, 255, 255, 0.92); }
+:root[data-theme="light"] .glass-panel,
+:root[data-theme="light"] .stats-bar,
+:root[data-theme="light"] .distance-panel {
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 8px 22px rgba(30, 45, 80, 0.1);
+}
+:root[data-theme="light"] #ds-controls,
+:root[data-theme="light"] .controls-bar--bst .bst-input-group { background: rgba(232, 238, 247, 0.8); }
+:root[data-theme="light"] .panel-tabs { background: rgba(40, 60, 95, 0.07); }
+:root[data-theme="light"] .algo-search-input,
+:root[data-theme="light"] .ds-input { background-color: #f3f6fb; color: var(--text-primary); }
+:root[data-theme="light"] .code-panel pre { background: #f6f8fc; }
+:root[data-theme="light"] .execution-log,
+:root[data-theme="light"] .distance-row { background: rgba(40, 60, 95, 0.06); }
+:root[data-theme="light"] .modal-overlay { background: rgba(30, 40, 65, 0.4); }
+:root[data-theme="light"] .modal-card { background: #ffffff; box-shadow: 0 24px 60px rgba(30, 45, 80, 0.25); }
+:root[data-theme="light"] .sidebar-toggle-bar { background: var(--text-primary); }
+:root[data-theme="light"] .brand-mark { background: linear-gradient(145deg, rgba(11, 123, 181, 0.16), rgba(107, 79, 216, 0.08)); border-color: rgba(11, 123, 181, 0.35); }
+:root[data-theme="light"] .brand-mark span { background: linear-gradient(to top, #0b7bb5, #38bdf8); }
+
+/* Kodi (highlight.js) në temën e çelët */
+:root[data-theme="light"] .hljs { color: #24292f; background: transparent; }
+:root[data-theme="light"] .hljs-doctag, :root[data-theme="light"] .hljs-keyword,
+:root[data-theme="light"] .hljs-meta .hljs-keyword, :root[data-theme="light"] .hljs-template-tag,
+:root[data-theme="light"] .hljs-type, :root[data-theme="light"] .hljs-variable.language_ { color: #cf222e; }
+:root[data-theme="light"] .hljs-title, :root[data-theme="light"] .hljs-title.class_,
+:root[data-theme="light"] .hljs-title.function_ { color: #8250df; }
+:root[data-theme="light"] .hljs-attr, :root[data-theme="light"] .hljs-attribute,
+:root[data-theme="light"] .hljs-literal, :root[data-theme="light"] .hljs-meta,
+:root[data-theme="light"] .hljs-number, :root[data-theme="light"] .hljs-operator,
+:root[data-theme="light"] .hljs-variable { color: #0550ae; }
+:root[data-theme="light"] .hljs-meta .hljs-string, :root[data-theme="light"] .hljs-regexp,
+:root[data-theme="light"] .hljs-string { color: #0a3069; }
+:root[data-theme="light"] .hljs-built_in, :root[data-theme="light"] .hljs-symbol { color: #953800; }
+:root[data-theme="light"] .hljs-code, :root[data-theme="light"] .hljs-comment,
+:root[data-theme="light"] .hljs-formula { color: #6e7781; }
+:root[data-theme="light"] .hljs-name, :root[data-theme="light"] .hljs-quote,
+:root[data-theme="light"] .hljs-selector-tag { color: #116329; }
+
+/* Shufrat, etiketat dhe skedat që përdornin ngjyra të çelëta të shkruara direkt */
+:root[data-theme="light"] .sort-bar rect.bar-default {
+    fill: #9db4d3;
+    fill-opacity: 0.85;
+    stroke: rgba(40, 60, 95, 0.35);
+}
+:root[data-theme="light"] .sort-bar text { fill: var(--text-secondary); }
+:root[data-theme="light"] #badge-time,
+:root[data-theme="light"] #badge-space {
+    color: #075985;
+    background: rgba(11, 123, 181, 0.1);
+    border-color: rgba(11, 123, 181, 0.35);
+}
+:root[data-theme="light"] .panel-tab.active {
+    color: #075985;
+    background: rgba(11, 123, 181, 0.14);
+}
