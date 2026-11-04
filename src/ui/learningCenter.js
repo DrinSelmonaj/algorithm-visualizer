@@ -1,5 +1,5 @@
 import { getLearningData } from './learningData.js';
-import { showCode } from './codePanel.js';
+import { showCode, revealActiveLine } from './codePanel.js';
 
 let currentKey = null;
 let currentJava = '';
@@ -22,6 +22,7 @@ function activateTab(tab) {
     });
     const headerActions = document.querySelector('.code-panel-header-right');
     if (headerActions) headerActions.classList.toggle('code-panel-header-right--muted', tab !== 'code');
+    if (tab === 'code') revealActiveLine();
 }
 
 function showLearning(key, javaSource) {

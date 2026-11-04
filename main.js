@@ -871,7 +871,13 @@ setGroupEnabled('#bst-input-group', false);
 initAlgoSearch();
 initSidebarToggle();
 initLearningCenter();
-initCompareMode(ALGORITHMS, () => [...currentArray]);
+initCompareMode(ALGORITHMS, () => {
+    // Përdor array-in aktual vetëm kur është aktiv një sorting/searching;
+    // përndryshe (asnjë algoritëm, BST, graf, DS) gjenero një array të ri.
+    const cat = currentAlgo ? ALGORITHMS[currentAlgo].category : null;
+    if ((cat === 'sorting' || cat === 'searching') && currentArray.length) return [...currentArray];
+    return generateArray(Number(document.getElementById('size-slider').value) || 20);
+});
 initTimeline((index, steps) => {
     if (!currentAlgo) return;
     const cat = ALGORITHMS[currentAlgo].category;
@@ -892,6 +898,9 @@ document.getElementById('btn-apply-preset')?.addEventListener('click', () => {
     if (!currentAlgo) return;
     const cat = ALGORITHMS[currentAlgo].category;
     if (cat !== 'sorting' && cat !== 'searching') return;
+    // Ndalo çdo ekzekutim aktiv — përndryshe gjeneratori vazhdon mbi shufrat e vjetra
+    stop();
+    currentGen = null;
     const size = Number(document.getElementById('size-slider').value);
     const preset = document.getElementById('preset-select').value;
     let values;
@@ -903,10 +912,13 @@ document.getElementById('btn-apply-preset')?.addEventListener('click', () => {
         for (let i = 1; i < values.length; i += 6) [values[i - 1], values[i]] = [values[i], values[i - 1]];
     } else values = generateArray(size);
     currentArray = cat === 'searching' ? [...values].sort((a, b) => a - b) : values;
-    customArray = [...currentArray];
+    // MOS vendos customArray këtu — përndryshe slider-i "Elementet" injorohet
+    // (getWorkingArray kthen gjithmonë customArray). Rikthe ripërdor currentArray.
     currentBars = renderBars(currentArray);
     resetStats();
     resetTimeline(true);
+    resetButtons();
+    enableButtons(['run', 'step', 'reset']);
 });
 
 document.getElementById('btn-share-state')?.addEventListener('click', async () => {
@@ -918,23 +930,37 @@ document.getElementById('btn-share-state')?.addEventListener('click', async () =
     url.searchParams.set('speed', String(speedValue));
     const target = document.getElementById('search-target-input')?.value;
     if (target) url.searchParams.set('target', target);
-    await navigator.clipboard.writeText(url.toString());
     const button = document.getElementById('btn-share-state');
-    button.textContent = 'Linku u kopjua';
+    let label = 'Linku u kopjua';
+    try {
+        await navigator.clipboard.writeText(url.toString());
+    } catch (err) {
+        console.error('Kopjimi dështoi:', err);
+        label = 'Kopjimi dështoi';
+    }
+    button.textContent = label;
     setTimeout(() => { button.textContent = 'Ndaj'; }, 1600);
 });
 
 const sharedParams = new URLSearchParams(window.location.search);
 const sharedAlgo = sharedParams.get('algo');
 if (sharedAlgo && ALGORITHMS[sharedAlgo]) {
-    const sharedData = sharedParams.get('data')?.split(',').map(Number).filter(Number.isFinite);
-    if (sharedData?.length) customArray = sharedData;
+    // Njësoj si Vlera Custom: 5–45 numra të plotë 0–999, përndryshe injorohet
+    const sharedData = parseCustomArray(sharedParams.get('data'));
+    if (sharedData) {
+        customArray = sharedData.values;
+    }
     const sharedSpeed = Number(sharedParams.get('speed'));
     if ([1, 2, 3].includes(sharedSpeed)) {
         speedValue = sharedSpeed;
         document.getElementById('speed-slider').value = String(sharedSpeed);
     }
     document.querySelector(`[data-algorithm="${sharedAlgo}"]`)?.click();
-    const target = sharedParams.get('target');
-    if (target) document.getElementById('search-target-input').value = target;
+    // Pas click()-ut: selectAlgorithm() riaktivizon slider-in, ndaj çaktivizohet këtu
+    if (sharedData) {
+        document.getElementById('size-slider').disabled = true;
+        document.getElementById('size-value').textContent = sharedData.values.length;
+    }
+    const target = parseValidInt(sharedParams.get('target'));
+    if (target !== null) document.getElementById('search-target-input').value = target;
 }
