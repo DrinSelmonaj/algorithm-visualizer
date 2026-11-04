@@ -29,7 +29,7 @@ function* shellSort(array) {
             let j = i;
 
             yield {
-                type: 'compare', indices: [j, j - gap], javaLine: 8,
+                type: 'compare', unit: i === gap, indices: [j, j - gap], javaLine: 8,
                 message: t('m.shell.1', { p0: gap, p1: j, p2: arr[j], p3: j - gap, p4: arr[j - gap] })
             };
 

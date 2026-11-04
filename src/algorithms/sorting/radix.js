@@ -47,7 +47,7 @@ function* countingSort(arr, exp) {
         count[digit]++;
         // real: false — Radix nuk krahason, shfaq vetëm elementin aktiv
         yield {
-            type: 'compare', real: false, indices: [i], javaLine: 11,
+            type: 'compare', real: false, unit: i === 0, indices: [i], javaLine: 11,
             message: t('m.radix.2', { p0: exp, p1: i, p2: arr[i], p3: digit })
         };
     }

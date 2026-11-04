@@ -40,7 +40,7 @@ function* bubbleSort(array) {
         }
         // Elementi i fundit i pasit është në pozicionin e tij final
         yield {
-            type: 'sorted', index: n - i - 1, javaLine: 4,
+            type: 'sorted', unit: true, index: n - i - 1, javaLine: 4,
             message: t('m.bubble.3', { p0: n - i - 1, p1: arr[n - i - 1] })
         };
     }

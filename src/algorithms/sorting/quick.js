@@ -70,7 +70,7 @@ function* partition(arr, low, high) {
         type: 'swap', indices: [i + 1, high], state: [...arr], javaLine: 18,
         message: t('m.quick.6', { p0: arr[i + 1], p1: i + 1 })
     };
-    yield { type: 'sorted', index: i + 1, message: t('m.quick.7', { p0: i + 1, p1: arr[i + 1] }) };
+    yield { type: 'sorted', unit: true, index: i + 1, message: t('m.quick.7', { p0: i + 1, p1: arr[i + 1] }) };
 
     return i + 1;
 }

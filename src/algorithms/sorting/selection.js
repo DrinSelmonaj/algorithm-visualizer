@@ -42,7 +42,7 @@ function* selectionSort(array) {
             };
         }
 
-        yield { type: 'sorted', index: i, javaLine: 4, message: t('m.selection.3', { p0: i, p1: arr[i] }) };
+        yield { type: 'sorted', unit: true, index: i, javaLine: 4, message: t('m.selection.3', { p0: i, p1: arr[i] }) };
     }
 
     yield { type: 'sorted', index: n - 1, message: t('m.selection.4', { p0: n - 1, p1: arr[n - 1] }) };
