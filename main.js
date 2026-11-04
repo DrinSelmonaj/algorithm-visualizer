@@ -11,10 +11,13 @@ import { applyStep, resetStats } from './src/engine/animator.js';
 import { showDSPanel, showGraphPanel, hideDSPanel } from './src/ui/controls.js'
 import { initAlgoSearch } from './src/ui/algoSearch.js';
 import { initSidebarToggle } from './src/ui/sidebarToggle.js';
-import { showCode, highlightLine } from './src/ui/codePanel.js';
+import { highlightLine } from './src/ui/codePanel.js';
 import { showComplexity } from './src/ui/complexity.js';
 import { hideDistancePanel } from './src/ui/distancePanel.js';
 import { hideHashContext } from './src/ui/hashContextPanel.js';
+import { initLearningCenter, showLearning } from './src/ui/learningCenter.js';
+import { initCompareMode } from './src/ui/compareMode.js';
+import { initTimeline, resetTimeline, recordTimelineStep } from './src/ui/timeline.js';
 
 // ── Sorting algorithms ────────────────────────────────────────────
 import { bubbleSort,    JAVA_SOURCE as JAVA_BUBBLE    } from './src/algorithms/sorting/bubble.js';
@@ -178,6 +181,7 @@ function selectAlgorithm(algoKey) {
 
     document.querySelector('.controls-bar')?.classList.remove('controls-bar--idle');
     document.querySelector('.algo-info-bar-right')?.classList.remove('algo-info-bar-right--idle');
+    document.querySelector('.visualizer-zone')?.classList.remove('visualizer-zone--idle');
     
     // Strukturat e të dhënave i nisin operacionet drejtpërdrejt nga paneli i
     // tyre; kontrollet globale Run/Pause/Step/Speed do të ishin të tepërta.
@@ -188,6 +192,10 @@ function selectAlgorithm(algoKey) {
     document.querySelector('.controls-bar')?.classList.toggle(
         'controls-bar--bst',
         algoKey === 'bst'
+    );
+    document.querySelector('.controls-bar')?.classList.toggle(
+        'controls-bar--graph',
+        algo.category === 'graph'
     );
     // Stack/Queue/LinkedList/HashMap kanë viewBox të vetin, fiks (max 7
     // elemente të dukshme + "+N more") — s'kanë nevojë të shtrihen flex:1
@@ -200,7 +208,7 @@ function selectAlgorithm(algoKey) {
  // Emri dhe kompleksiteti
     document.getElementById('active-algo-name').textContent = algo.name;
     showComplexity(algoKey);
-    showCode(algo.java);
+    showLearning(algoKey, algo.java);
 
     // Etiketa e statit "Ndërrime"/"Shkrime" ndryshon sipas mënyrës si punon algoritmi
     const swapsLabel = document.getElementById('stat-swaps-label');
@@ -213,6 +221,17 @@ function selectAlgorithm(algoKey) {
 
     // Inicializo varësisht nga kategoria
     const cat = algo.category;
+    resetTimeline(cat === 'sorting' || cat === 'searching');
+    const presetControl = document.getElementById('preset-control');
+    if (presetControl) {
+        presetControl.style.display = cat === 'sorting' || cat === 'searching' ? 'flex' : 'none';
+        setGroupEnabled('#preset-control', cat === 'sorting' || cat === 'searching');
+    }
+    const searchTargetGroup = document.getElementById('search-target-group');
+    if (searchTargetGroup) {
+        searchTargetGroup.style.display = cat === 'searching' ? 'flex' : 'none';
+        setGroupEnabled('#search-target-group', cat === 'searching');
+    }
 
     // Krahasime/Ndërrime/Hapi s'kanë kuptim algoritmik për Stack/Queue/
     // LinkedList/HashMap (s'janë operacione krahasimi apo renditjeje) —
@@ -233,6 +252,12 @@ function selectAlgorithm(algoKey) {
         const size = parseInt(document.getElementById('size-slider').value);
         currentArray = getWorkingArray(size, cat);
         currentBars = renderBars(currentArray);
+        if (cat === 'searching') {
+            const targetInput = document.getElementById('search-target-input');
+            if (targetInput && targetInput.value === '') {
+                targetInput.value = currentArray[Math.floor(currentArray.length / 2)];
+            }
+        }
         enableButtons(['run', 'step', 'reset']);
 
     } else if (cat === 'bst') {
@@ -304,6 +329,7 @@ function runAlgorithm() {
 
     const algo = ALGORITHMS[currentAlgo];
     const cat  = algo.category;
+    resetTimeline(cat === 'sorting' || cat === 'searching');
 
     if (cat === 'sorting') {
         currentGen = algo.gen([...currentArray]);
@@ -342,6 +368,7 @@ function runAlgorithm() {
     run(
         currentGen,
         (step) => {
+            if (cat === 'sorting' || cat === 'searching') recordTimelineStep(step);
             applyStep(step, currentBars, cat);
             if (step.javaLine) highlightLine(step.javaLine);
         },
@@ -364,6 +391,7 @@ function stepAlgorithm() {
     const cat  = algo.category;
 
     if (!currentGen) {
+        resetTimeline(cat === 'sorting' || cat === 'searching');
         if (cat === 'sorting') {
             currentGen = algo.gen([...currentArray]);
         } else if (cat === 'searching') {
@@ -378,6 +406,7 @@ function stepAlgorithm() {
     stepOnce(
         currentGen,
         (step) => {
+            if (cat === 'sorting' || cat === 'searching') recordTimelineStep(step);
             applyStep(step, currentBars, cat);
             if (step.javaLine) highlightLine(step.javaLine);
         },
@@ -399,6 +428,7 @@ function resetAlgorithm(forceRegenerate = false) {
     if (!currentAlgo) return;
     const algo = ALGORITHMS[currentAlgo];
     const cat  = algo.category;
+    resetTimeline(cat === 'sorting' || cat === 'searching');
 
     if (cat === 'sorting' || cat === 'searching') {
         // MOS rithirr getWorkingArray() këtu (përveç kur kërkohet eksplicit) —
@@ -452,13 +482,15 @@ function parseValidInt(str) {
 }
 
 function requestSearchTarget() {
-    const raw = prompt('Shkruaj numrin e plotë për të kërkuar:');
-    if (raw === null) return null;
-    const target = parseValidInt(raw);
+    const input = document.getElementById('search-target-input');
+    const target = parseValidInt(input?.value);
+    const status = document.getElementById('algo-status');
     if (target === null) {
-        alert('Shkruaj një numër të plotë të vlefshëm.');
+        if (status) status.textContent = 'Shkruaj një numër të plotë për ta kërkuar.';
+        input?.focus();
         return null;
     }
+    if (status) status.textContent = `Po kërkojmë vlerën ${target}.`;
     return target;
 }
 
@@ -593,6 +625,8 @@ document.getElementById('btn-run').addEventListener('click', () => {
     }
     runAlgorithm();
 });
+
+document.getElementById('btn-search-start')?.addEventListener('click', runAlgorithm);
 
 document.getElementById('btn-pause').addEventListener('click', () => {
     pause();
@@ -814,6 +848,10 @@ document.addEventListener('keydown', (e) => {
         document.getElementById('btn-custom-apply')?.click();
         return;
     }
+    if (e.target.id === 'search-target-input') {
+        document.getElementById('btn-search-start')?.click();
+        return;
+    }
 
     // DS panels (Stack/Queue/LinkedList/HashMap) + Graph panel —
     // kliko btn-primary e parë brenda të njëjtit rresht
@@ -832,3 +870,71 @@ setGroupEnabled('.size-control', false);
 setGroupEnabled('#bst-input-group', false);
 initAlgoSearch();
 initSidebarToggle();
+initLearningCenter();
+initCompareMode(ALGORITHMS, () => [...currentArray]);
+initTimeline((index, steps) => {
+    if (!currentAlgo) return;
+    const cat = ALGORITHMS[currentAlgo].category;
+    if (cat !== 'sorting' && cat !== 'searching') return;
+    stop();
+    currentGen = null;
+    resetStats();
+    currentBars = renderBars(currentArray);
+    steps.slice(0, index).forEach(step => {
+        applyStep(step, currentBars, cat);
+        if (step.javaLine) highlightLine(step.javaLine);
+    });
+    resetButtons();
+    enableButtons(['run', 'step', 'reset']);
+});
+
+document.getElementById('btn-apply-preset')?.addEventListener('click', () => {
+    if (!currentAlgo) return;
+    const cat = ALGORITHMS[currentAlgo].category;
+    if (cat !== 'sorting' && cat !== 'searching') return;
+    const size = Number(document.getElementById('size-slider').value);
+    const preset = document.getElementById('preset-select').value;
+    let values;
+    if (preset === 'sorted') values = Array.from({ length: size }, (_, i) => (i + 1) * 4);
+    else if (preset === 'reversed') values = Array.from({ length: size }, (_, i) => (size - i) * 4);
+    else if (preset === 'duplicates') values = Array.from({ length: size }, (_, i) => [12, 28, 12, 44, 28][i % 5]);
+    else if (preset === 'nearly') {
+        values = Array.from({ length: size }, (_, i) => (i + 1) * 4);
+        for (let i = 1; i < values.length; i += 6) [values[i - 1], values[i]] = [values[i], values[i - 1]];
+    } else values = generateArray(size);
+    currentArray = cat === 'searching' ? [...values].sort((a, b) => a - b) : values;
+    customArray = [...currentArray];
+    currentBars = renderBars(currentArray);
+    resetStats();
+    resetTimeline(true);
+});
+
+document.getElementById('btn-share-state')?.addEventListener('click', async () => {
+    if (!currentAlgo) return;
+    const url = new URL(window.location.href);
+    url.search = '';
+    url.searchParams.set('algo', currentAlgo);
+    if (currentArray.length) url.searchParams.set('data', currentArray.join(','));
+    url.searchParams.set('speed', String(speedValue));
+    const target = document.getElementById('search-target-input')?.value;
+    if (target) url.searchParams.set('target', target);
+    await navigator.clipboard.writeText(url.toString());
+    const button = document.getElementById('btn-share-state');
+    button.textContent = 'Linku u kopjua';
+    setTimeout(() => { button.textContent = 'Ndaj'; }, 1600);
+});
+
+const sharedParams = new URLSearchParams(window.location.search);
+const sharedAlgo = sharedParams.get('algo');
+if (sharedAlgo && ALGORITHMS[sharedAlgo]) {
+    const sharedData = sharedParams.get('data')?.split(',').map(Number).filter(Number.isFinite);
+    if (sharedData?.length) customArray = sharedData;
+    const sharedSpeed = Number(sharedParams.get('speed'));
+    if ([1, 2, 3].includes(sharedSpeed)) {
+        speedValue = sharedSpeed;
+        document.getElementById('speed-slider').value = String(sharedSpeed);
+    }
+    document.querySelector(`[data-algorithm="${sharedAlgo}"]`)?.click();
+    const target = sharedParams.get('target');
+    if (target) document.getElementById('search-target-input').value = target;
+}

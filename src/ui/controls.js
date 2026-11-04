@@ -139,15 +139,33 @@ function hideDSPanel() {
 // pjesa bazë e përbashkët për të dy algoritmet.
 const GRAPH_PANEL_BASE = `
     <div class="ds-ops" id="graph-panel">
-        <div class="ds-input-row">
-            <input type="text" id="graph-node-input" placeholder="ID nyje (p.sh. G)" class="ds-input ds-input--small">
-            <button class="btn btn-primary" onclick="window.__graphOp('addNode', document.getElementById('graph-node-input').value)">Shto Nyje</button>
+        <div class="graph-editor-group">
+            <span class="graph-editor-label">Nyje e re</span>
+            <div class="ds-input-row">
+                <label class="graph-field" for="graph-node-input">
+                    <span>ID e nyjes</span>
+                    <input type="text" id="graph-node-input" placeholder="p.sh. G" class="ds-input ds-input--small">
+                </label>
+                <button class="btn btn-primary" onclick="window.__graphOp('addNode', document.getElementById('graph-node-input').value)">Shto nyje</button>
+            </div>
         </div>
-        <div class="ds-input-row">
-            <input type="text" id="graph-source-input" placeholder="Nga (p.sh. A)" class="ds-input ds-input--small">
-            <input type="text" id="graph-target-input" placeholder="Tek (p.sh. B)" class="ds-input ds-input--small">
-            <input type="number" id="graph-weight-input" placeholder="Pesha" class="ds-input ds-input--small">
-            <button class="btn btn-primary" onclick="window.__graphOp('addEdge', document.getElementById('graph-source-input').value, document.getElementById('graph-target-input').value, document.getElementById('graph-weight-input').value)">Shto Lidhje</button>
+        <div class="graph-editor-group graph-editor-group--edge">
+            <span class="graph-editor-label">Lidhje e re</span>
+            <div class="ds-input-row">
+                <label class="graph-field" for="graph-source-input">
+                    <span>Nga nyja</span>
+                    <input type="text" id="graph-source-input" placeholder="p.sh. A" class="ds-input ds-input--small">
+                </label>
+                <label class="graph-field" for="graph-target-input">
+                    <span>Te nyja</span>
+                    <input type="text" id="graph-target-input" placeholder="p.sh. B" class="ds-input ds-input--small">
+                </label>
+                <label class="graph-field graph-field--weight" for="graph-weight-input">
+                    <span>Pesha</span>
+                    <input type="number" id="graph-weight-input" placeholder="p.sh. 4" class="ds-input ds-input--small">
+                </label>
+                <button class="btn btn-primary" onclick="window.__graphOp('addEdge', document.getElementById('graph-source-input').value, document.getElementById('graph-target-input').value, document.getElementById('graph-weight-input').value)">Shto lidhje</button>
+            </div>
         </div>
     </div>`;
 
@@ -156,9 +174,10 @@ const GRAPH_PANEL_BASE = `
 // Find, s'ka nocion "nisje" fare — MST-ja del identike pavarësisht nyjes.
 // Mbaje jashtë GRAPH_PANEL_BASE, shtoje vetëm kur showGraphPanel() e kërkon.
 const GRAPH_SOURCE_ROW = `
-    <div class="ds-input-row">
-    <input type="text" id="graph-source-node" placeholder="Nyja fillestare (default A)" class="ds-input ds-input--small">
-</div>`;
+    <label class="graph-source-control" for="graph-source-node">
+        <span class="graph-editor-label">Nyja fillestare</span>
+        <input type="text" id="graph-source-node" placeholder="Default: A" class="ds-input ds-input--small">
+    </label>`;
 
 /**
  * Shfaq panelin e editimit të grafit — thirret nga main.js kur cat === 'graph'.
