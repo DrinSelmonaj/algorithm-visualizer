@@ -95,3 +95,23 @@ test('BST traversal-et ruajnë rendin e saktë', () => {
   assert.deepEqual(consume(bstTraverse('preorder')).at(-1).traversal, [5, 3, 1, 4, 7, 6, 8]);
   assert.deepEqual(consume(bstTraverse('postorder')).at(-1).traversal, [1, 4, 3, 6, 8, 7, 5]);
 });
+
+// ── Hapat logjikë (shenja `unit` te gjeneratorët) ──────────────────
+const logical = gen => [...gen].filter(s => s.unit === true).length;
+const sample8 = [38, 61, 66, 9, 73, 97, 100, 69];
+
+test('hapat logjikë: Bubble, Selection, Insertion, Merge dhe Heap japin n-1', () => {
+    for (const fn of [bubbleSort, selectionSort, insertionSort, mergeSort, heapSort]) {
+        assert.equal(logical(fn([...sample8])), sample8.length - 1, fn.name);
+    }
+});
+
+test('hapat logjikë: Shell = numri i hapësirave (gap), Radix = numri i shifrave', () => {
+    assert.equal(logical(shellSort([...sample8])), 3);     // gap 4, 2, 1
+    assert.equal(logical(radixSort([...sample8])), 3);     // max 100 → 3 shifra
+});
+
+test('hapat logjikë: Quick = një për çdo ndarje (partition), jo më shumë se n-1', () => {
+    const n = logical(quickSort([...sample8]));
+    assert.ok(n >= 1 && n <= sample8.length - 1, `partitions=${n}`);
+});

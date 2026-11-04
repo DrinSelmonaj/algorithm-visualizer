@@ -37,7 +37,7 @@ function* heapSort(array) {
     for (let i = n - 1; i > 0; i--) {
         [arr[0], arr[i]] = [arr[i], arr[0]];
         yield {
-            type: 'swap', indices: [0, i], state: [...arr], javaLine: 7,
+            type: 'swap', unit: true, indices: [0, i], state: [...arr], javaLine: 7,
             message: t('m.heap.1', { p0: arr[i], p1: i })
         };
         yield { type: 'sorted', index: i, message: t('m.heap.2', { p0: i, p1: arr[i] }) };

@@ -49,7 +49,7 @@ function* merge(arr, l, m, r) {
 
     while (i < left.length && j < right.length) {
         yield {
-            type: 'compare', indices: [l + i, m + 1 + j], javaLine: 16,
+            type: 'compare', unit: i === 0 && j === 0, indices: [l + i, m + 1 + j], javaLine: 16,
             message: t('m.merge.2', { p0: left[i], p1: right[j] })
         };
         if (left[i] <= right[j]) {

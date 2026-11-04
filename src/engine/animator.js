@@ -10,7 +10,8 @@ const stats = {
     comparisons: 0,
     swaps:       0,
     writes:      0,
-    step:        0
+    step:        0,
+    logical:     0     // hapa logjikë: kalim, ndarje, bashkim, element i futur etj.
 };
 
 function resetStats() {
@@ -18,6 +19,7 @@ function resetStats() {
     stats.swaps       = 0;
     stats.writes      = 0;
     stats.step        = 0;
+    stats.logical     = 0;
     updateStats(stats);
     initExecutionLog();
 
@@ -30,6 +32,8 @@ function applyStep(step, bars, category) {
     if (step.type !== 'sorted' && step.type !== 'rerender') {
         stats.step++;
     }
+    // Hap logjik = një njësi pune e algoritmit (shih shenjën `unit` te gjeneratori)
+    if (step.unit === true) stats.logical++;
 
     if (category === 'sorting' || category === 'searching') {
         applySortStep(step, bars);

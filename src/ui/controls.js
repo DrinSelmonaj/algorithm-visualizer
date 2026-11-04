@@ -22,6 +22,10 @@ function updateStats(delta = {}) {
         // Vetëm njëri prej të dyve është >0 për çdo algoritëm — kombinimi është gjithmonë korrekt
         if (el) el.textContent = (delta.swaps || 0) + (delta.writes || 0);
     }
+    if (delta.logical != null) {
+        const el = document.getElementById('stat-logical');
+        if (el) el.textContent = delta.logical;
+    }
     if (delta.step != null) {
         const el = document.getElementById('stat-step');
         if (el) el.textContent = delta.step;
@@ -33,7 +37,7 @@ function updateStats(delta = {}) {
  * Thirret nga main.js kur zgjidhet algoritëm i ri ose reset.
  */
 function resetStats() {
-    ['stat-comparisons', 'stat-swaps', 'stat-step'].forEach(id => {
+    ['stat-comparisons', 'stat-swaps', 'stat-step', 'stat-logical'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.textContent = '0';
     });

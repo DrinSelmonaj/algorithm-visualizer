@@ -17,7 +17,7 @@ function* linearSearch(array, target) {
     yield { type: 'info', message: t('m.linear.1', { p0: target }) };
 
     for (let i = 0; i < arr.length; i++) {
-        yield { type: 'compare', indices: [i], javaLine: 3, message: t('m.linear.2', { p0: i, p1: arr[i], p2: target }) };
+        yield { type: 'compare', unit: true, indices: [i], javaLine: 3, message: t('m.linear.2', { p0: i, p1: arr[i], p2: target }) };
         if (arr[i] === target) {
             yield { type: 'found', indices: [i], javaLine: 4, message: t('m.linear.3', { p0: target, p1: i }) };
             return;

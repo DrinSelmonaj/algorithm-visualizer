@@ -51,7 +51,7 @@ function* insertionSort(array) {
             type: 'overwrite', index: j + 1, value: key, state: [...arr], javaLine: 10,
             message: t('m.insertion.5', { p0: key, p1: j + 1 })
         };
-        yield { type: 'sorted', index: i, javaLine: 10, message: t('m.insertion.6', { p0: i }) };
+        yield { type: 'sorted', unit: true, index: i, javaLine: 10, message: t('m.insertion.6', { p0: i }) };
     }
 }
 

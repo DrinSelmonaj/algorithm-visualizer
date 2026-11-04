@@ -24,7 +24,7 @@ function* binarySearch(array, target) {
     while (low <= high) {
         const mid = Math.floor((low + high) / 2);
 
-        yield { type: 'compare', indices: [mid], javaLine: 5, message: t('m.binary.2', { p0: mid, p1: mid, p2: arr[mid], p3: target }) };
+        yield { type: 'compare', unit: true, indices: [mid], javaLine: 5, message: t('m.binary.2', { p0: mid, p1: mid, p2: arr[mid], p3: target }) };
 
         if (arr[mid] === target) {
             yield { type: 'found', indices: [mid], javaLine: 6, message: t('m.binary.3', { p0: target, p1: mid }) };
